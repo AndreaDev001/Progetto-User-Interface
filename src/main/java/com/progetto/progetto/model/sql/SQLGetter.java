@@ -25,7 +25,7 @@ public class SQLGetter {
             PreparedStatement firstStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS USER id int auto_increment primary key, username varchar(50) not null, password varchar(50) not null");
             PreparedStatement secondStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LIBRARY id int primary key, foreign key (id) references Utente(id)");
             PreparedStatement thirdStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS FILM api_id int primary key,title varchar(100) not null, description varchar(100) not null, poster varchar(100) not null");
-            PreparedStatement fourthStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS library_id int references Library(id),film_id int references Film(api_id), primary key (library_id,film_id)");
+            PreparedStatement fourthStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LIBRARY library_id int references Library(id),film_id int references Film(api_id), primary key (library_id,film_id)");
             firstStatement.executeUpdate();
             secondStatement.executeUpdate();
             thirdStatement.executeUpdate();
