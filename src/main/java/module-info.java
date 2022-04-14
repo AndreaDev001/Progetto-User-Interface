@@ -1,6 +1,8 @@
 module com.progetto.progetto {
     requires javafx.controls;
     requires javafx.fxml;
+    requires themoviedbapi;
+    requires java.sql;
 
 
     opens com.progetto.progetto to javafx.fxml;
