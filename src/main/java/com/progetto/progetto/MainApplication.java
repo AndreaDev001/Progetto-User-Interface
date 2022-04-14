@@ -16,10 +16,6 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("MainView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 640,480);
-        TmdbMovies movies = new TmdbApi("3837271101e801680438310f38a3feff").getMovies();
-        MovieDb movie = movies.getMovie(5353,"en");
-        movie.getImages(ArtworkType.POSTER);
-        System.out.println(movie.getTitle());
         stage.setTitle("Main Application");
         stage.setScene(scene);
         stage.show();
