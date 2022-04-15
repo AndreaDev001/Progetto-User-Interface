@@ -3,7 +3,6 @@ package com.progetto.progetto.model;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 
 import java.util.ArrayList;

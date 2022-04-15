@@ -9,9 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 public class SceneHandler {
 
