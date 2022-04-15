@@ -1,4 +1,4 @@
-package com.progetto.progetto;
+package com.progetto.progetto.controller;
 
 import com.progetto.progetto.model.ProfileHandler;
 import com.progetto.progetto.view.SceneHandler;
@@ -25,6 +25,7 @@ public class LoginController
             if(result)
                 SceneHandler.getInstance().loadMainScene();
         });
+
     }
     public final Button getLoginButton() {return loginButton;}
     public final TextField getUsernameLabel() {return usernameField;}

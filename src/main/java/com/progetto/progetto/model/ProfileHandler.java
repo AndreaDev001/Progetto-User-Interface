@@ -2,6 +2,9 @@ package com.progetto.progetto.model;
 
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
+import com.progetto.progetto.view.SceneHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,38 +21,52 @@ public class ProfileHandler {
 
     private User loggedUser;
 
-    public boolean login(String username, String password,boolean bypass) {
+    public boolean login(String username, String password, boolean bypass) {
 
-        if(bypass)
+        if (bypass)
             return true;
 
-        if(loggedUser != null)
+        if (loggedUser != null)
             return false;
 
         try {
-            ResultSet result = SQLGetter.getInstance().makeQuery("SELECT * FROM USER WHERE name =?",username);
-            if(result.next()) {
+            ResultSet result = SQLGetter.getInstance().makeQuery("SELECT * FROM USER WHERE name =?", username);
+            if (result.next()) {
                 String dbPassword = result.getString(1);
-                if(dbPassword.equals(password)) {
+                if (dbPassword.equals(password)) {
                     this.loggedUser = new User(username, result.getString(1));
                     return true;
                 }
+                SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Password", Alert.AlertType.ERROR);
             }
+            else
+                SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Username", Alert.AlertType.ERROR);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean logout()
-    {
-        if(this.loggedUser != null)
-        {
+    public boolean logout() {
+        if (this.loggedUser != null) {
             this.loggedUser = null;
             return true;
         }
         return false;
     }
+
+    public boolean createUser(String username, String password)
+    {
+        try {
+            SQLGetter.getInstance().makeUpdate("INSERT INTO USER (name,password) VALUES (?,?)");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public User getLoggedUser() {
         return this.loggedUser;
     }
