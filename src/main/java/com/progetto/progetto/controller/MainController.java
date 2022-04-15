@@ -1,4 +1,4 @@
-package com.progetto.progetto;
+package com.progetto.progetto.controller;
 
 import com.progetto.progetto.view.SceneHandler;
 import javafx.fxml.FXML;
