@@ -9,7 +9,9 @@ import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class SceneHandler {
 
@@ -80,6 +82,7 @@ public class SceneHandler {
         if(this.scene == null)
             this.scene = new Scene(root);
         this.scene.getStylesheets().clear();
+        this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
         this.scene.setRoot(root);
         stage.setMinWidth(500);
         stage.setMinHeight(300);
