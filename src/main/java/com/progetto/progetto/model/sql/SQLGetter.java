@@ -11,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SQLGetter {
+    private static SQLGetter instance = new SQLGetter();
     private final MySQL mySQL;
 
-    public SQLGetter(MySQL mySQL) {
-        this.mySQL = mySQL;
+    private SQLGetter() {
+        this.mySQL = new MySQL("","","","","",true);
+        //this.mySQL.Connect();
         createTables();
     }
-
     public void createTables() {
         if (!mySQL.isConnected())
             return;
@@ -140,4 +141,5 @@ public class SQLGetter {
         }
         return libraries;
     }
+    public static SQLGetter getInstance() {return instance;}
 }

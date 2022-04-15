@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.MainController">
    <center>
       <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
          <items>
@@ -24,10 +24,10 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <Button mnemonicParsing="false" text="Films" />
-                        <Button mnemonicParsing="false" text="Library" />
-                        <Button mnemonicParsing="false" text="Settings" />
-                        <Button mnemonicParsing="false" text="Logout" />
+                        <Button fx:id="filmsButton" mnemonicParsing="false" text="Films" />
+                        <Button fx:id="libraryButton" mnemonicParsing="false" text="Library" />
+                        <Button fx:id="settingsButton" mnemonicParsing="false" text="Settings" />
+                        <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout" />
                      </children>
                   </VBox>
                </children>

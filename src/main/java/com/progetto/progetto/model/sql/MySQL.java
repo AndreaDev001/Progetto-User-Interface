@@ -27,10 +27,11 @@ public class MySQL
     {
         String usesSSL = useSSL ? "?useSSL=true" : "?useSSL=false";
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + usesSSL,username,password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,username,password);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("Connected");
     }
     public void Disconnect()
     {
