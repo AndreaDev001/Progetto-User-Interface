@@ -1,6 +1,6 @@
 package com.progetto.progetto;
 
-import com.progetto.progetto.model.AuthenticatorHandler;
+import com.progetto.progetto.model.ProfileHandler;
 import com.progetto.progetto.view.SceneHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,7 +21,7 @@ public class LoginController
     private void initialize()
     {
         loginButton.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-            boolean result = AuthenticatorHandler.getInstance().login(usernameField.getText(),passwordField.getText(),true);
+            boolean result = ProfileHandler.getInstance().login(usernameField.getText(),passwordField.getText(),true);
             if(result)
                 SceneHandler.getInstance().loadMainScene();
         });

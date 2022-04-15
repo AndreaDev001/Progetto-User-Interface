@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SQLGetter {
     private static SQLGetter instance = new SQLGetter();
@@ -16,14 +17,14 @@ public class SQLGetter {
 
     private SQLGetter() {
         this.mySQL = new MySQL("","","","","",true);
-        //this.mySQL.Connect();
         createTables();
     }
+
     public void createTables() {
         if (!mySQL.isConnected())
             return;
         try {
-            PreparedStatement firstStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS USER id int auto_increment primary key, username varchar(50) not null, password varchar(50) not null");
+            PreparedStatement firstStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS USER username varchar(50) primary key, password varchar(50) not null");
             PreparedStatement secondStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LIBRARY id int primary key, foreign key (id) references Utente(id)");
             PreparedStatement thirdStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS FILM api_id int primary key,title varchar(100) not null, description varchar(100) not null, poster varchar(100) not null");
             PreparedStatement fourthStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LIBRARY library_id int references Library(id),film_id int references Film(api_id), primary key (library_id,film_id)");
@@ -35,6 +36,24 @@ public class SQLGetter {
             e.printStackTrace();
         }
     }
+
+    public ResultSet makeQuery(String query, Object... objects) throws SQLException
+    {
+
+        PreparedStatement preparedStatement = SQLGetter.getInstance().getMySQL().getConnection().prepareStatement(query);
+        for(int i = 0;i < objects.length;i++)
+            preparedStatement.setObject(i + 1,objects[i]);
+        return preparedStatement.executeQuery();
+    }
+
+    public int makeUpdate(String update, Object... objects) throws SQLException
+    {
+        PreparedStatement preparedStatement = SQLGetter.getInstance().getMySQL().getConnection().prepareStatement(update);
+        for(int i = 0;i < objects.length;i++)
+            preparedStatement.setObject(i + 1,objects[i]);
+        return preparedStatement.executeUpdate();
+    }
+
 
     public void deleteRow(String tableName, String primaryKey, int value) {
         if (!mySQL.isConnected())
@@ -88,10 +107,9 @@ public class SQLGetter {
             preparedStatement = this.mySQL.getConnection().prepareStatement("SELECT * FROM USERS");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                int id = resultSet.getInt(1);
-                String username = resultSet.getString(2);
-                String password = resultSet.getString(3);
-                User user = new User(id, username, password);
+                String username = resultSet.getString(1);
+                String password = resultSet.getString(2);
+                User user = new User(username, password);
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -141,5 +159,10 @@ public class SQLGetter {
         }
         return libraries;
     }
+
+    public MySQL getMySQL() {
+        return mySQL;
+    }
+
     public static SQLGetter getInstance() {return instance;}
 }
