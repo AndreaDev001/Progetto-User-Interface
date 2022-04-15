@@ -1,68 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" styleClass="borderPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MainController">
    <center>
-      <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5" style="-fx-box-border: transparent;" BorderPane.alignment="CENTER">
          <items>
-            <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="100.0">
+            <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="anchorPane">
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <Button fx:id="filmsButton" mnemonicParsing="false" text="Films" />
-                        <Button fx:id="libraryButton" mnemonicParsing="false" text="Library" />
-                        <Button fx:id="settingsButton" mnemonicParsing="false" text="Settings" />
-                        <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout" />
+                        <HBox fx:id="firstHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Label text="Home">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="secondHBox" alignment="CENTER" layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Label text="Library">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="thirdHBox" alignment="CENTER" layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Label text="Settings">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="fourthHBox" alignment="CENTER" layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Label fx:id="logoutButton" text="Quit">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="300.0" prefHeight="160.0" prefWidth="100.0">
+            <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" prefWidth="100.0" styleClass="anchorPane">
                <children>
                   <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <FlowPane hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" vgap="5.0">
+                        <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="flowPane" vgap="5.0">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
-                           <children>
-                              <VBox alignment="CENTER" focusTraversable="true" prefHeight="30.0" prefWidth="30.0">
-                                 <children>
-                                    <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                    <Label text="Label" />
-                                 </children>
-                                 <FlowPane.margin>
-                                    <Insets />
-                                 </FlowPane.margin>
-                                 <padding>
-                                    <Insets bottom="5.0" />
-                                 </padding>
-                              </VBox>
-                              <VBox alignment="CENTER" focusTraversable="true" prefHeight="30.0" prefWidth="30.0">
-                                 <children>
-                                    <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                    <Label text="Label" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="5.0" />
-                                 </padding>
-                              </VBox>
-                           </children>
                         </FlowPane>
                      </content>
                   </ScrollPane>
@@ -72,7 +80,7 @@
       </SplitPane>
    </center>
    <top>
-      <HBox nodeOrientation="RIGHT_TO_LEFT">
+      <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="18.0" prefWidth="448.0" style="-fx-border-width: 0px;">
          <children>
             <TextField alignment="CENTER" promptText="Cerca film" />
          </children>

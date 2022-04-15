@@ -64,6 +64,7 @@ public class SceneHandler {
         if(this.scene == null)
             this.scene = new Scene(root);
         this.scene.getStylesheets().clear();
+        this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "MainView.css")).toExternalForm());
         this.scene.setRoot(root);
         stage.setWidth(1280);
         stage.setHeight(720);
