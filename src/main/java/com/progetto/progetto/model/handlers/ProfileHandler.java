@@ -1,4 +1,4 @@
-package com.progetto.progetto.model;
+package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;

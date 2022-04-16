@@ -1,20 +1,18 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.model.enums.MovieFilterType;
+import com.progetto.progetto.model.handlers.FilmHandler;
+import com.progetto.progetto.model.enums.MovieListType;
+import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
-import info.movito.themoviedbapi.TmdbAccount;
+import info.movito.themoviedbapi.TmdbGenre;
 import info.movito.themoviedbapi.TmdbMovies;
-import info.movito.themoviedbapi.model.Artwork;
 import info.movito.themoviedbapi.model.ArtworkType;
+import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.model.MovieImages;
-import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -54,12 +52,12 @@ public class MainController
     private void initialize()
     {
         fourthHBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
-        TmdbMovies movies = new TmdbApi("3837271101e801680438310f38a3feff").getMovies();
-        MovieResultsPage movieDbs = null;
-        for(int i = 0;i < 10;i++)
+        TmdbMovies movies = new TmdbApi("3837271101e801680438310f38a3feff").getMovies();;
+        for(int i = 0;i < 5;i++)
         {
-            movieDbs = movies.getPopularMovies("en",i);
-            createFilms(movieDbs);
+            List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
+            List<MovieDb> x = FilmHandler.getInstance().filterMovies("Action","en",result,MovieFilterType.GENRE);
+            createFilms(x);
         }
         initLabelHolder(firstHBox);
         initLabelHolder(secondHBox);
@@ -75,22 +73,17 @@ public class MainController
             current.setStyle("-fx-border-width: 0px;-fx-border-color: white;-fx-cursor: hand");
         });
     }
-    private void createFilms(MovieResultsPage movieDbs)
+    private void createFilms(List<MovieDb> movieDbs)
     {
-        TmdbMovies movies = new TmdbApi("3837271101e801680438310f38a3feff").getMovies();
-        for(MovieDb current : movieDbs.getResults())
+        for(MovieDb current : movieDbs)
         {
-            VBox vBox = new VBox();
-            MovieDb db = movies.getMovie(current.getId(),"en", TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
-            MovieImages movieImages = movies.getImages(db.getId(),"en");
-            ImageView imageView = new ImageView();
-            if(movieImages.getPosters().size() > 0)
-            {
-                Artwork artwork = movieImages.getPosters().get(0);
-                imageView.setImage(new Image("https://image.tmdb.org/t/p/w500" + artwork.getFilePath(),true));
-            }
-            else
+            if(current.getGenres() != null)
+                System.out.println(current.getGenres().get(0).getName());
+            String path = FilmHandler.getInstance().getMovieImageURL(current.getId(),"en",ArtworkType.POSTER,0);
+            if(path.equals(""))
                 continue;
+            VBox vBox = new VBox();
+            ImageView imageView = new ImageView(new Image(path,true));
             Label label = new Label(current.getTitle());
             vBox.setAlignment(Pos.CENTER);
             vBox.setPrefWidth(30);
@@ -102,7 +95,6 @@ public class MainController
             vBox.setFillWidth(true);
             imageView.setFitWidth(150);
             imageView.setFitHeight(150);
-            imageView.setStyle("-fx-border-radius: 10px");
             vBox.setStyle("-fx-cursor: hand");
             vBox.getChildren().add(imageView);
             vBox.getChildren().add(label);
