@@ -1,4 +1,4 @@
-package com.progetto.progetto.model;
+package com.progetto.progetto.model.handlers;
 
 import javafx.scene.image.Image;
 
