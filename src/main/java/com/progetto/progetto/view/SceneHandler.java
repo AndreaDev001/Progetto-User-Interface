@@ -74,6 +74,25 @@ public class SceneHandler {
         centerStage(stage.getWidth(),stage.getHeight());
         stage.show();
     }
+
+    public void loadSettingsScene()
+    {
+        stage.hide();
+        Parent root = loadRootFromFXML("SettingsView.fxml");
+        if(root == null)
+            return;
+        if(this.scene == null)
+            this.scene = new Scene(root);
+        this.scene.getStylesheets().clear();
+        this.scene.setRoot(root);
+        stage.setMinWidth(640);
+        stage.setMinHeight(480);
+        stage.setResizable(true);
+        stage.setTitle("Settings");
+        centerStage(stage.getWidth(),stage.getHeight());
+        stage.show();
+    }
+
     public void loadLoginScene()
     {
         Parent root = loadRootFromFXML("LoginView.fxml");
