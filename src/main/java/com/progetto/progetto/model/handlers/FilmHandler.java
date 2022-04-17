@@ -8,11 +8,15 @@ import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FilmHandler
 {
     private static FilmHandler instance = new FilmHandler();
+    private final Map<String,Genre> stringGenreMap = new HashMap<String,Genre>();
+    private final Map<String,List<MovieDb>> movieDbMap = new HashMap<>();
     private final String apiKey;
     private final TmdbApi tmdbApi;
     private final TmdbMovies movies;
@@ -39,7 +43,21 @@ public class FilmHandler
         if(movieDbs == null)
             throw new NullPointerException();
         for(MovieDb current : movieDbs)
+        {
             result.add(current);
+            List<Genre> genres = getMovieGenres(current.getId(),language);
+            for(Genre genre : genres)
+            {
+                stringGenreMap.put(genre.getName(),genre);
+                List<MovieDb> list = movieDbMap.get(genre.getName());
+                if(list == null)
+                    list = new ArrayList<>();
+                if(list.contains(current))
+                    continue;
+                list.add(current);
+                movieDbMap.put(genre.getName(),list);
+            }
+        }
         return result;
     }
     public List<Genre> getMovieGenres(int movieId,String language) throws NullPointerException
@@ -80,27 +98,31 @@ public class FilmHandler
     public List<MovieDb> filterMovies(String value, String language,List<MovieDb> movieDbs, MovieFilterType filterType) throws NullPointerException
     {
         List<MovieDb> result = new ArrayList<>();
+        if(value == null)
+            return result;
         switch (filterType)
         {
             case GENRE -> {
-                for(MovieDb current : movieDbs)
-                {
-                    List<Genre> genres = getMovieGenres(current.getId(),language);
-                    if(genres == null)
-                        throw new NullPointerException();
-                    for(Genre genre : genres)
-                        if(genre.getName().equals(value))
-                        {
-                            result.add(current);
-                            break;
-                        }
-                }
+                result = movieDbMap.get(value);
             }
             case NAME -> {
                 for(MovieDb current : movieDbs)
                 {
-                    if(current.getTitle().contains(value))
-                        result.add(current);
+                    String title = current.getTitle();
+                    if(value.length() > 3)
+                    {
+                        if(title.contains(value))
+                            result.add(current);
+                    }
+                    else
+                    {
+                        String x = title.substring(0,value.length());
+                        if(value.equals(x))
+                        {
+                            result.add(current);
+                            System.out.println(title);
+                        }
+                    }
                 }
             }
         }
@@ -108,6 +130,7 @@ public class FilmHandler
     }
     public static FilmHandler getInstance() {return instance;}
     public final String getApiKey() {return apiKey;}
+    public final Map<String,Genre> getStringGenreMap() {return stringGenreMap;}
     public final TmdbApi getTmdbApi() {return tmdbApi;}
     public final TmdbMovies getMovies() {return movies;}
     public final String getDefaultPath() {return defaultPath;}
