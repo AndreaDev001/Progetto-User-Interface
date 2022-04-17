@@ -18,45 +18,66 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="anchorPane">
                <children>
-                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <HBox fx:id="firstHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                        <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
+                        <HBox fx:id="actionBox" alignment="CENTER" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
                            <children>
-                              <Label text="Home">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
+                              <Label styleClass="leftLabels" text="Action" />
                            </children>
                         </HBox>
-                        <HBox fx:id="secondHBox" alignment="CENTER" layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                        <HBox fx:id="adventureBox" alignment="CENTER" layoutX="20.0" layoutY="329.0" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
                            <children>
-                              <Label text="Library">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
+                              <Label styleClass="leftLabels" text="Adventure" />
                            </children>
                         </HBox>
-                        <HBox fx:id="thirdHBox" alignment="CENTER" layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                        <HBox fx:id="warBox" alignment="CENTER" layoutX="20.0" layoutY="339.0" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
                            <children>
-                              <Label text="Settings">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
+                              <Label styleClass="leftLabels" text="War" />
                            </children>
                         </HBox>
-                        <HBox fx:id="fourthHBox" alignment="CENTER" layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                        <HBox fx:id="storyBox" alignment="CENTER" layoutX="20.0" layoutY="348.0" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
                            <children>
-                              <Label fx:id="logoutButton" text="Quit">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
+                              <Label styleClass="leftLabels" text="History" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="comedyBox" alignment="CENTER" layoutX="20.0" layoutY="358.0" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                           <children>
+                              <Label styleClass="leftLabels" text="Comedy" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="drammaticBox" alignment="CENTER" layoutX="20.0" layoutY="377.0" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                           <children>
+                              <Label styleClass="leftLabels" text="Dramatic" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="apocalypticBox" alignment="CENTER" layoutX="20.0" layoutY="387.0" prefHeight="100.0">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                           <children>
+                              <Label styleClass="leftLabels" text="Apocalyptic" />
                            </children>
                         </HBox>
                      </children>
@@ -80,12 +101,62 @@
       </SplitPane>
    </center>
    <top>
-      <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="18.0" prefWidth="448.0" style="-fx-border-width: 0px;">
+      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField alignment="CENTER" promptText="Cerca film" />
+            <HBox fx:id="homeBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="65.0">
+               <children>
+                  <Label fx:id="filmsButton" text="Home">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="libraryBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="70.0">
+               <children>
+                  <Label fx:id="libraryButton" text="Library">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="settingsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0">
+               <children>
+                  <Label fx:id="settingsButton" text="Settings">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="quitBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="60.0">
+               <children>
+                  <Label fx:id="logoutButton" text="Quit">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
          </children>
          <padding>
-            <Insets bottom="6.0" left="15.0" right="15.0" top="6.0" />
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </HBox>
    </top>
