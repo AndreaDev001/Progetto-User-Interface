@@ -62,9 +62,8 @@ public class MainController
     @FXML
     private TextField searchField;
 
-    private List<MovieDb> currentLoaded = new ArrayList<>();
-    private Map<String,MovieDb> movieDbMap = new HashMap<>();
-    private List<VBox> vBoxes = new ArrayList<>();
+    private final List<MovieDb> currentLoaded = new ArrayList<>();
+    private final List<Integer> integerList = new ArrayList<>();
     private Label currentLabel;
 
     @FXML
@@ -73,8 +72,7 @@ public class MainController
         currentLabel = (Label)homeBox.getChildren().get(0);
         currentLabel.setUnderline(true);
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
-        TmdbMovies movies = new TmdbApi("3837271101e801680438310f38a3feff").getMovies();;
-        for(int i = 0;i < 5;i++)
+        for(int i = 0;i < 7;i++)
         {
             List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
             for(MovieDb current : result)
@@ -91,22 +89,20 @@ public class MainController
                 return;
             List<MovieDb> filteredMovies = FilmHandler.getInstance().filterMovies(this.searchField.getText(),"en",currentLoaded,MovieFilterType.NAME);
             flowPane.getChildren().clear();
-            vBoxes.clear();
-            if(filteredMovies.size() == 0)
-                filteredMovies = currentLoaded;
+            integerList.clear();
             createFilms(filteredMovies);
         });
-        initLabel(homeBox,true);
-        initLabel(libraryBox,true);
-        initLabel(settingsBox,true);
-        initLabel(quitBox,true);
-        initLabel(actionBox,false);
-        initLabel(adventureBox,false);
-        initLabel(warBox,false);
-        initLabel(storyBox,false);
-        initLabel(comedyBox,false);
-        initLabel(drammaticBox,false);
-        initLabel(apocalypticBox,false);
+        initLabelHolder(homeBox,true);
+        initLabelHolder(libraryBox,true);
+        initLabelHolder(settingsBox,true);
+        initLabelHolder(quitBox,true);
+        initLabelHolder(actionBox,false);
+        initLabelHolder(adventureBox,false);
+        initLabelHolder(warBox,false);
+        initLabelHolder(storyBox,false);
+        initLabelHolder(comedyBox,false);
+        initLabelHolder(drammaticBox,false);
+        initLabelHolder(apocalypticBox,false);
         initLeftLabel(actionBox,"Action");
         initLeftLabel(adventureBox,"Adventure");
         initLeftLabel(warBox,"War");
@@ -119,10 +115,11 @@ public class MainController
         current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
             List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",currentLoaded,MovieFilterType.GENRE);
             flowPane.getChildren().clear();
+            integerList.clear();
             createFilms(result);
         });
     }
-    void initLabel(HBox current,boolean top)
+    void initLabelHolder(HBox current,boolean top)
     {
         current.addEventHandler(MouseEvent.MOUSE_ENTERED,(e) -> {
             current.setStyle("-fx-border-width: 1px;-fx-border-color: white;-fx-cursor: hand");
@@ -144,25 +141,10 @@ public class MainController
             try
             {
                 String path = FilmHandler.getInstance().getMovieImageURL(current.getId(),"en",ArtworkType.POSTER,0);
-                VBox vBox = new VBox();
-                Image image = CacheHandler.getInstance().getImage(path);
-                ImageView imageView = new ImageView(image);
-                Label label = new Label(current.getTitle());
-                vBox.setAlignment(Pos.CENTER);
-                vBox.setPrefWidth(30);
-                vBox.setPrefHeight(30);
-                vBox.setMinWidth(Region.USE_COMPUTED_SIZE);
-                vBox.setMinHeight(Region.USE_COMPUTED_SIZE);
-                vBox.setMaxWidth(Region.USE_COMPUTED_SIZE);
-                vBox.setMaxHeight(Region.USE_COMPUTED_SIZE);
-                vBox.setFillWidth(true);
-                label.getStyleClass().add("card-label");
-                imageView.setFitWidth(150);
-                imageView.setFitHeight(150);
-                vBox.setStyle("-fx-cursor: hand");
-                vBox.getChildren().add(imageView);
-                vBox.getChildren().add(label);
-                vBoxes.add(vBox);
+                VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),path);
+                if(integerList.contains(current.getId()))
+                    continue;
+                integerList.add(current.getId());
                 flowPane.getChildren().add(vBox);
             }catch (NullPointerException | IndexOutOfBoundsException exception)
             {

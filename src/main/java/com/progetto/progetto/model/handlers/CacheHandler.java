@@ -1,6 +1,11 @@
 package com.progetto.progetto.model.handlers;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +21,7 @@ public class CacheHandler {
 
     //THIS IS THE MEMORY CACHE
     private final Map<String, Image> IMAGE_CACHE = new HashMap<>();
+    private final Map<Integer, VBox> VBOX_CACHE = new HashMap<>();
 
 
     public Image getImage(String url)
@@ -29,10 +35,31 @@ public class CacheHandler {
         }
         return image;
     }
-
-
-
-
-
-
+    public VBox getFilmBox(Integer id,String title,String path)
+    {
+        VBox vBox = VBOX_CACHE.get(id);
+        if(vBox == null)
+        {
+            Image image = getImage(path);
+            ImageView imageView = new ImageView(image);
+            Label label = new Label(title);
+            vBox = new VBox();
+            vBox.setAlignment(Pos.CENTER);
+            vBox.setPrefWidth(30);
+            vBox.setPrefHeight(30);
+            vBox.setMinWidth(Region.USE_COMPUTED_SIZE);
+            vBox.setMinHeight(Region.USE_COMPUTED_SIZE);
+            vBox.setMaxWidth(Region.USE_COMPUTED_SIZE);
+            vBox.setMaxHeight(Region.USE_COMPUTED_SIZE);
+            vBox.setFillWidth(true);
+            label.getStyleClass().add("card-label");
+            imageView.setFitWidth(150);
+            imageView.setFitHeight(150);
+            vBox.setStyle("-fx-cursor: hand");
+            vBox.getChildren().add(imageView);
+            vBox.getChildren().add(label);
+            VBOX_CACHE.put(id,vBox);
+        }
+        return vBox;
+    }
 }
