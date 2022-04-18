@@ -18,68 +18,12 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="anchorPane">
                <children>
-                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
                         <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                        <HBox fx:id="actionBox" alignment="CENTER" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="Action" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="adventureBox" alignment="CENTER" layoutX="20.0" layoutY="329.0" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="Adventure" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="warBox" alignment="CENTER" layoutX="20.0" layoutY="339.0" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="War" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="storyBox" alignment="CENTER" layoutX="20.0" layoutY="348.0" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="History" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="comedyBox" alignment="CENTER" layoutX="20.0" layoutY="358.0" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="Comedy" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="drammaticBox" alignment="CENTER" layoutX="20.0" layoutY="377.0" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="Dramatic" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="apocalypticBox" alignment="CENTER" layoutX="20.0" layoutY="387.0" prefHeight="100.0">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Label styleClass="leftLabels" text="Apocalyptic" />
-                           </children>
-                        </HBox>
                      </children>
                   </VBox>
                </children>

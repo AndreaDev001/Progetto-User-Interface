@@ -16,6 +16,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,10 +29,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MainController
 {
@@ -44,19 +42,7 @@ public class MainController
     @FXML
     private HBox quitBox;
     @FXML
-    private HBox actionBox;
-    @FXML
-    private HBox adventureBox;
-    @FXML
-    private HBox warBox;
-    @FXML
-    private HBox storyBox;
-    @FXML
-    private HBox comedyBox;
-    @FXML
-    private HBox drammaticBox;
-    @FXML
-    private HBox apocalypticBox;
+    private VBox genreHolder;
     @FXML
     private FlowPane flowPane;
     @FXML
@@ -64,6 +50,8 @@ public class MainController
 
     private final List<MovieDb> currentLoaded = new ArrayList<>();
     private final List<Integer> integerList = new ArrayList<>();
+    private final List<HBox> topBoxes = new ArrayList<>();
+    private final List<HBox> leftBoxes = new ArrayList<>();
     private Label currentLabel;
 
     @FXML
@@ -83,7 +71,6 @@ public class MainController
             }
             createFilms(currentLoaded);
         }
-        searchField.setStyle("-fx-border-color: black");
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
             if(e.getCode() != KeyCode.ENTER)
                 return;
@@ -92,37 +79,53 @@ public class MainController
             integerList.clear();
             createFilms(filteredMovies);
         });
+        initBoxes();
         initLabelHolder(homeBox,true);
         initLabelHolder(libraryBox,true);
         initLabelHolder(settingsBox,true);
         initLabelHolder(quitBox,true);
-        initLabelHolder(actionBox,false);
-        initLabelHolder(adventureBox,false);
-        initLabelHolder(warBox,false);
-        initLabelHolder(storyBox,false);
-        initLabelHolder(comedyBox,false);
-        initLabelHolder(drammaticBox,false);
-        initLabelHolder(apocalypticBox,false);
-        initLeftLabel(actionBox,"Action");
-        initLeftLabel(adventureBox,"Adventure");
-        initLeftLabel(warBox,"War");
-        initLeftLabel(storyBox,"History");
-        initLeftLabel(comedyBox,"Comedy");
-        initLeftLabel(apocalypticBox,"Apocalyptic");
     }
-    void initLeftLabel(HBox current,String value)
+    private void initBoxes()
     {
-        current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-            List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",currentLoaded,MovieFilterType.GENRE);
-            flowPane.getChildren().clear();
-            integerList.clear();
-            createFilms(result);
-        });
+        topBoxes.add(homeBox);
+        topBoxes.add(libraryBox);
+        topBoxes.add(settingsBox);
+        topBoxes.add(quitBox);
+        initLabelHolder(homeBox,true);
+        initLabelHolder(libraryBox,true);
+        initLabelHolder(settingsBox,true);
+        initLabelHolder(quitBox,true);
+        Set<String> genres = FilmHandler.getInstance().getGenres();
+        for(String current : genres)
+        {
+            HBox box = createGenreBox(current,"leftLabels");
+            genreHolder.getChildren().add(box);
+            leftBoxes.add(box);
+        }
     }
-    void initLabelHolder(HBox current,boolean top)
+    private HBox createGenreBox(String genreName,String styleClass)
+    {
+        HBox box = new HBox();
+        box.setAlignment(Pos.CENTER);
+        box.setMinWidth(Region.USE_COMPUTED_SIZE);
+        box.setMinHeight(Region.USE_COMPUTED_SIZE);
+        box.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        box.setPrefHeight(100);
+        box.setMaxWidth(Region.USE_COMPUTED_SIZE);
+        box.setMaxHeight(Region.USE_COMPUTED_SIZE);
+        Label label = new Label(genreName);
+        label.getStyleClass().add(styleClass);
+        initLabelHolder(box,false);
+        box.getChildren().add(label);
+        return box;
+    }
+    private void initLabelHolder(HBox current,boolean top)
     {
         current.addEventHandler(MouseEvent.MOUSE_ENTERED,(e) -> {
             current.setStyle("-fx-border-width: 1px;-fx-border-color: white;-fx-cursor: hand");
+        });
+        current.addEventHandler(MouseEvent.MOUSE_EXITED,(e) -> {
+            current.setStyle("-fx-border-width: 0px;-fx-border-color: white;-fx-cursor: hand");
         });
         if(top)
             current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
@@ -130,9 +133,14 @@ public class MainController
                 currentLabel = (Label)current.getChildren().get(0);
                 currentLabel.setUnderline(true);
             });
-        current.addEventHandler(MouseEvent.MOUSE_EXITED,(e) -> {
-            current.setStyle("-fx-border-width: 0px;-fx-border-color: white;-fx-cursor: hand");
-        });
+        else
+            current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
+                String value = ((Label)current.getChildren().get(0)).getText();
+                List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",currentLoaded,MovieFilterType.GENRE);
+                flowPane.getChildren().clear();
+                integerList.clear();
+                createFilms(result);
+            });
     }
     private void createFilms(List<MovieDb> movieDbs)
     {

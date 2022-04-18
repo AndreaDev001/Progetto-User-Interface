@@ -7,10 +7,7 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FilmHandler
 {
@@ -130,6 +127,7 @@ public class FilmHandler
         }
         return result;
     }
+    public Set<String> getGenres() {return stringGenreMap.keySet();}
     public static FilmHandler getInstance() {return instance;}
     public final String getApiKey() {return apiKey;}
     public final Map<String,Genre> getStringGenreMap() {return stringGenreMap;}
