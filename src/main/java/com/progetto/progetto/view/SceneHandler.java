@@ -9,7 +9,6 @@ import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -32,6 +31,7 @@ public class SceneHandler {
     {
         this.stage = stage;
         this.loadLoginScene();
+        StyleHandler.getInstance().init(this.scene);
         this.stage.setScene(this.scene);
         this.stage.show();
     }
@@ -85,6 +85,7 @@ public class SceneHandler {
         if(this.scene == null)
             this.scene = new Scene(root);
         this.scene.getStylesheets().clear();
+        StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
         stage.setMinWidth(640);
         stage.setMinHeight(480);
@@ -103,6 +104,7 @@ public class SceneHandler {
             this.scene = new Scene(root);
         this.scene.getStylesheets().clear();
         this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
+        StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
         stage.setMinWidth(500);
         stage.setMinHeight(300);
