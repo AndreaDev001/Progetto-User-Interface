@@ -30,7 +30,7 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.stage = stage;
-        this.loadLoginScene();
+        this.loadMainScene();
         StyleHandler.getInstance().init(this.scene);
         this.stage.setScene(this.scene);
         this.stage.show();
@@ -64,16 +64,17 @@ public class SceneHandler {
         if(this.scene == null)
             this.scene = new Scene(root);
         this.scene.getStylesheets().clear();
+        StyleHandler.getInstance().updateScene(this.scene);
         this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "MainView.css")).toExternalForm());
         this.scene.setRoot(root);
-        stage.setWidth(1280);
-        stage.setHeight(720);
         stage.setMinWidth(640);
         stage.setMinHeight(480);
         stage.setResizable(true);
         stage.setTitle("Main Scene");
         centerStage(stage.getWidth(),stage.getHeight());
         stage.show();
+        stage.setWidth(1280);
+        stage.setHeight(720);
     }
 
     public void loadSettingsScene()
@@ -84,6 +85,7 @@ public class SceneHandler {
             return;
         if(this.scene == null)
             this.scene = new Scene(root);
+
         this.scene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
@@ -103,8 +105,8 @@ public class SceneHandler {
         if(this.scene == null)
             this.scene = new Scene(root);
         this.scene.getStylesheets().clear();
-        this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
         StyleHandler.getInstance().updateScene(this.scene);
+        this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
         this.scene.setRoot(root);
         stage.setMinWidth(500);
         stage.setMinHeight(300);

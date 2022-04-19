@@ -1,10 +1,15 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.StyleMode;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -30,17 +35,21 @@ public class SettingsController {
     @FXML
     private CheckBox dyslexicCheckBox;
 
-    @FXML
-    private Button filmsButton;
 
     @FXML
-    private Button libraryButton;
+    void onHomeClicked(MouseEvent event) {
+        SceneHandler.getInstance().loadMainScene();
+    }
 
     @FXML
-    private Button logoutButton;
+    void onLibraryClicked(MouseEvent event) {
+        SceneHandler.getInstance().loadMainScene();
+    }
 
     @FXML
-    private Button settingsButton;
+    void onQuitClicked(MouseEvent event) {
+        SceneHandler.getInstance().loadLoginScene();
+    }
 
     @FXML
     public void initialize()

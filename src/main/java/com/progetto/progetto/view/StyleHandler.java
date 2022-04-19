@@ -14,16 +14,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Properties;
 
 //STYLE HANDLER CLASS written by Pierlugi, aka PierKnight
 //FOR the moment the config file is saved in the home folder inside a directory named "film_app"
-public class StyleHandler
-{
+public class StyleHandler {
     private static final StyleHandler STYLE_HANDLER = new StyleHandler();
 
-    public static StyleHandler getInstance()
-    {
+    public static StyleHandler getInstance() {
         return STYLE_HANDLER;
     }
 
@@ -35,33 +34,31 @@ public class StyleHandler
     private final BooleanProperty dyslexicFont = new SimpleBooleanProperty();
 
 
-    private StyleHandler(){}
+    private StyleHandler() {
+    }
 
     //read the config file and update the scene along with it
-    public void init(Scene scene)
-    {
-        try
-        {
+    public void init(Scene scene) {
+        try {
             Path folderPath = Path.of(folder_path);
             Files.createDirectories(folderPath);
 
             Path filePath = Path.of(folder_path + File.separator + "config.txt");
             Properties properties = new Properties();
 
-            if(!Files.exists(filePath))
+            if (!Files.exists(filePath))
                 saveConfigurationOnFile(properties);
 
             FileReader fileReader = new FileReader(filePath.toFile());
             properties.load(fileReader);
-            this.dyslexicFont.set(properties.getProperty("use_dyslexic_font","false").equals("true"));
-            this.primaryColor.set(Color.web(properties.getProperty("primary_color","0XFFFFFF")));
-            this.secondaryColor.set(Color.web(properties.getProperty("secondary_color","0XFFFFFF")));
-            this.currentStyle.set(StyleMode.values()[Integer.parseInt(properties.getProperty("style_file","0"))]);
+            this.dyslexicFont.set(properties.getProperty("use_dyslexic_font", "false").equals("true"));
+            this.primaryColor.set(Color.web(properties.getProperty("primary_color", "0XFFFFFF")));
+            this.secondaryColor.set(Color.web(properties.getProperty("secondary_color", "0XFFFFFF")));
+            this.currentStyle.set(StyleMode.values()[Integer.parseInt(properties.getProperty("style_file", "0"))]);
 
             StyleHandler.getInstance().updateScene(scene);
 
-        }  catch (IOException e)
-        {
+        } catch (IOException e) {
         }
 
     }
@@ -69,8 +66,7 @@ public class StyleHandler
 
     //this is called when we need to re-apply the style, in our cause this is called when a new scene is showed
     //or when we change the style configurations in runtime.
-    public void updateScene(Scene scene)
-    {
+    public void updateScene(Scene scene) {
         //--------dyslexic font----------
         /* String dyslexic_style = Objects.requireNonNull(MainApplication.class.getResource("css/dyslexic_font.css")).toExternalForm();
         if(this.dyslexicFont.get())
@@ -78,44 +74,44 @@ public class StyleHandler
         else
             scene.getStylesheets().remove(dyslexic_style);
          */
+
+        String file = Objects.requireNonNull(MainApplication.class.getResource("css/dark.css")).toExternalForm();
+
+        if (this.getCurrentStyle().get() == StyleMode.DARK)
+            scene.getStylesheets().add(file);
+        else
+            scene.getStylesheets().remove(file);
+
     }
 
-    public void saveConfigurationOnFile(Properties properties) throws IOException
-    {
+    public void saveConfigurationOnFile(Properties properties) throws IOException {
         Path filePath = Path.of(folder_path + File.separator + "config.txt");
-        properties.setProperty("use_dyslexic_font",String.valueOf(this.dyslexicFont.get()));
+        properties.setProperty("use_dyslexic_font", String.valueOf(this.dyslexicFont.get()));
         properties.setProperty("style_file", String.valueOf(this.currentStyle.get().ordinal()));
         properties.setProperty("primary_color", primaryColor.get().toString());
         properties.setProperty("secondary_color", secondaryColor.get().toString());
-        properties.store(new FileWriter(filePath.toFile()),"Configurazione app film");
+        properties.store(new FileWriter(filePath.toFile()), "Configurazione app film");
     }
 
-    public ObjectProperty<StyleMode> getCurrentStyle()
-    {
+    public ObjectProperty<StyleMode> getCurrentStyle() {
         return currentStyle;
     }
 
-    public ObjectProperty<Color> getPrimaryColor()
-    {
+    public ObjectProperty<Color> getPrimaryColor() {
         return primaryColor;
     }
 
-    public ObjectProperty<Color> getSecondaryColor()
-    {
+    public ObjectProperty<Color> getSecondaryColor() {
         return secondaryColor;
     }
 
-    public BooleanProperty getDyslexicFont()
-    {
+    public BooleanProperty getDyslexicFont() {
         return this.dyslexicFont;
     }
 
 
-
-    private String getFilePath(StyleMode styleMode)
-    {
-        switch(styleMode)
-        {
+    private String getFilePath(StyleMode styleMode) {
+        switch (styleMode) {
             case LIGHT -> {
                 return MainApplication.class.getResource("css/light.css").toExternalForm();
             }

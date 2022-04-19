@@ -1,35 +1,27 @@
 package com.progetto.progetto.controller;
 
 import com.progetto.progetto.model.enums.MovieFilterType;
+import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
-import com.progetto.progetto.model.enums.MovieListType;
-import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
-import info.movito.themoviedbapi.TmdbGenre;
-import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.ArtworkType;
-import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import info.movito.themoviedbapi.TmdbApi;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class MainController
 {
@@ -60,6 +52,8 @@ public class MainController
         currentLabel = (Label)homeBox.getChildren().get(0);
         currentLabel.setUnderline(true);
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
+        settingsBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> SceneHandler.getInstance().loadSettingsScene());
+
         for(int i = 0;i < 3;i++)
         {
             List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
@@ -71,6 +65,7 @@ public class MainController
             }
             createFilms(currentLoaded);
         }
+
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
             if(e.getCode() != KeyCode.ENTER)
                 return;
@@ -148,7 +143,7 @@ public class MainController
         {
             try
             {
-                String path = FilmHandler.getInstance().getMovieImageURL(current.getId(),"en",ArtworkType.POSTER,0);
+                String path = FilmHandler.getInstance().getDefaultPath() +  current.getPosterPath();
                 VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),path);
                 if(integerList.contains(current.getId()))
                     continue;
@@ -161,4 +156,3 @@ public class MainController
         }
     }
 }
-
