@@ -14,8 +14,6 @@ public class FilmHandler
 {
     private static FilmHandler instance = new FilmHandler();
     private final Map<String,Genre> stringGenreMap = new HashMap<String,Genre>();
-    private final Map<String,List<MovieDb>> movieDbMap = new HashMap<>();
-    private final Map<String,MovieDb> titleMovieDbMap = new HashMap<>();
     private final String apiKey;
     private final TmdbApi tmdbApi;
     private final TmdbMovies movies;
@@ -41,28 +39,11 @@ public class FilmHandler
         }
         if(movieDbs == null)
             throw new NullPointerException();
-        for(MovieDb current : movieDbs)
-        {
-            result.add(current);
-            titleMovieDbMap.put(current.getTitle(),current);
-            List<Genre> genres = getMovieGenres(current.getId(),language);
-            for(Genre genre : genres)
-            {
-                stringGenreMap.put(genre.getName(),genre);
-                List<MovieDb> list = movieDbMap.get(genre.getName());
-                if(list == null)
-                    list = new ArrayList<>();
-                if(list.contains(current))
-                    continue;
-                list.add(current);
-                movieDbMap.put(genre.getName(),list);
-            }
-        }
+        List<Genre> genres = tmdbApi.getGenre().getGenreList(language);
+        result.addAll(movieDbs.getResults());
+        for(Genre current : genres)
+            stringGenreMap.put(current.getName(),current);
         return result;
-    }
-    public List<Genre> getMovieGenres(int movieId,String language) throws NullPointerException
-    {
-        return movies.getMovie(movieId,language).getGenres();
     }
     public List<Artwork> getMovieArtworks(int movieId,String language,ArtworkType artworkType) throws NullPointerException
     {

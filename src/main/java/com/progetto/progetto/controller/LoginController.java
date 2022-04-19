@@ -23,7 +23,7 @@ public class LoginController
         loginButton.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
             boolean result = ProfileHandler.getInstance().login(usernameField.getText(),passwordField.getText(),true);
             if(result)
-                SceneHandler.getInstance().loadSettingsScene();
+                SceneHandler.getInstance().loadMainScene();
         });
 
     }
