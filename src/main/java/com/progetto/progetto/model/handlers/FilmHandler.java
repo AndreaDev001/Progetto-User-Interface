@@ -3,6 +3,7 @@ package com.progetto.progetto.model.handlers;
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.enums.MovieListType;
 import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbFind;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
@@ -94,7 +95,7 @@ public class FilmHandler
         result = defaultPath + artwork.getFilePath();
         return result;
     }
-    public List<MovieDb> filterMovies(String value, String language,List<MovieDb> movieDbs, MovieFilterType filterType) throws NullPointerException
+    public List<MovieDb> filterMovies(String value, String language,List<MovieDb> movieDbs, MovieFilterType filterType,boolean includeAdult) throws NullPointerException
     {
         List<MovieDb> result = new ArrayList<>();
         if(value == null)
@@ -102,27 +103,13 @@ public class FilmHandler
         switch (filterType)
         {
             case GENRE -> {
-                result = movieDbMap.get(value);
+                Genre genre = stringGenreMap.get(value);
+                MovieResultsPage movieResultsPage = tmdbApi.getGenre().getGenreMovies(genre.getId(),language,1,includeAdult);
+                return movieResultsPage.getResults();
             }
             case NAME -> {
-                for(MovieDb current : movieDbs)
-                {
-                    String title = current.getTitle();
-                    if(value.length() > 3)
-                    {
-                        if(title.contains(value))
-                            result.add(current);
-                    }
-                    else
-                    {
-                        String x = title.substring(0,value.length());
-                        if(value.equals(x))
-                        {
-                            result.add(current);
-                            System.out.println(title);
-                        }
-                    }
-                }
+                MovieResultsPage movieResultsPage = tmdbApi.getSearch().searchMovie(value,null,language,includeAdult,1);
+                return movieResultsPage.getResults();
             }
         }
         return result;

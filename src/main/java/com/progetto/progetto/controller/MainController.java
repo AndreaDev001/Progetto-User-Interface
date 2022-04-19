@@ -60,7 +60,7 @@ public class MainController
         currentLabel = (Label)homeBox.getChildren().get(0);
         currentLabel.setUnderline(true);
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
-        for(int i = 0;i < 7;i++)
+        for(int i = 0;i < 3;i++)
         {
             List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
             for(MovieDb current : result)
@@ -74,7 +74,7 @@ public class MainController
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
             if(e.getCode() != KeyCode.ENTER)
                 return;
-            List<MovieDb> filteredMovies = FilmHandler.getInstance().filterMovies(this.searchField.getText(),"en",currentLoaded,MovieFilterType.NAME);
+            List<MovieDb> filteredMovies = FilmHandler.getInstance().filterMovies(this.searchField.getText(),"en",currentLoaded,MovieFilterType.NAME,true);
             flowPane.getChildren().clear();
             integerList.clear();
             createFilms(filteredMovies);
@@ -136,7 +136,7 @@ public class MainController
         else
             current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
                 String value = ((Label)current.getChildren().get(0)).getText();
-                List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",currentLoaded,MovieFilterType.GENRE);
+                List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",currentLoaded,MovieFilterType.GENRE,true);
                 flowPane.getChildren().clear();
                 integerList.clear();
                 createFilms(result);
