@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Properties;
 
 //STYLE HANDLER CLASS written by Pierlugi, aka PierKnight
@@ -78,6 +79,14 @@ public class StyleHandler
         else
             scene.getStylesheets().remove(dyslexic_style);
          */
+
+        String file = Objects.requireNonNull(MainApplication.class.getResource("css/dark.css")).toExternalForm();
+
+        if(this.getCurrentStyle().get() == StyleMode.DARK)
+            scene.getStylesheets().add(file);
+        else
+            scene.getStylesheets().remove(file);
+
     }
 
     public void saveConfigurationOnFile(Properties properties) throws IOException
