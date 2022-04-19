@@ -18,6 +18,20 @@
 {
    -fx-text-fill: white;
 }
+.topLabels
+{
+   -fx-font-size: 17px;
+   -fx-font-weight: bold;
+}
+.leftLabels
+{
+   -fx-font-size: 14px;
+   -fx-font-weight: bold;
+}
+.card-label
+{
+   -fx-font-size: 15px;
+}
 .split-pane:horizontal > .split-pane-divider {
    -fx-background-color: transparent;
 }
