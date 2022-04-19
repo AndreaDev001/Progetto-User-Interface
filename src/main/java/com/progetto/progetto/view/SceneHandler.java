@@ -71,7 +71,7 @@ public class SceneHandler {
         stage.setMinHeight(480);
         stage.setResizable(true);
         stage.setTitle("Main Scene");
-        centerStage(stage.getWidth(),stage.getHeight());
+        centerStage(1280,720);
         stage.show();
         stage.setWidth(1280);
         stage.setHeight(720);
