@@ -11,3 +11,6 @@
 {
    -fx-font-size: 14px;
 }
+.text-area .content{
+   -fx-cursor: pointer;
+}

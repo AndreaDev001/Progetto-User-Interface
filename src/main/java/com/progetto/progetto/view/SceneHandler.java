@@ -62,6 +62,7 @@ public class SceneHandler {
     //---------------------------SCENES------------------------------//
     public void loadMainScene()
     {
+        this.filmStage.hide();
         stage.hide();
         Parent root = loadRootFromFXML("MainView.fxml");
         if(root == null)
@@ -84,6 +85,7 @@ public class SceneHandler {
 
     public void loadSettingsScene()
     {
+        this.filmStage.hide();
         stage.hide();
         Parent root = loadRootFromFXML("SettingsView.fxml");
         if(root == null)
@@ -104,6 +106,7 @@ public class SceneHandler {
 
     public void loadLoginScene()
     {
+        this.filmStage.hide();
         Parent root = loadRootFromFXML("LoginView.fxml");
         if(root == null)
             return;
