@@ -41,6 +41,8 @@ public class FilmController
         releaseDate = film.getReleaseDate();
         language = film.getOriginalLanguage();
         overview = film.getOverview();
+        if(overview.isEmpty())
+            overview = "No description found";
         float rating = film.getVoteAverage();
         String path = FilmHandler.getInstance().getDefaultPath() + film.getPosterPath();
         filmImage.setImage(CacheHandler.getInstance().getImage(path));
@@ -49,6 +51,6 @@ public class FilmController
         filmReleaseDate.setText(releaseDate);
         filmLanguage.setText(language);
         filmRating.setText(String.valueOf(rating));
-        filmDescription.setText(film.getOverview());
+        filmDescription.setText(overview);
     }
 }
