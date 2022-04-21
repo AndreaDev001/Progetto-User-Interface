@@ -1,36 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="500.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
    <center>
       <AnchorPane minHeight="0.0" minWidth="300.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorPane">
          <children>
             <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <content>
-                  <VBox maxWidth="1.7976931348623157E308" spacing="30.0" styleClass="background">
+                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" spacing="30.0" styleClass="background">
                      <children>
                         <VBox spacing="10.0">
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxWidth="1.7976931348623157E308" text="Application Color Mode" underline="true" wrapText="true">
+                              <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxWidth="1.7976931348623157E308" text="Application Color Mode" wrapText="true">
                                  <font>
-                                    <Font size="15.0" />
+                                    <Font size="21.0" />
                                  </font>
+                                 <tooltip>
+                                    <Tooltip text="In this section you can select your preferred style mode!" />
+                                 </tooltip>
                               </Label>
-                              <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="Light Mode" />
-                              <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="Dark Mode" />
+                              <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="Light Mode">
+                                 <tooltip>
+                                    <Tooltip text="The Classic LightMode" />
+                                 </tooltip></RadioButton>
+                              <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="Dark Mode">
+                                 <tooltip>
+                                    <Tooltip text="This is especially useful during night" />
+
+                                 </tooltip></RadioButton>
                               <HBox alignment="CENTER_LEFT" spacing="30.0" VBox.vgrow="NEVER">
                                  <children>
-                                    <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="Custom Mode" />
-                                    <ColorPicker fx:id="foreground_color" />
-                                    <ColorPicker fx:id="background_color" />
+                                    <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="Custom Mode">
+                                       <tooltip>
+                                          <Tooltip text="Here You can use a custom color pattern! " />
+                                       </tooltip></RadioButton>
+                                    <ColorPicker fx:id="foreground_color">
+                                       <tooltip>
+                                          <Tooltip text="Customize Foreground Color" />
+                                       </tooltip></ColorPicker>
+                                    <ColorPicker fx:id="background_color">
+                                       <tooltip>
+                                          <Tooltip text="Customize Background Color" />
+                                       </tooltip></ColorPicker>
+                                    <ColorPicker fx:id="text_color">
+                                       <tooltip>
+                                          <Tooltip text="Customize Text Color" />
+                                       </tooltip></ColorPicker>
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
-                        <CheckBox fx:id="dyslexicCheckBox" mnemonicParsing="false" text="Use dyslexic font" />
+                        <CheckBox fx:id="dyslexicCheckBox" mnemonicParsing="false" text="Use dyslexic font">
+                           <tooltip>
+                              <Tooltip text="Text will be formatted to be more comfortable to dyslexic users, no underlined text" />
+                           </tooltip></CheckBox>
                      </children>
                      <padding>
                         <Insets left="10.0" top="10.0" />
@@ -42,7 +77,7 @@
       </AnchorPane>
    </center>
    <top>
-      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" spacing="20.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" spacing="20.0" styleClass="foreground" BorderPane.alignment="CENTER">
          <children>
             <HBox fx:id="homeBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onHomeClicked" prefHeight="26.0" prefWidth="65.0">
                <children>
