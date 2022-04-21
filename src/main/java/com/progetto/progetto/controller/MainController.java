@@ -143,7 +143,7 @@ public class MainController
             try
             {
                 String path = FilmHandler.getInstance().getDefaultPath() +  current.getPosterPath();
-                VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),"en",path);
+                VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),current.getReleaseDate(),"en",path);
                 if(integerList.contains(current.getId()))
                     continue;
                 integerList.add(current.getId());

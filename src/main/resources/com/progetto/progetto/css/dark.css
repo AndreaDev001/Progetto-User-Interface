@@ -39,7 +39,7 @@
 }
 .text-area, .text-area .content {
     -fx-background-color: -text-foreground-color;
-    -fx-background-radius: 0 ;
+    -fx-background-radius: 0px;
 }
 .split-pane:horizontal > .split-pane-divider {
    -fx-background-color: transparent;
