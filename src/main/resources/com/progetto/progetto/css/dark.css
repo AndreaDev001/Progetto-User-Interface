@@ -27,15 +27,27 @@
 {
     -fx-background-color: derive(-text-foreground-color,-30%);
 }
-
+.text-area .content {
+ -fx-background-color : -text-background-color;
+}
+.text-area {
+  -fx-focus-color: transparent;
+  -fx-text-box-border: transparent;
+}
 .text-field,
 .button
 {
    -fx-background-color: -text-foreground-color;
+   -fx-cursor: hand;
 }
-
-
-
+.button:hover{
+   -fx-border-width: 1px;
+   -fx-border-color: white;
+}
+.text-area, .text-area .content {
+    -fx-background-color: -text-foreground-color;
+    -fx-background-radius: 0px;
+}
 .split-pane:horizontal > .split-pane-divider {
    -fx-background-color: transparent;
 }

@@ -12,6 +12,14 @@
 {
    -fx-font-size: 15px;
 }
+.card
+{
+  -fx-cursor: hand;
+  -fx-background-color: derive(rgb(60,60,60),-30%);
+  -fx-padding: 8px 8px;
+  -fx-border-width: 1px;
+  -fx-background-radius: 10px;
+}
 .labelHolder
 {
    -fx-cursor: hand;

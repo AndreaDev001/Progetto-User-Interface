@@ -1,0 +1,16 @@
+.label
+{
+   -fx-font-size: 14px;
+   -fx-font-weight: bold;
+}
+.topLabel
+{
+  -fx-font-size: 20px;
+}
+.text-area
+{
+   -fx-font-size: 14px;
+}
+.text-area .content{
+   -fx-cursor: pointer;
+}

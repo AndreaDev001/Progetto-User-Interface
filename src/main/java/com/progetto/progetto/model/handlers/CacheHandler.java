@@ -1,9 +1,12 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.view.SceneHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
@@ -35,14 +38,15 @@ public class CacheHandler {
         }
         return image;
     }
-    public VBox getFilmBox(Integer id,String title,String path)
+    public VBox getFilmBox(Integer id,String title,String releaseDate,String language,String path)
     {
         VBox vBox = VBOX_CACHE.get(id);
         if(vBox == null)
         {
             Image image = getImage(path);
             ImageView imageView = new ImageView(image);
-            Label label = new Label(title);
+            Label titleLabel = new Label(title);
+            Label releaseDateLabel = new Label(releaseDate);
             vBox = new VBox();
             vBox.setAlignment(Pos.CENTER);
             vBox.setPrefWidth(30);
@@ -52,12 +56,20 @@ public class CacheHandler {
             vBox.setMaxWidth(Region.USE_COMPUTED_SIZE);
             vBox.setMaxHeight(Region.USE_COMPUTED_SIZE);
             vBox.setFillWidth(true);
-            label.getStyleClass().add("card-label");
-            imageView.setFitWidth(150);
+            titleLabel.getStyleClass().add("card-label");
+            releaseDateLabel.getStyleClass().add("card-label");
+            imageView.setFitWidth(135);
+            imageView.setPreserveRatio(false);
+            imageView.setSmooth(true);
             imageView.setFitHeight(150);
-            vBox.setStyle("-fx-cursor: hand");
+            vBox.getStyleClass().add("card");
             vBox.getChildren().add(imageView);
-            vBox.getChildren().add(label);
+            vBox.getChildren().add(titleLabel);
+            vBox.getChildren().add(releaseDateLabel);
+            vBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
+                FilmHandler.getInstance().selectFilm(id,language);
+                SceneHandler.getInstance().loadFilmScene();
+            });
             VBOX_CACHE.put(id,vBox);
         }
         return vBox;
