@@ -56,9 +56,9 @@ public class CacheHandler {
             vBox.setMaxHeight(Region.USE_COMPUTED_SIZE);
             vBox.setFillWidth(true);
             label.getStyleClass().add("card-label");
-            imageView.setFitWidth(150);
+            imageView.setFitWidth(140);
             imageView.setFitHeight(150);
-            vBox.setStyle("-fx-cursor: hand");
+            vBox.getStyleClass().add("card");
             vBox.getChildren().add(imageView);
             vBox.getChildren().add(label);
             vBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
