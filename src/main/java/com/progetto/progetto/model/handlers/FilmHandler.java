@@ -18,6 +18,7 @@ public class FilmHandler
     private final TmdbApi tmdbApi;
     private final TmdbMovies movies;
     private final String defaultPath;
+    private MovieDb currentSelectedFilm;
 
     private FilmHandler()
     {
@@ -95,6 +96,11 @@ public class FilmHandler
         }
         return result;
     }
+    public void selectFilm(int id,String language)
+    {
+        this.currentSelectedFilm = movies.getMovie(id,language, TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.reviews, TmdbMovies.MovieMethod.credits);
+    }
+    public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
     public Set<String> getGenres() {return stringGenreMap.keySet();}
     public static FilmHandler getInstance() {return instance;}
     public final String getApiKey() {return apiKey;}

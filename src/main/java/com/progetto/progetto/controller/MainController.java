@@ -5,7 +5,6 @@ import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.view.SceneHandler;
-import info.movito.themoviedbapi.model.ArtworkType;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -54,7 +53,7 @@ public class MainController
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
         settingsBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> SceneHandler.getInstance().loadSettingsScene());
 
-        for(int i = 0;i < 3;i++)
+        for(int i = 0;i < 10;i++)
         {
             List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
             for(MovieDb current : result)
@@ -93,12 +92,12 @@ public class MainController
         Set<String> genres = FilmHandler.getInstance().getGenres();
         for(String current : genres)
         {
-            HBox box = createGenreBox(current,"leftLabels");
+            HBox box = createGenreBox(current);
             genreHolder.getChildren().add(box);
             leftBoxes.add(box);
         }
     }
-    private HBox createGenreBox(String genreName,String styleClass)
+    private HBox createGenreBox(String genreName)
     {
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER);
@@ -109,7 +108,7 @@ public class MainController
         box.setMaxWidth(Region.USE_COMPUTED_SIZE);
         box.setMaxHeight(Region.USE_COMPUTED_SIZE);
         Label label = new Label(genreName);
-        label.getStyleClass().add(styleClass);
+        label.getStyleClass().add("leftLabels");
         initLabelHolder(box,false);
         box.getChildren().add(label);
         return box;
@@ -144,7 +143,7 @@ public class MainController
             try
             {
                 String path = FilmHandler.getInstance().getDefaultPath() +  current.getPosterPath();
-                VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),path);
+                VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),"en",path);
                 if(integerList.contains(current.getId()))
                     continue;
                 integerList.add(current.getId());

@@ -8,8 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Objects;
 
 public class SceneHandler {
@@ -22,6 +24,8 @@ public class SceneHandler {
 
     private Stage stage;
     private Scene scene;
+    private Stage filmStage;
+    private Scene filmScene;
 
 
     private SceneHandler(){}
@@ -30,6 +34,7 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.stage = stage;
+        this.filmStage = new Stage(StageStyle.DECORATED);
         this.loadMainScene();
         StyleHandler.getInstance().init(this.scene);
         this.stage.setScene(this.scene);
@@ -71,7 +76,7 @@ public class SceneHandler {
         stage.setMinHeight(480);
         stage.setResizable(true);
         stage.setTitle("Main Scene");
-        centerStage(1280,720);
+        centerStage(stage,1280,720);
         stage.show();
         stage.setWidth(1280);
         stage.setHeight(720);
@@ -93,7 +98,7 @@ public class SceneHandler {
         stage.setMinHeight(480);
         stage.setResizable(true);
         stage.setTitle("Settings");
-        centerStage(stage.getWidth(),stage.getHeight());
+        centerStage(stage,stage.getWidth(),stage.getHeight());
         stage.show();
     }
 
@@ -114,9 +119,29 @@ public class SceneHandler {
         stage.setWidth(stage.getMinWidth());
         stage.setHeight(stage.getMinHeight());
         stage.setResizable(false);
-        centerStage(stage.getWidth(),stage.getHeight());
+        centerStage(stage,stage.getWidth(),stage.getHeight());
     }
-    public void centerStage(double width,double height)
+    public void loadFilmScene()
+    {
+        this.filmStage.hide();
+        Parent root = loadRootFromFXML("FilmView.fxml");
+        if(root == null)
+            return;
+        if(this.filmScene == null)
+            this.filmScene = new Scene(root);
+        this.filmScene.getStylesheets().clear();
+        StyleHandler.getInstance().updateScene(this.filmScene);
+        this.filmScene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "FilmView.css")).toExternalForm());
+        this.filmScene.setRoot(root);
+        this.filmStage.setTitle("Film View");
+        this.filmStage.setResizable(false);
+        this.filmStage.setScene(this.filmScene);
+        this.filmStage.setWidth(640);
+        this.filmStage.setHeight(480);
+        centerStage(this.filmStage,this.filmStage.getWidth(),this.filmStage.getHeight());
+        this.filmStage.show();
+    }
+    public void centerStage(Stage stage,double width,double height)
     {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX((screenBounds.getWidth() - width) / 2);

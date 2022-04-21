@@ -1,9 +1,12 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.view.SceneHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
@@ -35,7 +38,7 @@ public class CacheHandler {
         }
         return image;
     }
-    public VBox getFilmBox(Integer id,String title,String path)
+    public VBox getFilmBox(Integer id,String title,String language,String path)
     {
         VBox vBox = VBOX_CACHE.get(id);
         if(vBox == null)
@@ -58,6 +61,10 @@ public class CacheHandler {
             vBox.setStyle("-fx-cursor: hand");
             vBox.getChildren().add(imageView);
             vBox.getChildren().add(label);
+            vBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
+                FilmHandler.getInstance().selectFilm(id,language);
+                SceneHandler.getInstance().loadFilmScene();
+            });
             VBOX_CACHE.put(id,vBox);
         }
         return vBox;
