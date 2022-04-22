@@ -2,13 +2,18 @@ package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.enums.MovieListType;
+import com.progetto.progetto.model.enums.MovieSortType;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbFind;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import info.movito.themoviedbapi.tools.ApiUrl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FilmHandler
 {
@@ -44,6 +49,34 @@ public class FilmHandler
         result.addAll(movieDbs.getResults());
         for(Genre current : genres)
             stringGenreMap.put(current.getName(),current);
+        return result;
+    }
+    public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType) throws NullPointerException,IllegalArgumentException
+    {
+        List<MovieDb> result = new ArrayList<>();
+        switch (movieSortType)
+        {
+            case NAME -> result = values.stream().sorted(Comparator.comparing(MovieDb::getTitle)).toList();
+            case RELEASE_DATE -> result = values.stream().sorted((o1,o2) ->
+            {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date firstDate = null;
+                Date secondDate = null;
+                try
+                {
+                    firstDate = format.parse(o1.getReleaseDate());
+                    secondDate = format.parse(o2.getReleaseDate());
+                }
+                catch (ParseException exception)
+                {
+                    return -1;
+                }
+                if(firstDate == null || secondDate == null)
+                    throw new NullPointerException();
+                return secondDate.compareTo(firstDate);
+            }).toList();
+            case RATING -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteAverage).reversed()).toList();
+        }
         return result;
     }
     public List<Artwork> getMovieArtworks(int movieId,String language,ArtworkType artworkType) throws NullPointerException

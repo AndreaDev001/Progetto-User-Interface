@@ -48,11 +48,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filmLanguage" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Language">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <HBox fx:id="flagHolder" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" prefWidth="200.0" spacing="5.0" />
                         <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating">
                            <font>
                               <Font size="14.0" />

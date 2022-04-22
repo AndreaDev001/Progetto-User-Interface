@@ -24,6 +24,33 @@
                      </padding>
                      <children>
                         <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
+                        <HBox fx:id="sortByName" alignment="CENTER" prefHeight="30.0" prefWidth="200.0" style="-fx-cursor: hand;" styleClass="foreground">
+                           <children>
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Sort by Name" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="sortByRelease" alignment="CENTER" layoutX="20.0" layoutY="51.0" prefHeight="30.0" prefWidth="200.0" style="-fx-cursor: hand;" styleClass="foreground">
+                           <children>
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Sort by Release" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="sortByRating" alignment="CENTER" layoutX="20.0" layoutY="86.0" prefHeight="30.0" prefWidth="200.0" style="-fx-cursor: hand;" styleClass="foreground">
+                           <children>
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Sort by Rating" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>
