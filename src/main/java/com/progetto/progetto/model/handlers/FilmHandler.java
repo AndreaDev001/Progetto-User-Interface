@@ -110,7 +110,7 @@ public class FilmHandler
         result = defaultPath + artwork.getFilePath();
         return result;
     }
-    public List<MovieDb> filterMovies(String value, String language,List<MovieDb> movieDbs, MovieFilterType filterType,boolean includeAdult) throws NullPointerException
+    public List<MovieDb> filterMovies(String value, String language, MovieFilterType filterType,boolean includeAdult) throws NullPointerException
     {
         List<MovieDb> result = new ArrayList<>();
         if(value == null)
@@ -131,7 +131,7 @@ public class FilmHandler
     }
     public void selectFilm(int id,String language)
     {
-        this.currentSelectedFilm = movies.getMovie(id,language, TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.reviews, TmdbMovies.MovieMethod.credits);
+        this.currentSelectedFilm = movies.getMovie(id,language, TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
     }
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
     public Set<String> getGenres() {return stringGenreMap.keySet();}

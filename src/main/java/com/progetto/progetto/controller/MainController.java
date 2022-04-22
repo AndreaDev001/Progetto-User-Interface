@@ -80,7 +80,7 @@ public class MainController
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
             if(e.getCode() != KeyCode.ENTER)
                 return;
-            List<MovieDb> filteredMovies = FilmHandler.getInstance().filterMovies(this.searchField.getText(),"en",currentLoaded,MovieFilterType.NAME,true);
+            List<MovieDb> filteredMovies = FilmHandler.getInstance().filterMovies(this.searchField.getText(),"en",MovieFilterType.NAME,false);
             flowPane.getChildren().clear();
             integerList.clear();
             currentLoaded = filteredMovies;
@@ -152,7 +152,7 @@ public class MainController
         else
             current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
                 String value = ((Label)current.getChildren().get(0)).getText();
-                List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",currentLoaded,MovieFilterType.GENRE,true);
+                List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",MovieFilterType.GENRE,false);
                 flowPane.getChildren().clear();
                 integerList.clear();
                 currentLoaded = result;
