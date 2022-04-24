@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.LoginController">
+<AnchorPane prefHeight="300.0" prefWidth="500.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.RegisterController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -24,7 +24,7 @@
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="usernameField" promptText="Inserisci username" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="usernameField" promptText="Enter Username" HBox.hgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" />
@@ -37,7 +37,7 @@
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </Label>
-                  <PasswordField fx:id="passwordField" prefHeight="26.0" prefWidth="361.0" HBox.hgrow="ALWAYS" />
+                  <PasswordField fx:id="passwordField" prefHeight="26.0" prefWidth="361.0" promptText="Enter Password" HBox.hgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" />
@@ -50,15 +50,15 @@
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </Label>
-                  <PasswordField fx:id="passwordField1" prefHeight="26.0" prefWidth="361.0" HBox.hgrow="ALWAYS" />
+                  <PasswordField fx:id="repeatPasswordField" promptText="Repeat Password" HBox.hgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" />
                </padding>
             </HBox>
-            <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
                <children>
-                  <Button fx:id="loginButton" mnemonicParsing="false" text="register">
+                  <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegisterPressed" text="register">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>

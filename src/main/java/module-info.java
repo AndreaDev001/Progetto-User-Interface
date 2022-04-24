@@ -3,6 +3,7 @@ module com.progetto.progetto {
     requires javafx.fxml;
     requires themoviedbapi;
     requires java.sql;
+    requires spring.security.crypto;
 
 
     opens com.progetto.progetto to javafx.fxml;
