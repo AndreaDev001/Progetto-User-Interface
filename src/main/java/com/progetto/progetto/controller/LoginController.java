@@ -13,20 +13,9 @@ import javafx.scene.input.MouseEvent;
 public class LoginController
 {
     @FXML
-    private Button loginButton;
-    @FXML
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
-
-    @FXML
-    private ChoiceBox<String> test;
-
-    @FXML
-    private void initialize()
-    {
-        test.getItems().add("eeeee");
-    }
 
     @FXML
     void onLoginPressed(ActionEvent event) {
