@@ -46,7 +46,7 @@ public class FilmHandler
             stringGenreMap.put(current.getName(),current);
         return result;
     }
-    public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType) throws NullPointerException,IllegalArgumentException
+    public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType)
     {
         List<MovieDb> result = new ArrayList<>();
         switch (movieSortType)
@@ -63,7 +63,7 @@ public class FilmHandler
                         throw new NullPointerException();
                     return secondDate.compareTo(firstDate);
                 }
-                catch (ParseException exception)
+                catch (ParseException | NullPointerException exception)
                 {
                     return -1;
                 }

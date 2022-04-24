@@ -4,7 +4,6 @@
     -text-background-color: rgb(24,24,24);
     -text-foreground-color: rgb(60,60,60);
 }
-
 *
 {
     -fx-text-fill: -text-color;
@@ -17,7 +16,14 @@
     -fx-show-delay: 0.1s;
     -fx-font-size: 16px;
 }
-
+.card
+{
+  -fx-cursor: hand;
+  -fx-background-color: derive(-text-foreground-color,-30%);
+  -fx-padding: 8px 8px;
+  -fx-border-width: 1px;
+  -fx-background-radius: 10px;
+}
 .background
 {
     -fx-background-color: -text-background-color;

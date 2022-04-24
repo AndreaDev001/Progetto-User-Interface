@@ -29,11 +29,17 @@ public class FilmController
     private Label filmRating;
     @FXML
     private TextArea filmDescription;
+    @FXML
+    private Label filmBudget;
+    @FXML
+    private Label filmRevenue;
 
     private String title;
     private String releaseDate;
     private String language;
     private String overview;
+    private long budget;
+    private long revenue;
     private int rating;
 
     @FXML
@@ -45,6 +51,8 @@ public class FilmController
         language = film.getOriginalLanguage();
         overview = film.getOverview().isEmpty() ? "No description found" : film.getOverview();
         float rating = film.getVoteAverage();
+        budget = film.getBudget();
+        revenue = film.getRevenue();
         String path = FilmHandler.getInstance().getDefaultPath() + film.getPosterPath();
         filmImage.setImage(CacheHandler.getInstance().getImage(path));
         filmNameTop.setText(title);
@@ -52,6 +60,8 @@ public class FilmController
         filmReleaseDate.setText(releaseDate);
         filmRating.setText(String.valueOf(rating));
         filmDescription.setText(overview);
+        filmBudget.setText("Budget:" + " " + (budget > 0 ? budget : "-"));
+        filmRevenue.setText("Revenue:" + " " + (revenue > 0 ? revenue : "-"));
         createFlags(film);
     }
     private void createFlags(MovieDb film)
