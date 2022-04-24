@@ -11,6 +11,9 @@ import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -55,6 +58,8 @@ public class MainController
     private final List<Label> sortingLabels = new ArrayList<>();
     private final List<Label> genresLabels = new ArrayList<>();
     private final List<Integer> integerList = new ArrayList<>();
+    private static final BooleanProperty categoriesVisible = new SimpleBooleanProperty(false);
+    private static final BooleanProperty sortingVisible = new SimpleBooleanProperty(false);
     private Label currentLabel;
 
     @FXML
@@ -103,8 +108,8 @@ public class MainController
                 currentLoaded = result;
                 createFilms(result);
             });
-            label.setVisible(false);
-            label.managedProperty().bind(label.visibleProperty());
+            label.visibleProperty().bind(sortingVisible);
+            label.managedProperty().bind(sortingVisible);
             sortingLabels.add(label);
             sortingHolder.getChildren().add(label);
             initLabel(label,false,false);
@@ -113,19 +118,19 @@ public class MainController
         for(String current : genres)
         {
             Label label = createLeftLabel(current);
-            label.setVisible(false);
-            label.managedProperty().bind(label.visibleProperty());
+            label.visibleProperty().bind(categoriesVisible);
+            label.managedProperty().bind(categoriesVisible);
             genresLabels.add(label);
             genreHolder.getChildren().add(label);
             initLabel(label,false,true);
         }
         expandCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             for(Label current : genresLabels)
-                current.setVisible(!current.isVisible());
+                categoriesVisible.set(!categoriesVisible.get());
         });
         expandSorting.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             for(Label current : sortingLabels)
-                current.setVisible(!current.isVisible());
+                sortingVisible.set(!sortingVisible.get());
         });
     }
     private Label createLeftLabel(String value)

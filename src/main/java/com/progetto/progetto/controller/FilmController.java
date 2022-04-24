@@ -66,12 +66,10 @@ public class FilmController
     }
     private void createFlags(MovieDb film)
     {
-        System.out.println(film.getSpokenLanguages().size());
         //Si dovrebbe usare getTranslations(),ma anche quando si specifica MovieMethod.translations ritorna un 'mapping error',possibile fix fare la richiesta manualmente,questo è un placeholder"
         for(ProductionCountry current : film.getProductionCountries())
         {
             String isoCode = current.getIsoCode().toLowerCase();
-            System.out.println(isoCode);
             ImageView imageView = new ImageView(new Image("https://flagcdn.com/32x24/" + isoCode + ".png"));
             imageView.setFitWidth(30);
             imageView.setFitHeight(24);
