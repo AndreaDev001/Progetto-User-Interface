@@ -76,6 +76,7 @@ public class SettingsController {
         this.foreground_color.setValue(this.styleConfig.foregroundColor);
         this.background_color.setValue(this.styleConfig.backgroundColor);
         this.text_color.setValue(this.styleConfig.textColor);
+        this.dyslexicCheckBox.setSelected(this.styleConfig.dyslexic);
 
 
         this.lightModeToggle.setSelected(styleConfig.styleMode == StyleMode.LIGHT);

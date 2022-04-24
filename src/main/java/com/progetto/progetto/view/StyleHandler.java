@@ -37,8 +37,6 @@ public class StyleHandler {
         return STYLE_HANDLER;
     }
 
-    private final String folder_path = System.getProperty("user.home") + File.separator + ".film_app";
-
     private StyleConfiguration styleConfiguration = new StyleConfiguration();
 
 
@@ -48,14 +46,18 @@ public class StyleHandler {
     //read the config file and update the scene along with it
     public void init(Scene scene) {
         try {
-            Path folderPath = Path.of(folder_path);
+
+            Path folderPath = Path.of(getFolderPath());
             Files.createDirectories(folderPath);
 
-            Path filePath = Path.of(folder_path + File.separator + "config.txt");
+            Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
             Properties properties = new Properties();
 
             if (!Files.exists(filePath))
                 saveConfigurationOnFile(properties);
+
+            if(scene == null)
+                return;
 
             FileReader fileReader = new FileReader(filePath.toFile());
             properties.load(fileReader);
@@ -100,7 +102,7 @@ public class StyleHandler {
 
 
     public void saveConfigurationOnFile(Properties properties) throws IOException {
-        Path filePath = Path.of(folder_path + File.separator + "config.txt");
+        Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
         properties.setProperty("use_dyslexic_font", String.valueOf(this.styleConfiguration.dyslexic));
         properties.setProperty("style_file", String.valueOf(this.styleConfiguration.styleMode.ordinal()));
         properties.setProperty("primary_color", this.styleConfiguration.foregroundColor.toString());
@@ -144,7 +146,7 @@ public class StyleHandler {
             cssString = cssString.replace("rgb(24,24,24)","#" + this.styleConfiguration.foregroundColor.toString().substring(2));
             cssString = cssString.replace("rgb(60,60,60)","#" + this.styleConfiguration.backgroundColor.toString().substring(2));
             cssString = cssString.replace("white","#" + this.styleConfiguration.textColor.toString().substring(2));
-            Files.writeString(Path.of(folder_path + File.separator + getCustomCssFileName()),cssString);
+            Files.writeString(Path.of(getFolderPath() + File.separator + "custom.css"),cssString);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -155,14 +157,15 @@ public class StyleHandler {
         if(styleMode != StyleMode.CUSTOM)
             return MainApplication.class.getResource("css/" + styleMode.getName() + ".css").toExternalForm();
         try {
-            return Path.of(folder_path + File.separator + getCustomCssFileName()).toUri().toURL().toExternalForm();
+            return Path.of(getFolderPath() + File.separator + "custom.css").toUri().toURL().toExternalForm();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return getCssPath(StyleMode.DARK);
     }
-    private String getCustomCssFileName()
+    private String getFolderPath()
     {
-        return ProfileHandler.getInstance().getLoggedUser() != null ? "profile_custom.css" : "custom.css";
+        String userFolder = ProfileHandler.getInstance().getLoggedUser() != null ? "User" : "Default";
+        return System.getProperty("user.home") + File.separator + ".film_app" + File.separator + userFolder;
     }
 }

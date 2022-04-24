@@ -12,9 +12,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Properties;
 
 public class ProfileHandler {
     private static final ProfileHandler instance = new ProfileHandler();
@@ -49,6 +51,7 @@ public class ProfileHandler {
                     this.loggedUser = new User(username);
                     StyleConfiguration styleConfiguration = new StyleConfiguration(styleMode,foregroundColor,backgroundColor,textColor,dyslexic);
                     StyleHandler.getInstance().updateConfiguration(styleConfiguration);
+                    StyleHandler.getInstance().init(null);
                     return true;
                 }
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Password", Alert.AlertType.ERROR);
