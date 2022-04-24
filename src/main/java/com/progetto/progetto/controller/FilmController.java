@@ -61,6 +61,7 @@ public class FilmController
         for(ProductionCountry current : film.getProductionCountries())
         {
             String isoCode = current.getIsoCode().toLowerCase();
+            System.out.println(isoCode);
             ImageView imageView = new ImageView(new Image("https://flagcdn.com/32x24/" + isoCode + ".png"));
             imageView.setFitWidth(30);
             imageView.setFitHeight(24);

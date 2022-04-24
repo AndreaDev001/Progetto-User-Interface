@@ -6,7 +6,8 @@
 .leftLabels
 {
    -fx-font-size: 14px;
-   -fx-font-weight: bold;
+   -fx-font-weight: 300;
+   -fx-cursor: hand;
 }
 .card-label
 {
