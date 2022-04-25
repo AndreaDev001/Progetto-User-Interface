@@ -125,12 +125,10 @@ public class MainController
             initLabel(label,false,true);
         }
         expandCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            for(Label current : genresLabels)
-                categoriesVisible.set(!categoriesVisible.get());
+            categoriesVisible.set(!categoriesVisible.get());
         });
         expandSorting.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            for(Label current : sortingLabels)
-                sortingVisible.set(!sortingVisible.get());
+            sortingVisible.set(!sortingVisible.get());
         });
     }
     private Label createLeftLabel(String value)

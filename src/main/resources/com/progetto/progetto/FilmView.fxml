@@ -54,6 +54,16 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <Label fx:id="filmPopularity" layoutX="20.0" layoutY="312.0" maxWidth="1.7976931348623157E308" text="Film Popularity">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="filmRuntime" maxWidth="1.7976931348623157E308" text="Film Runtime">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </VBox>
                </children>

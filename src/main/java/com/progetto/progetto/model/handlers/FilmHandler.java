@@ -69,6 +69,7 @@ public class FilmHandler
                 }
             }).toList();
             case RATING  -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteAverage).reversed()).toList();
+            case POPULARITY -> result = values.stream().sorted(Comparator.comparing(MovieDb::getPopularity).reversed()).toList();
         }
         return result;
     }

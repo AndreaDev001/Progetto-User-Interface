@@ -1,6 +1,5 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import info.movito.themoviedbapi.model.*;
@@ -10,8 +9,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-
-import java.util.Locale;
 
 public class FilmController
 {
@@ -33,6 +30,10 @@ public class FilmController
     private Label filmBudget;
     @FXML
     private Label filmRevenue;
+    @FXML
+    private Label filmPopularity;
+    @FXML
+    private Label filmRuntime;
 
     private String title;
     private String releaseDate;
@@ -41,6 +42,8 @@ public class FilmController
     private long budget;
     private long revenue;
     private int rating;
+    private float popularity;
+    private int runtime;
 
     @FXML
     private void initialize()
@@ -53,6 +56,8 @@ public class FilmController
         float rating = film.getVoteAverage();
         budget = film.getBudget();
         revenue = film.getRevenue();
+        popularity = film.getPopularity();
+        runtime = film.getRuntime();
         String path = FilmHandler.getInstance().getDefaultPath() + film.getPosterPath();
         filmImage.setImage(CacheHandler.getInstance().getImage(path));
         filmNameTop.setText(title);
@@ -62,6 +67,8 @@ public class FilmController
         filmDescription.setText(overview);
         filmBudget.setText("Budget:" + " " + (budget > 0 ? budget : "-"));
         filmRevenue.setText("Revenue:" + " " + (revenue > 0 ? revenue : "-"));
+        filmPopularity.setText(String.valueOf(popularity));
+        filmRuntime.setText("Runtime:" + " " + String.valueOf(runtime) + " " + "min");
         createFlags(film);
     }
     private void createFlags(MovieDb film)

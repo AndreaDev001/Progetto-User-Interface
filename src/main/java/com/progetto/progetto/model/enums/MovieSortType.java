@@ -5,4 +5,5 @@ public enum MovieSortType
     NAME,
     RELEASE,
     RATING,
+    POPULARITY,
 }
