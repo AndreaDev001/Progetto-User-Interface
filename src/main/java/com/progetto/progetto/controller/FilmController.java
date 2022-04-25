@@ -58,7 +58,7 @@ public class FilmController
         revenue = film.getRevenue();
         popularity = film.getPopularity();
         runtime = film.getRuntime();
-        String path = FilmHandler.getInstance().getDefaultPath() + film.getPosterPath();
+        String path = FilmHandler.getInstance().getPosterPath(film);
         filmImage.setImage(CacheHandler.getInstance().getImage(path));
         filmNameTop.setText(title);
         filmNameLeft.setText(title);

@@ -55,21 +55,24 @@ public class FilmHandler
             case RELEASE -> result = values.stream().sorted((o1,o2) ->
             {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date firstDate = null;
+                Date secondDate = null;
                 try
                 {
-                    Date firstDate = format.parse(o1.getReleaseDate());
-                    Date secondDate = format.parse(o2.getReleaseDate());
-                    if(firstDate == null || secondDate == null)
-                        throw new NullPointerException();
+                    firstDate = format.parse(o1.getReleaseDate());
+                    secondDate = format.parse(o2.getReleaseDate());
                     return secondDate.compareTo(firstDate);
                 }
-                catch (ParseException | NullPointerException exception)
+                catch (ParseException exception)
                 {
-                    return -1;
+                    if(firstDate == null)
+                        return -1;
                 }
+                return 1;
             }).toList();
             case RATING  -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteAverage).reversed()).toList();
             case POPULARITY -> result = values.stream().sorted(Comparator.comparing(MovieDb::getPopularity).reversed()).toList();
+            case VOTE_COUNT -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteCount).reversed()).toList();
         }
         return result;
     }
@@ -91,6 +94,10 @@ public class FilmHandler
             }
         }
         return result;
+    }
+    public String getPosterPath(MovieDb movieDb)
+    {
+        return defaultPath + movieDb.getPosterPath();
     }
     public MovieDb getMovie(int id,String language)
     {

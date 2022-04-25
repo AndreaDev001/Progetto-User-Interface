@@ -13,7 +13,6 @@ import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -24,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,8 +55,6 @@ public class MainController
     private Label expandCategories;
 
     private List<MovieDb> currentLoaded = new ArrayList<>();
-    private final List<Label> sortingLabels = new ArrayList<>();
-    private final List<Label> genresLabels = new ArrayList<>();
     private final List<Integer> integerList = new ArrayList<>();
     private static final BooleanProperty categoriesVisible = new SimpleBooleanProperty(false);
     private static final BooleanProperty sortingVisible = new SimpleBooleanProperty(false);
@@ -110,7 +108,6 @@ public class MainController
             });
             label.visibleProperty().bind(sortingVisible);
             label.managedProperty().bind(sortingVisible);
-            sortingLabels.add(label);
             sortingHolder.getChildren().add(label);
             initLabel(label,false,false);
         }
@@ -120,16 +117,11 @@ public class MainController
             Label label = createLeftLabel(current);
             label.visibleProperty().bind(categoriesVisible);
             label.managedProperty().bind(categoriesVisible);
-            genresLabels.add(label);
             genreHolder.getChildren().add(label);
             initLabel(label,false,true);
         }
-        expandCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            categoriesVisible.set(!categoriesVisible.get());
-        });
-        expandSorting.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            sortingVisible.set(!sortingVisible.get());
-        });
+        expandCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> categoriesVisible.set(!categoriesVisible.get()));
+        expandSorting.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> sortingVisible.set(!sortingVisible.get()));
     }
     private Label createLeftLabel(String value)
     {
@@ -169,7 +161,7 @@ public class MainController
     {
         for(MovieDb current : movieDbs)
         {
-            String path = FilmHandler.getInstance().getDefaultPath() +  current.getPosterPath();
+            String path = FilmHandler.getInstance().getPosterPath(current);
             VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),current.getReleaseDate(),"en",path);
             if(integerList.contains(current.getId()))
                 continue;
