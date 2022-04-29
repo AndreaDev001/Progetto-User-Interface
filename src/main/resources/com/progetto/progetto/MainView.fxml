@@ -21,9 +21,10 @@
                   <VBox prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
+                        <VBox fx:id="listHolder" alignment="TOP_CENTER" layoutX="20.0" layoutY="49.0" prefWidth="100.0" spacing="2.0" />
                         <VBox fx:id="sortingHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
                            <children>
-                              <Label fx:id="expandSorting" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Sorting">
+                              <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="Sorting">
                                  <font>
                                     <Font name="System Bold" size="17.0" />
                                  </font>
@@ -32,13 +33,14 @@
                         </VBox>
                         <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
                            <children>
-                              <Label fx:id="expandCategories" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Categories" wrapText="true">
+                              <Label fx:id="expandCategories" maxWidth="1.7976931348623157E308" text="Filters" wrapText="true">
                                  <font>
                                     <Font name="System Bold" size="17.0" />
                                  </font>
                               </Label>
                            </children>
                         </VBox>
+                        <VBox fx:id="advancedHolder" alignment="TOP_CENTER" layoutX="20.0" layoutY="79.0" prefWidth="100.0" spacing="2.0" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

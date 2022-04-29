@@ -9,7 +9,33 @@
     -fx-text-fill: -text-color;
     -fx-focus-color: transparent;
 }
-
+.titled-pane
+{
+   -fx-font-size: 12px;
+   -fx-font-weight: bold;
+   -fx-text-fill: -text-color;
+}
+.titled-pane > .title
+{
+   -fx-background-color: -text-background-color;
+   -fx-font-size: 17px;
+   -fx-padding: 0px;
+}
+.titled-pane > .title > .arrow-button {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+}
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-padding: 0px;
+    -fx-shape: "";
+}
+.titled-pane > *.content
+{
+    -fx-background-color: -text-background-color;
+    -fx-cursor: hand;
+ }
 .tooltip
 {
     -fx-show-duration: 10s;
@@ -28,7 +54,6 @@
 {
     -fx-background-color: -text-background-color;
 }
-
 .foreground
 {
     -fx-background-color: derive(-text-foreground-color,-30%);
@@ -117,4 +142,30 @@
 .scroll-pane
 {
   -fx-background-color: -text-background-color;
+}
+.combo-box-base {
+    -fx-background-color: -text-foreground-color;
+    -fx-text-fill: -text-color;
+    -fx-pref-width: 100;
+    -fx-pref-height: 30;
+}
+.combo-box .list-cell
+{
+    -fx-background: -text-foreground-color;
+    -fx-background-color: -text-foreground-color;
+    -fx-text-fill: -text-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: 300;
+    -fx-padding: 3 0 2 7;
+    -fx-cell-size: 1.66667em;
+    -fx-pref-height: 30;
+}
+.combo-box-popup .list-view
+{
+    -fx-background-color: -text-foreground-color;
+}
+.combo-box .list-cell:hover
+{
+   -fx-cursor: hand;
+   -fx-underline: true;
 }
