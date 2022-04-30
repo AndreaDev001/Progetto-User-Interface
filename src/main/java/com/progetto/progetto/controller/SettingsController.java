@@ -114,7 +114,6 @@ public class SettingsController {
             this.styleConfig.textColor = this.text_color.getValue();
             this.styleConfig.dyslexic = this.dyslexicCheckBox.isSelected();
             styleHandler.saveConfigurationOnFile(new Properties());
-            styleHandler.saveConfigurationOnDatabase();
             styleHandler.updateScene(this.background_color.getScene());
 
         } catch (IOException e)

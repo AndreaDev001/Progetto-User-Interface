@@ -27,7 +27,7 @@ public class SQLGetter {
         if (!mySQL.isConnected())
             return;
         try {
-            PreparedStatement firstStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS USER ( username varchar(50) primary key, password varchar(100) not null,style_mode int not null default 1, foregroundColor char(6) not null default 'FFFFFF', backgroundColor char(6) not null default 'FFFFFF', textColor char(6) not null default '000000', dyslexic tinyint not null default 0)");
+            PreparedStatement firstStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS USER username varchar(50) primary key, password varchar(100) not null");
             PreparedStatement secondStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LIBRARY id int primary key, foreign key (id) references Utente(id)");
             PreparedStatement thirdStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS FILM api_id int primary key,title varchar(100) not null, description varchar(100) not null, poster varchar(100) not null");
             PreparedStatement fourthStatement = this.mySQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LIBRARY library_id int references Library(id),film_id int references Film(api_id), primary key (library_id,film_id)");

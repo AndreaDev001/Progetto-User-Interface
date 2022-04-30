@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,6 +32,7 @@ import java.util.Properties;
 //STYLE HANDLER CLASS written by Pierlugi, aka PierKnight
 //FOR the moment the config file is saved in the home folder inside a directory named "film_app"
 public class StyleHandler {
+
     private static final StyleHandler STYLE_HANDLER = new StyleHandler();
 
     public static StyleHandler getInstance() {
@@ -68,14 +70,13 @@ public class StyleHandler {
             this.styleConfiguration.styleMode = StyleMode.values()[Integer.parseInt(properties.getProperty("style_file", "0"))];
             StyleHandler.getInstance().updateScene(scene);
 
+
+            //LOAD FONT FOR DYSLEXIC
+            //Font.loadFont(Objects.requireNonNull(MainApplication.class.getResource("fonts/OpenDyslexic3-Regular.ttf")).toExternalForm(),10);
+
         } catch (IOException e) {
         }
 
-    }
-
-    public void updateConfiguration(StyleConfiguration styleConfiguration)
-    {
-        this.styleConfiguration = styleConfiguration;
     }
 
     public StyleConfiguration getStyleConfiguration() {
@@ -87,17 +88,17 @@ public class StyleHandler {
     //this is called when we need to re-apply the style, in our cause this is called when a new scene is showed
     //or when we change the style configurations in runtime.
     public void updateScene(Scene scene) {
+        //DELETE (IF EXIST) THE OLD STYLES
+        scene.getStylesheets().removeIf(styleString -> Arrays.stream(StyleMode.values()).anyMatch(styleMode -> styleString.endsWith(styleMode.getName() + ".css")));
+        //ADD NEW CSS PATH
+        scene.getStylesheets().add(getCssPath(this.styleConfiguration.styleMode));
+
         //--------dyslexic font----------
         String dyslexic_style = Objects.requireNonNull(MainApplication.class.getResource("css/dyslexic.css")).toExternalForm();
         if(this.styleConfiguration.dyslexic)
             scene.getStylesheets().add(dyslexic_style);
         else
             scene.getStylesheets().remove(dyslexic_style);
-
-        //DELETE (IF EXIST) THE OLD STYLES
-        scene.getStylesheets().removeIf(styleString -> Arrays.stream(StyleMode.values()).anyMatch(styleMode -> styleString.endsWith(styleMode.getName() + ".css")));
-        //ADD NEW CSS PATH
-        scene.getStylesheets().add(getCssPath(this.styleConfiguration.styleMode));
     }
 
 
@@ -111,32 +112,6 @@ public class StyleHandler {
         properties.store(new FileWriter(filePath.toFile()), "FILM APP CONFIGURATION");
         saveCustomCSS();
     }
-
-    public boolean saveConfigurationOnDatabase()
-    {
-        User user = ProfileHandler.getInstance().getLoggedUser();
-        if(user == null)
-            return false;
-
-        String queryString = "update user set style_mode = ? , foregroundColor = ? , backgroundColor = ? , textColor = ? , dyslexic = ? where username = ?";
-
-        int style_mode = this.styleConfiguration.styleMode.ordinal();
-        String foregroundColor = this.styleConfiguration.foregroundColor.toString().substring(2,8);
-        String backgroundColor = this.styleConfiguration.backgroundColor.toString().substring(2,8);
-        String textColor = this.styleConfiguration.textColor.toString().substring(2,8);
-        boolean dyslexic = this.styleConfiguration.dyslexic;
-
-        try {
-            SQLGetter.getInstance().makeUpdate(queryString,style_mode,foregroundColor,backgroundColor,textColor,dyslexic,user.username());
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-
     private void saveCustomCSS() throws IOException {
         URL cssCopy = Objects.requireNonNull(MainApplication.class.getResource("css/dark.css"));
 
@@ -163,9 +138,10 @@ public class StyleHandler {
         }
         return getCssPath(StyleMode.DARK);
     }
+
+
     private String getFolderPath()
     {
-        String userFolder = ProfileHandler.getInstance().getLoggedUser() != null ? "User" : "Default";
-        return System.getProperty("user.home") + File.separator + ".film_app" + File.separator + userFolder;
+        return System.getProperty("user.home") + File.separator + ".film_app";
     }
 }

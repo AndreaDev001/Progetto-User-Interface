@@ -43,15 +43,7 @@ public class ProfileHandler {
             if (result.next()) {
                 String dbPassword = result.getString(2);
                 if (BCrypt.checkpw(password,dbPassword)) {
-                    StyleMode styleMode = StyleMode.values()[result.getInt(3)];
-                    Color foregroundColor = Color.web("#" + result.getString(4));
-                    Color backgroundColor = Color.web("#" + result.getString(5));
-                    Color textColor = Color.web("#" + result.getString(6));
-                    boolean dyslexic = result.getBoolean(7);
                     this.loggedUser = new User(username);
-                    StyleConfiguration styleConfiguration = new StyleConfiguration(styleMode,foregroundColor,backgroundColor,textColor,dyslexic);
-                    StyleHandler.getInstance().updateConfiguration(styleConfiguration);
-                    StyleHandler.getInstance().init(null);
                     return true;
                 }
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Password", Alert.AlertType.ERROR);
