@@ -1,8 +1,11 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.enums.MovieListType;
+import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
+import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
@@ -29,7 +32,7 @@ public class FilmHandler
         movies = tmdbApi.getMovies();
         defaultPath = "https://image.tmdb.org/t/p/w500";
     }
-    public List<MovieDb> getMovies(int page, MovieListType movieListType,String language,String region) throws NullPointerException
+    public List<MovieDb> getMovies(int page, MovieListType movieListType,String language,String region) throws FilmNotFoundException
     {
         MovieResultsPage movieDbs = null;
         switch (movieListType)
@@ -38,8 +41,8 @@ public class FilmHandler
             case UPCOMING_MOVIES -> movieDbs = movies.getUpcoming(language,page,region);
             case TOP_RATED_MOVIES -> movieDbs = movies.getTopRatedMovies(language,page);
         }
-        if(movieDbs == null)
-            throw new NullPointerException();
+        if(movieDbs == null || movieDbs.getResults().size() == 0)
+            throw new FilmNotFoundException("An error has occured,result is empty");
         List<Genre> genres = tmdbApi.getGenre().getGenreList(language);
         List<MovieDb> result = new ArrayList<>(movieDbs.getResults());
         for(Genre current : genres)
@@ -51,8 +54,8 @@ public class FilmHandler
         List<MovieDb> result = new ArrayList<>();
         switch (movieSortType)
         {
-            case NAME -> result = values.stream().sorted(Comparator.comparing(MovieDb::getTitle)).toList();
-            case RELEASE -> result = values.stream().sorted((o1,o2) ->
+            case ORIGINAL_TITLE -> result = values.stream().sorted(Comparator.comparing(MovieDb::getTitle)).toList();
+            case RELEASE_DATE -> result = values.stream().sorted((o1,o2) ->
             {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date firstDate = null;
@@ -70,34 +73,39 @@ public class FilmHandler
                 }
                 return 1;
             }).toList();
-            case RATING  -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteAverage).reversed()).toList();
+            case VOTE_AVERAGE -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteAverage).reversed()).toList();
             case POPULARITY -> result = values.stream().sorted(Comparator.comparing(MovieDb::getPopularity).reversed()).toList();
             case VOTE_COUNT -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteCount).reversed()).toList();
         }
         return result;
     }
-    public List<MovieDb> filterMovies(String value, String language, MovieFilterType filterType,boolean includeAdult) throws NullPointerException
+    public List<MovieDb> makeSearch(String value, String language, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
         List<MovieDb> result = new ArrayList<>();
-        if(value == null)
-            return result;
-        switch (filterType)
+        switch (movieFilterType)
         {
-            case GENRE -> {
-                Genre genre = stringGenreMap.get(value);
-                MovieResultsPage movieResultsPage = tmdbApi.getGenre().getGenreMovies(genre.getId(),language,1,includeAdult);
-                return movieResultsPage.getResults();
-            }
-            case NAME -> {
-                MovieResultsPage movieResultsPage = tmdbApi.getSearch().searchMovie(value,null,language,includeAdult,1);
-                return movieResultsPage.getResults();
+            case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,1).getResults();
+            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(1,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,0,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
+            case MULTIPLE_GENRES -> {
+                String[] values = value.split(",");
+                StringBuilder builder = new StringBuilder();
+                for(int i = 0;i < values.length;i++)
+                {
+                    int id = stringGenreMap.get(values[i]).getId();
+                    builder.append(id);
+                    if(i != values.length - 1)
+                        builder.append(",");
+                }
+                result =  tmdbApi.getDiscover().getDiscover(1,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,0,0,builder.toString(),"","","","","").getResults();
             }
         }
+        if(result == null || result.isEmpty())
+            throw new FilmNotFoundException("An error has occured,film not found");
         return result;
     }
     public String getPosterPath(MovieDb movieDb)
     {
-        return defaultPath + movieDb.getPosterPath();
+        return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
     }
     public MovieDb getMovie(int id,String language)
     {
@@ -110,5 +118,4 @@ public class FilmHandler
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
     public Set<String> getGenres() {return stringGenreMap.keySet();}
     public static FilmHandler getInstance() {return instance;}
-    public final String getDefaultPath() {return defaultPath;}
 }

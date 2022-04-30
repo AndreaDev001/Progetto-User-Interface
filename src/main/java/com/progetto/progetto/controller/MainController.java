@@ -97,7 +97,7 @@ public class MainController
             {
                 if(e.getCode() != KeyCode.ENTER)
                     return;
-                currentLoaded = FilmHandler.getInstance().makeSearch(searchField.getText(),"en",MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase()),MovieFilterType.SINGLE_GENRE,MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase()));
+                currentLoaded = FilmHandler.getInstance().makeSearch(searchField.getText(),"en",MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase()),MovieFilterType.NAME,MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase()));
                 flowPane.getChildren().clear();
                 integerList.clear();
                 createFilms(currentLoaded);
@@ -123,8 +123,7 @@ public class MainController
             MovieSortType movieSortType = MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase());
             MovieSortOrder movieSortOrder = MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase());
             String genre = movieFilterType == MovieFilterType.SINGLE_GENRE ? genresComboBox.getSelectionModel().getSelectedItem() : getMultipleGenres();
-            if(genre == null || genre.isEmpty())
-                return;
+            genre = genre == null ? "" : genre;
             currentLoaded = FilmHandler.getInstance().makeSearch(genre, "en", movieSortType,movieFilterType, movieSortOrder);
             integerList.clear();
             flowPane.getChildren().clear();
