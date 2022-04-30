@@ -3,6 +3,7 @@
     -text-color: white;
     -text-background-color: rgb(24,24,24);
     -text-foreground-color: rgb(60,60,60);
+    -combo-foreground-color: derive(-text-foreground-color,-30%);
 }
 *
 {
@@ -151,8 +152,8 @@
 }
 .combo-box .list-cell
 {
-    -fx-background: -text-foreground-color;
-    -fx-background-color: -text-foreground-color;
+    -fx-background: -combo-foreground-color;
+    -fx-background-color: -combo-foreground-color;
     -fx-text-fill: -text-color;
     -fx-font-size: 14px;
     -fx-font-weight: 300;
@@ -162,7 +163,7 @@
 }
 .combo-box-popup .list-view
 {
-    -fx-background-color: -text-foreground-color;
+    -fx-background-color: -combo-foreground-color;
 }
 .combo-box .list-cell:hover
 {

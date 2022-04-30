@@ -2,7 +2,9 @@ package com.progetto.progetto.controller;
 
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.enums.MovieListType;
+import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
+import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.ProfileHandler;
@@ -11,25 +13,24 @@ import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MainController
 {
@@ -42,22 +43,26 @@ public class MainController
     @FXML
     private Label quitBox;
     @FXML
-    private VBox genreHolder;
+    private VBox listHolder;
     @FXML
-    private VBox sortingHolder;
+    private VBox advancedHolder;
     @FXML
     private FlowPane flowPane;
     @FXML
     private TextField searchField;
     @FXML
-    private Label expandSorting;
+    private ComboBox<String> sortComboBox;
     @FXML
-    private Label expandCategories;
+    private ComboBox<String> sortOrderComboBox;
+    @FXML
+    private ComboBox<String> genresComboBox = new ComboBox<>();
+    @FXML
+    private Button advancedSearchButton;
 
+
+    private final List<CheckBox> checkBoxes = new ArrayList<>();
     private List<MovieDb> currentLoaded = new ArrayList<>();
     private final List<Integer> integerList = new ArrayList<>();
-    private static final BooleanProperty categoriesVisible = new SimpleBooleanProperty(false);
-    private static final BooleanProperty sortingVisible = new SimpleBooleanProperty(false);
     private Label currentLabel;
 
     @FXML
@@ -68,94 +73,119 @@ public class MainController
         libraryBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> loadLibrary());
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
         settingsBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> SceneHandler.getInstance().loadSettingsScene());
-        for(int i = 0;i < 10;i++)
+        advancedSearchButton.setOnAction((event) -> search(MovieFilterType.MULTIPLE_GENRES));
+        for(int i = 0;i < 5;i++)
         {
-            List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
-            for(MovieDb current : result)
+            try
             {
-                if(currentLoaded.contains(current))
-                    continue;
-                currentLoaded.add(current);
+                List<MovieDb> result = FilmHandler.getInstance().getMovies(i, MovieListType.MOST_POPULAR,"en","eu");
+                for(MovieDb current : result)
+                {
+                    if(currentLoaded.contains(current))
+                        continue;
+                    currentLoaded.add(current);
+                }
             }
-            createFilms(currentLoaded);
+            catch (FilmNotFoundException e)
+            {
+                handleException();
+            }
+            createFilms(FilmHandler.getInstance().sortMovies(currentLoaded,MovieSortType.POPULARITY));
         }
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
-            if(e.getCode() != KeyCode.ENTER)
-                return;
-            List<MovieDb> filteredMovies = FilmHandler.getInstance().filterMovies(this.searchField.getText(),"en",MovieFilterType.NAME,false);
-            flowPane.getChildren().clear();
-            integerList.clear();
-            currentLoaded = filteredMovies;
-            createFilms(filteredMovies);
+            try
+            {
+                if(e.getCode() != KeyCode.ENTER)
+                    return;
+                currentLoaded = FilmHandler.getInstance().makeSearch(searchField.getText(),"en",MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase()),MovieFilterType.SINGLE_GENRE,MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase()));
+                flowPane.getChildren().clear();
+                integerList.clear();
+                createFilms(currentLoaded);
+            }
+            catch (FilmNotFoundException exception)
+            {
+                handleException();
+            }
         });
         initBoxes();
     }
+    private <T extends Enum<T>> void initDropdown(Enum<T>[] values,ComboBox<String> comboBox)
+    {
+        for(Enum<T> current : values)
+        {
+            String value = current.name().toLowerCase();
+            comboBox.getItems().add(value);
+        }
+        comboBox.setOnAction((e) -> search(MovieFilterType.SINGLE_GENRE));
+    }
+    private void search(MovieFilterType movieFilterType) {
+        try {
+            MovieSortType movieSortType = MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase());
+            MovieSortOrder movieSortOrder = MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase());
+            String genre = movieFilterType == MovieFilterType.SINGLE_GENRE ? genresComboBox.getSelectionModel().getSelectedItem() : getMultipleGenres();
+            if(genre == null || genre.isEmpty())
+                return;
+            currentLoaded = FilmHandler.getInstance().makeSearch(genre, "en", movieSortType,movieFilterType, movieSortOrder);
+            integerList.clear();
+            flowPane.getChildren().clear();
+            createFilms(currentLoaded);
+        }
+        catch (FilmNotFoundException exception)
+        {
+            handleException();
+        }
+    }
     private void initBoxes()
     {
-        initLabel(homeBox,true,false);
-        initLabel(libraryBox,true,false);
-        initLabel(settingsBox,true,false);
-        initLabel(quitBox,true,false);
-        for(MovieSortType current : MovieSortType.values())
+        initLabel(homeBox);
+        initLabel(libraryBox);
+        initLabel(settingsBox);
+        initLabel(quitBox);
+        initDropdown(MovieSortType.values(),sortComboBox);
+        initDropdown(MovieSortOrder.values(),sortOrderComboBox);
+        sortComboBox.getSelectionModel().select(2);
+        genresComboBox.getSelectionModel().select(0);
+        genresComboBox.setOnAction((event) -> search(MovieFilterType.SINGLE_GENRE));
+        advancedSearchButton.setOnAction((event) -> search(MovieFilterType.MULTIPLE_GENRES));
+        sortOrderComboBox.getSelectionModel().select(1);
+        for(MovieListType movieListType : MovieListType.values())
         {
-            Label label = createLeftLabel(current.name().toLowerCase());
-            label.addEventHandler(MouseEvent.MOUSE_CLICKED,mouseEvent -> {
-                integerList.clear();
-                flowPane.getChildren().clear();
-                List<MovieDb> result = FilmHandler.getInstance().sortMovies(currentLoaded,current);
-                currentLoaded = result;
-                createFilms(result);
+            String value = movieListType.name().toLowerCase();
+            Label label = new Label(value);
+            label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+                try
+                {
+                    currentLoaded = FilmHandler.getInstance().getMovies(1,MovieListType.valueOf(value.toUpperCase()),"en","eu");
+                    integerList.clear();
+                    flowPane.getChildren().clear();
+                    createFilms(currentLoaded);
+                } catch (FilmNotFoundException e) {
+                    handleException();
+                }
             });
-            label.visibleProperty().bind(sortingVisible);
-            label.managedProperty().bind(sortingVisible);
-            sortingHolder.getChildren().add(label);
-            initLabel(label,false,false);
+            listHolder.getChildren().add(label);
         }
-        Set<String> genres = FilmHandler.getInstance().getGenres();
-        for(String current : genres)
+        for(String current : FilmHandler.getInstance().getGenres())
         {
-            Label label = createLeftLabel(current);
-            label.visibleProperty().bind(categoriesVisible);
-            label.managedProperty().bind(categoriesVisible);
-            genreHolder.getChildren().add(label);
-            initLabel(label,false,true);
+            genresComboBox.getItems().add(current);
+            CheckBox checkBox = new CheckBox(current);
+            checkBox.setLineSpacing(100);
+            checkBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+            checkBox.setTooltip(createToolTip("Add filter by" + " " + current + " " + "to advanced research"));
+            checkBox.setAlignment(Pos.CENTER);
+            checkBoxes.add(checkBox);
+            advancedHolder.getChildren().add(checkBox);
         }
-        expandCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> categoriesVisible.set(!categoriesVisible.get()));
-        expandSorting.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> sortingVisible.set(!sortingVisible.get()));
     }
-    private Label createLeftLabel(String value)
-    {
-        Label result = new Label(value);
-        result.setWrapText(true);
-        result.setAlignment(Pos.CENTER_RIGHT);
-        result.setMinWidth(Region.USE_COMPUTED_SIZE);
-        result.setMinHeight(Region.USE_COMPUTED_SIZE);
-        result.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        result.setPrefHeight(10);
-        result.setMaxWidth(Double.MAX_VALUE);
-        result.setMaxHeight(Region.USE_PREF_SIZE);
-        result.getStyleClass().add("leftLabels");
-        return result;
-    }
-    private void initLabel(Label current,boolean top,boolean filter)
+    private void initLabel(Label current)
     {
         current.addEventHandler(MouseEvent.MOUSE_ENTERED,mouseEvent -> current.setUnderline(true));
         current.addEventHandler(MouseEvent.MOUSE_EXITED,mouseEvent -> current.setUnderline(false));
-        if(top)
-            current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-                currentLabel.setUnderline(false);
-                currentLabel = current;
-                currentLabel.setUnderline(true);
-            });
-        else if(filter)
-            current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-                String value = current.getText();
-                List<MovieDb> result = FilmHandler.getInstance().filterMovies(value,"en",MovieFilterType.GENRE,false);
-                flowPane.getChildren().clear();
-                integerList.clear();
-                currentLoaded = result;
-                createFilms(result);
-            });
+        current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
+            currentLabel.setUnderline(false);
+            currentLabel = current;
+            currentLabel.setUnderline(true);
+        });
     }
     private void createFilms(List<MovieDb> movieDbs)
     {
@@ -169,7 +199,18 @@ public class MainController
             flowPane.getChildren().add(vBox);
         }
     }
-    //Da testare e modificare
+    private String getMultipleGenres()
+    {
+        String result = "";
+        StringBuilder stringBuilder = new StringBuilder();
+        for(CheckBox current : checkBoxes)
+        {
+            if(current.isSelected())
+                stringBuilder.append(current.getText()).append(",");
+        }
+        result = stringBuilder.toString();
+        return result;
+    }
     private void loadLibrary()
     {
         System.out.println("Loading library");
@@ -194,5 +235,37 @@ public class MainController
         flowPane.getChildren().clear();
         integerList.clear();
         createFilms(movieDbs);
+    }
+    private void handleException()
+    {
+        integerList.clear();
+        flowPane.getChildren().clear();
+        System.out.println(flowPane.getChildren().size());
+        VBox vBox = new VBox();
+        vBox.setMinWidth(Region.USE_PREF_SIZE);
+        vBox.setMinHeight(Region.USE_PREF_SIZE);
+        vBox.setMaxWidth(Region.USE_PREF_SIZE);
+        vBox.setMaxHeight(Region.USE_PREF_SIZE);
+        Label label = new Label("Empty Set");
+        label.setStyle("-fx-font-size: 30px;-fx-font-weight: bold");
+        Button button = new Button("Back to Home");
+        button.setStyle("-fx-padding: 10px 10px");
+        button.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            flowPane.getChildren().clear();
+            createFilms(currentLoaded);
+        });
+        vBox.getChildren().add(label);
+        vBox.getChildren().add(button);
+        flowPane.getChildren().add(vBox);
+    }
+    private Tooltip createToolTip(String value)
+    {
+        Tooltip result = new Tooltip(value);
+        result.setTextAlignment(TextAlignment.CENTER);
+        result.setWrapText(true);
+        Duration duration = Duration.seconds(0);
+        result.setShowDelay(duration);
+        result.setHideDelay(duration);
+        return result;
     }
 }

@@ -68,7 +68,7 @@ public class FilmController
         filmBudget.setText("Budget:" + " " + (budget > 0 ? budget : "-"));
         filmRevenue.setText("Revenue:" + " " + (revenue > 0 ? revenue : "-"));
         filmPopularity.setText(String.valueOf(popularity));
-        filmRuntime.setText("Runtime:" + " " + String.valueOf(runtime) + " " + "min");
+        filmRuntime.setText("Runtime:" + " " + (runtime > 0 ? String.valueOf(runtime) + " " + "min" : "-"));
         createFlags(film);
     }
     private void createFlags(MovieDb film)
