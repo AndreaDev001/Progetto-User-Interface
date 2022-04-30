@@ -31,7 +31,7 @@
                         </TitledPane>
                         <VBox fx:id="sortingHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="5.0">
                            <children>
-                              <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="Sorting">
+                              <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="Sort by">
                                  <font>
                                     <Font name="System Bold" size="17.0" />
                                  </font>
@@ -47,7 +47,7 @@
                                     <Font name="System Bold" size="17.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="genresComboBox" prefWidth="150.0" />
+                              <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
                            </children>
                         </VBox>
                         <TitledPane expanded="false" text="Advanced">

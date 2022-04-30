@@ -85,7 +85,7 @@ public class FilmHandler
         switch (movieFilterType)
         {
             case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,1).getResults();
-            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(1,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,0,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
+            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(1,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
             case MULTIPLE_GENRES -> {
                 String[] values = value.split(",");
                 StringBuilder builder = new StringBuilder();
