@@ -71,7 +71,7 @@
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0">
                <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="background" vgap="5.0">
                            <padding>
@@ -80,14 +80,6 @@
                         </FlowPane>
                      </content>
                   </ScrollPane>
-                  <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="10.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                     <children>
-                        <Button mnemonicParsing="false" onAction="#loadNextPage" text="Next Page" />
-                     </children>
-                  </HBox>
                </children>
             </AnchorPane>
          </items>
@@ -140,4 +132,15 @@
          </padding>
       </HBox>
    </top>
+   <bottom>
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="10.0" spacing="5.0" style="-fx-background-color: rgba(0,0,0,0); -fx-background: transparent;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
+            <Button layoutX="125.0" layoutY="20.0" mnemonicParsing="false" onAction="#loadPreviousPage" text="Previous Page" />
+            <Button mnemonicParsing="false" onAction="#loadNextPage" text="Next Page" />
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>
