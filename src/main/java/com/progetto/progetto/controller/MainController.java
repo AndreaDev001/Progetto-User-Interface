@@ -64,6 +64,7 @@ public class MainController
     private List<MovieDb> currentLoaded = new ArrayList<>();
     private final List<Integer> integerList = new ArrayList<>();
     private Label currentLabel;
+    private int currentPage = 0;
 
     @FXML
     private void initialize()
@@ -73,12 +74,12 @@ public class MainController
         libraryBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> loadLibrary());
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
         settingsBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> SceneHandler.getInstance().loadSettingsScene());
-        advancedSearchButton.setOnAction((event) -> search(MovieFilterType.MULTIPLE_GENRES));
+        advancedSearchButton.setOnAction((event) -> search(currentPage,MovieFilterType.MULTIPLE_GENRES));
         for(int i = 0;i < 5;i++)
         {
             try
             {
-                List<MovieDb> result = FilmHandler.getInstance().getMovies(i, MovieListType.MOST_POPULAR,"en","eu");
+                List<MovieDb> result = FilmHandler.getInstance().getMovies(i, MovieListType.MOST_POPULAR,"en");
                 for(MovieDb current : result)
                 {
                     if(currentLoaded.contains(current))
@@ -95,9 +96,10 @@ public class MainController
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
             try
             {
+                currentPage = 0;
                 if(e.getCode() != KeyCode.ENTER)
                     return;
-                currentLoaded = FilmHandler.getInstance().makeSearch(searchField.getText(),"en",MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase()),MovieFilterType.NAME,MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase()));
+                currentLoaded = FilmHandler.getInstance().makeSearch(searchField.getText(),"en",0,MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase()),MovieFilterType.NAME,MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase()));
                 flowPane.getChildren().clear();
                 integerList.clear();
                 createFilms(currentLoaded);
@@ -109,6 +111,12 @@ public class MainController
         });
         initBoxes();
     }
+    @FXML
+    private void loadNextPage()
+    {
+        currentPage++;
+        search(currentPage,MovieFilterType.SINGLE_GENRE);
+    }
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values,ComboBox<String> comboBox)
     {
         for(Enum<T> current : values)
@@ -116,15 +124,18 @@ public class MainController
             String value = current.name().toLowerCase();
             comboBox.getItems().add(value);
         }
-        comboBox.setOnAction((e) -> search(MovieFilterType.SINGLE_GENRE));
+        comboBox.setOnAction((e) -> {
+            currentPage = 0;
+            search(currentPage,MovieFilterType.SINGLE_GENRE);
+        });
     }
-    private void search(MovieFilterType movieFilterType) {
+    private void search(int page,MovieFilterType movieFilterType) {
         try {
             MovieSortType movieSortType = MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase());
             MovieSortOrder movieSortOrder = MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase());
             String genre = movieFilterType == MovieFilterType.SINGLE_GENRE ? genresComboBox.getSelectionModel().getSelectedItem() : getMultipleGenres();
             genre = genre == null ? "" : genre;
-            currentLoaded = FilmHandler.getInstance().makeSearch(genre, "en", movieSortType,movieFilterType, movieSortOrder);
+            currentLoaded = FilmHandler.getInstance().makeSearch(genre,"en",currentPage, movieSortType,movieFilterType, movieSortOrder);
             integerList.clear();
             flowPane.getChildren().clear();
             createFilms(currentLoaded);
@@ -144,8 +155,14 @@ public class MainController
         initDropdown(MovieSortOrder.values(),sortOrderComboBox);
         sortComboBox.getSelectionModel().select(2);
         genresComboBox.getSelectionModel().select(0);
-        genresComboBox.setOnAction((event) -> search(MovieFilterType.SINGLE_GENRE));
-        advancedSearchButton.setOnAction((event) -> search(MovieFilterType.MULTIPLE_GENRES));
+        genresComboBox.setOnAction((event) -> {
+            currentPage = 0;
+            search(currentPage,MovieFilterType.SINGLE_GENRE);
+        });
+        advancedSearchButton.setOnAction((event) -> {
+            currentPage = 0;
+            search(currentPage,MovieFilterType.MULTIPLE_GENRES);
+        });
         sortOrderComboBox.getSelectionModel().select(1);
         for(MovieListType movieListType : MovieListType.values())
         {
@@ -154,7 +171,8 @@ public class MainController
             label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
                 try
                 {
-                    currentLoaded = FilmHandler.getInstance().getMovies(1,MovieListType.valueOf(value.toUpperCase()),"en","eu");
+                    currentPage = 0;
+                    currentLoaded = FilmHandler.getInstance().getMovies(1,MovieListType.valueOf(value.toUpperCase()),"en");
                     integerList.clear();
                     flowPane.getChildren().clear();
                     createFilms(currentLoaded);
@@ -237,6 +255,7 @@ public class MainController
     }
     private void handleException()
     {
+        currentPage = 0;
         integerList.clear();
         flowPane.getChildren().clear();
         System.out.println(flowPane.getChildren().size());

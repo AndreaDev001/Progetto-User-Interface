@@ -32,13 +32,13 @@ public class FilmHandler
         movies = tmdbApi.getMovies();
         defaultPath = "https://image.tmdb.org/t/p/w500";
     }
-    public List<MovieDb> getMovies(int page, MovieListType movieListType,String language,String region) throws FilmNotFoundException
+    public List<MovieDb> getMovies(int page, MovieListType movieListType,String language) throws FilmNotFoundException
     {
         MovieResultsPage movieDbs = null;
         switch (movieListType)
         {
             case MOST_POPULAR ->  movieDbs = movies.getPopularMovies(language,page);
-            case UPCOMING_MOVIES -> movieDbs = movies.getUpcoming(language,page,region);
+            case UPCOMING_MOVIES -> movieDbs = movies.getUpcoming(language,page,null);
             case TOP_RATED_MOVIES -> movieDbs = movies.getTopRatedMovies(language,page);
         }
         if(movieDbs == null || movieDbs.getResults().size() == 0)
@@ -79,13 +79,13 @@ public class FilmHandler
         }
         return result;
     }
-    public List<MovieDb> makeSearch(String value, String language, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
+    public List<MovieDb> makeSearch(String value, String language,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
         List<MovieDb> result = new ArrayList<>();
         switch (movieFilterType)
         {
             case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,1).getResults();
-            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(1,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
+            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
             case MULTIPLE_GENRES -> {
                 String[] values = value.split(",");
                 StringBuilder builder = new StringBuilder();
@@ -96,7 +96,7 @@ public class FilmHandler
                     if(i != values.length - 1)
                         builder.append(",");
                 }
-                result =  tmdbApi.getDiscover().getDiscover(1,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,0,0,builder.toString(),"","","","","").getResults();
+                result =  tmdbApi.getDiscover().getDiscover(page,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,builder.toString(),"","","","","").getResults();
             }
         }
         if(result == null || result.isEmpty())
