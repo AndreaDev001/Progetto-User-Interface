@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="500.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
+<BorderPane nodeOrientation="LEFT_TO_RIGHT" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
    <center>
       <AnchorPane minHeight="0.0" minWidth="300.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorPane">
          <children>
@@ -76,64 +76,4 @@
          </children>
       </AnchorPane>
    </center>
-   <top>
-      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" spacing="20.0" styleClass="foreground" BorderPane.alignment="CENTER">
-         <children>
-            <HBox fx:id="homeBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onHomeClicked" prefHeight="26.0" prefWidth="65.0">
-               <children>
-                  <Label text="Home">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onLibraryClicked" prefHeight="100.0" prefWidth="70.0">
-               <children>
-                  <Label fx:id="libraryButton" text="Library">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <HBox fx:id="settingsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0">
-               <children>
-                  <Label text="Settings" underline="true">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <HBox fx:id="quitBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onQuitClicked" prefHeight="100.0" prefWidth="60.0">
-               <children>
-                  <Label text="Quit">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-      </HBox>
-   </top>
 </BorderPane>

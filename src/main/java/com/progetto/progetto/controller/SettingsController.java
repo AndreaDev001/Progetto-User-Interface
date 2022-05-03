@@ -44,22 +44,6 @@ public class SettingsController {
     private final StyleConfiguration styleConfig = styleHandler.getStyleConfiguration();
 
 
-
-    @FXML
-    void onHomeClicked(MouseEvent event) {
-        SceneHandler.getInstance().loadMainScene();
-    }
-
-    @FXML
-    void onLibraryClicked(MouseEvent event) {
-        SceneHandler.getInstance().loadMainScene();
-    }
-
-    @FXML
-    void onQuitClicked(MouseEvent event) {
-        SceneHandler.getInstance().loadLoginScene();
-    }
-
     @FXML
     public void initialize()
     {
