@@ -7,6 +7,8 @@ import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.StyleMode;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
@@ -28,7 +30,7 @@ public class ProfileHandler {
         return instance;
     }
 
-    private User loggedUser;
+    private ObjectProperty<User> loggedUser = new SimpleObjectProperty<>(null);
 
     public boolean login(String username, String password, boolean bypass) {
 
@@ -43,7 +45,7 @@ public class ProfileHandler {
             if (result.next()) {
                 String dbPassword = result.getString(2);
                 if (BCrypt.checkpw(password,dbPassword)) {
-                    this.loggedUser = new User(username);
+                    this.loggedUser.set(new User(username));
                     return true;
                 }
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Password", Alert.AlertType.ERROR);
@@ -57,10 +59,9 @@ public class ProfileHandler {
         return false;
     }
 
-
     public boolean logout() {
-        if (this.loggedUser != null) {
-            this.loggedUser = null;
+        if (this.loggedUser.get() != null) {
+            this.loggedUser.set(null);
             return true;
         }
         return false;
@@ -84,7 +85,7 @@ public class ProfileHandler {
         return false;
     }
 
-    public User getLoggedUser() {
+    public ObjectProperty<User> getLoggedUser() {
         return this.loggedUser;
     }
 

@@ -35,14 +35,6 @@ import java.util.List;
 public class MainController
 {
     @FXML
-    private Label homeBox;
-    @FXML
-    private Label libraryBox;
-    @FXML
-    private Label settingsBox;
-    @FXML
-    private Label quitBox;
-    @FXML
     private VBox listHolder;
     @FXML
     private VBox advancedHolder;
@@ -63,20 +55,14 @@ public class MainController
     private final List<CheckBox> checkBoxes = new ArrayList<>();
     private List<MovieDb> currentLoaded = new ArrayList<>();
     private final List<Integer> integerList = new ArrayList<>();
-    private Label currentLabel;
     private int currentPage = 1;
     private MovieListType currentListType = MovieListType.MOST_POPULAR;
 
     @FXML
     private void initialize()
     {
-        currentLabel = homeBox;
-        currentLabel.setUnderline(true);
-        libraryBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> loadLibrary());
-        quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
-        settingsBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> SceneHandler.getInstance().loadSettingsScene());
         advancedSearchButton.setOnAction((event) -> search(currentPage,MovieFilterType.MULTIPLE_GENRES,false));
-        for(int i = 1;i < 5;i++)
+        for(int i = 1;i < 2;i++)
         {
             try
             {
@@ -163,10 +149,6 @@ public class MainController
     }
     private void initBoxes()
     {
-        initLabel(homeBox);
-        initLabel(libraryBox);
-        initLabel(settingsBox);
-        initLabel(quitBox);
         initDropdown(MovieSortType.values(),sortComboBox);
         initDropdown(MovieSortOrder.values(),sortOrderComboBox);
         sortComboBox.getSelectionModel().select(2);
@@ -213,16 +195,6 @@ public class MainController
             advancedHolder.getChildren().add(checkBox);
         }
     }
-    private void initLabel(Label current)
-    {
-        current.addEventHandler(MouseEvent.MOUSE_ENTERED,mouseEvent -> current.setUnderline(true));
-        current.addEventHandler(MouseEvent.MOUSE_EXITED,mouseEvent -> current.setUnderline(false));
-        current.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-            currentLabel.setUnderline(false);
-            currentLabel = current;
-            currentLabel.setUnderline(true);
-        });
-    }
     private void createFilms(List<MovieDb> movieDbs)
     {
         for(MovieDb current : movieDbs)
@@ -250,7 +222,7 @@ public class MainController
     private void loadLibrary()
     {
         System.out.println("Loading library");
-        User user = ProfileHandler.getInstance().getLoggedUser();
+        User user = ProfileHandler.getInstance().getLoggedUser().get();
         Library library = null;
         List<MovieDb> movieDbs = new ArrayList<>();
         try {

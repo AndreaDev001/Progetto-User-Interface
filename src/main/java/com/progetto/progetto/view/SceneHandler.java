@@ -1,15 +1,24 @@
 package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -25,8 +34,6 @@ public class SceneHandler {
 
     private Stage stage;
     private Scene scene;
-    private Stage filmStage;
-    private Scene filmScene;
 
 
     private SceneHandler(){}
@@ -35,7 +42,6 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.stage = stage;
-        this.filmStage = new Stage(StageStyle.DECORATED);
         this.loadMainScene();
         this.stage.setScene(this.scene);
         this.stage.show();
@@ -52,6 +58,37 @@ public class SceneHandler {
         return null;
     }
 
+    private String currentPage;
+
+    public void loadPage(StackPane stackPane,String pageToLoad)
+    {
+        Parent newPage = loadRootFromFXML(pageToLoad);
+        stackPane.getChildren().add(newPage);
+        Node currentNode = stackPane.getChildren().get(0);
+
+        if(currentPage == null || currentPage.equals(pageToLoad))
+        {
+            currentPage = pageToLoad;
+            return;
+        }
+        currentPage = pageToLoad;
+
+        newPage.setTranslateX(stage.getWidth());
+
+
+        Timeline timeline = new Timeline();
+
+        KeyValue keyValue = new KeyValue(newPage.translateXProperty(),0, Interpolator.EASE_IN);
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(450),keyValue);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setOnFinished(event -> stackPane.getChildren().remove(currentNode));
+        timeline.play();
+
+
+
+    }
+
+
     public Alert createAlertMessage(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType,message);
         alert.setTitle(title);
@@ -63,9 +100,8 @@ public class SceneHandler {
     //---------------------------SCENES------------------------------//
     public void loadMainScene()
     {
-        this.filmStage.hide();
         stage.hide();
-        Parent root = loadRootFromFXML("MainView.fxml");
+        Parent root = loadRootFromFXML("MenuView.fxml");
         if(root == null)
             return;
         if(this.scene == null) {
@@ -74,7 +110,6 @@ public class SceneHandler {
         }
         this.scene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(this.scene);
-        this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "MainView.css")).toExternalForm());
         this.scene.setRoot(root);
         stage.setMinWidth(640);
         stage.setMinHeight(480);
@@ -86,46 +121,6 @@ public class SceneHandler {
         stage.setHeight(720);
     }
 
-    public void loadSettingsScene()
-    {
-        this.filmStage.hide();
-        stage.hide();
-        Parent root = loadRootFromFXML("SettingsView.fxml");
-        if(root == null)
-            return;
-        if(this.scene == null)
-            this.scene = new Scene(root);
-
-        this.scene.getStylesheets().clear();
-        StyleHandler.getInstance().updateScene(this.scene);
-        this.scene.setRoot(root);
-        stage.setMinWidth(640);
-        stage.setMinHeight(480);
-        stage.setResizable(true);
-        stage.setTitle("Settings");
-        centerStage(stage,stage.getWidth(),stage.getHeight());
-        stage.show();
-    }
-
-    public void loadLoginScene()
-    {
-        this.filmStage.hide();
-        Parent root = loadRootFromFXML("LoginView.fxml");
-        if(root == null)
-            return;
-        StyleHandler.getInstance().updateScene(scene);
-        scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
-        scene.setRoot(root);
-        stage.setMinWidth(500);
-        stage.setMinHeight(300);
-        stage.setTitle("Login View");
-        stage.setWidth(stage.getMinWidth());
-        stage.setHeight(stage.getMinHeight());
-        stage.setResizable(false);
-        centerStage(stage,stage.getWidth(),stage.getHeight());
-        stage.setScene(scene);
-        stage.show();
-    }
 
     public void loadRegisterScene()
     {
@@ -152,22 +147,22 @@ public class SceneHandler {
 
     public void loadFilmScene()
     {
+        Stage filmStage = new Stage(StageStyle.DECORATED);
         Parent root = loadRootFromFXML("FilmView.fxml");
         if(root == null)
             return;
-        if(this.filmScene == null)
-            this.filmScene = new Scene(root);
-        this.filmScene.getStylesheets().clear();
-        StyleHandler.getInstance().updateScene(this.filmScene);
-        this.filmScene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "FilmView.css")).toExternalForm());
-        this.filmScene.setRoot(root);
-        this.filmStage.setTitle("Film View");
-        this.filmStage.setResizable(false);
-        this.filmStage.setScene(this.filmScene);
-        this.filmStage.setWidth(640);
-        this.filmStage.setHeight(480);
-        centerStage(this.filmStage,this.filmStage.getWidth(),this.filmStage.getHeight());
-        this.filmStage.show();
+        Scene filmScene = new Scene(root);
+        filmScene.getStylesheets().clear();
+        StyleHandler.getInstance().updateScene(filmScene);
+        filmScene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "FilmView.css")).toExternalForm());
+        filmScene.setRoot(root);
+        filmStage.setTitle("Film View");
+        filmStage.setResizable(false);
+        filmStage.setScene(filmScene);
+        filmStage.setWidth(640);
+        filmStage.setHeight(480);
+        centerStage(filmStage,filmStage.getWidth(),filmStage.getHeight());
+        filmStage.show();
     }
     public void centerStage(Stage stage,double width,double height)
     {
