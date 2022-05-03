@@ -29,15 +29,18 @@ public class MySQL
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,username,password);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("non è stato possibile connettersi al server sql!, Error Message: " + e.getMessage());
         }
         System.out.println("Connected");
     }
     public void Disconnect()
     {
+        if(connection == null)
+            return;
         try {
             connection.close();
             connection = null;
+            System.out.println("Disconnect");
         } catch (SQLException e) {
             e.printStackTrace();
         }

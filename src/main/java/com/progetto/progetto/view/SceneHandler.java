@@ -6,6 +6,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -36,7 +37,6 @@ public class SceneHandler {
         this.stage = stage;
         this.filmStage = new Stage(StageStyle.DECORATED);
         this.loadMainScene();
-        StyleHandler.getInstance().init(this.scene);
         this.stage.setScene(this.scene);
         this.stage.show();
     }
@@ -52,11 +52,12 @@ public class SceneHandler {
         return null;
     }
 
-    public void createAlertMessage(String title, String message, Alert.AlertType alertType) {
+    public Alert createAlertMessage(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType,message);
         alert.setTitle(title);
         alert.setAlertType(alertType);
-        alert.show();
+        alert.showAndWait();
+        return alert;
     }
 
     //---------------------------SCENES------------------------------//
@@ -67,8 +68,10 @@ public class SceneHandler {
         Parent root = loadRootFromFXML("MainView.fxml");
         if(root == null)
             return;
-        if(this.scene == null)
+        if(this.scene == null) {
             this.scene = new Scene(root);
+            StyleHandler.getInstance().init(this.scene);
+        }
         this.scene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(this.scene);
         this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "MainView.css")).toExternalForm());
@@ -110,12 +113,9 @@ public class SceneHandler {
         Parent root = loadRootFromFXML("LoginView.fxml");
         if(root == null)
             return;
-        if(this.scene == null)
-            this.scene = new Scene(root);
-        this.scene.getStylesheets().clear();
-        StyleHandler.getInstance().updateScene(this.scene);
-        this.scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
-        this.scene.setRoot(root);
+        StyleHandler.getInstance().updateScene(scene);
+        scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "LoginView.css")).toExternalForm());
+        scene.setRoot(root);
         stage.setMinWidth(500);
         stage.setMinHeight(300);
         stage.setTitle("Login View");
@@ -123,7 +123,33 @@ public class SceneHandler {
         stage.setHeight(stage.getMinHeight());
         stage.setResizable(false);
         centerStage(stage,stage.getWidth(),stage.getHeight());
+        stage.setScene(scene);
+        stage.show();
     }
+
+    public void loadRegisterScene()
+    {
+        Parent root = loadRootFromFXML("RegistryView.fxml");
+        if(root == null)
+            return;
+        Stage stage = new Stage(StageStyle.DECORATED);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().clear();
+        StyleHandler.getInstance().updateScene(scene);
+        scene.setRoot(root);
+
+        stage.setMinWidth(500);
+        stage.setMinHeight(300);
+        stage.setTitle("Registry View");
+        stage.setWidth(stage.getMinWidth());
+        stage.setHeight(stage.getMinHeight());
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void loadFilmScene()
     {
         Parent root = loadRootFromFXML("FilmView.fxml");
