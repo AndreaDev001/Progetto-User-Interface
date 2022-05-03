@@ -1,12 +1,22 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.model.records.StyleConfiguration;
 import com.progetto.progetto.model.records.User;
+import com.progetto.progetto.model.sql.ITaskResult;
 import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
+import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.view.StyleMode;
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
+import javafx.scene.paint.Color;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Properties;
 
 public class ProfileHandler {
     private static final ProfileHandler instance = new ProfileHandler();
@@ -29,11 +39,11 @@ public class ProfileHandler {
             return false;
 
         try {
-            ResultSet result = SQLGetter.getInstance().makeQuery("SELECT * FROM USER WHERE name =?", username);
+            ResultSet result = SQLGetter.getInstance().makeQuery("SELECT * FROM USER WHERE username = ?", username);
             if (result.next()) {
-                String dbPassword = result.getString(1);
-                if (dbPassword.equals(password)) {
-                    this.loggedUser = new User(username, result.getString(1));
+                String dbPassword = result.getString(2);
+                if (BCrypt.checkpw(password,dbPassword)) {
+                    this.loggedUser = new User(username);
                     return true;
                 }
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Password", Alert.AlertType.ERROR);
@@ -47,6 +57,7 @@ public class ProfileHandler {
         return false;
     }
 
+
     public boolean logout() {
         if (this.loggedUser != null) {
             this.loggedUser = null;
@@ -57,10 +68,17 @@ public class ProfileHandler {
 
     public boolean createUser(String username, String password)
     {
+
         try {
-            SQLGetter.getInstance().makeUpdate("INSERT INTO USER (name,password) VALUES (?,?)");
+            SQLGetter.getInstance().makeUpdate("INSERT INTO USER(username,password) VALUES (?,?)",username,password);
+            SceneHandler.getInstance().createAlertMessage("SUCCESS!","Created a new account!", Alert.AlertType.INFORMATION);
             return true;
-        } catch (SQLException e) {
+        }
+        catch (SQLIntegrityConstraintViolationException e)//this is called when trying to add an already used username.
+        {
+            SceneHandler.getInstance().createAlertMessage("ERROR","Username already used!", Alert.AlertType.ERROR);
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
         return false;

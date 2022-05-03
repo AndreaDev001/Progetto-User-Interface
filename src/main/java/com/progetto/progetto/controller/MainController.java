@@ -53,7 +53,7 @@ public class MainController
         quitBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> SceneHandler.getInstance().loadLoginScene());
         settingsBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> SceneHandler.getInstance().loadSettingsScene());
 
-        for(int i = 0;i < 10;i++)
+        for(int i = 0;i < 1;i++)
         {
             List<MovieDb> result = FilmHandler.getInstance().getMovies(i,MovieListType.MOST_POPULAR,"en","eu");
             for(MovieDb current : result)

@@ -1,5 +1,6 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.model.records.StyleConfiguration;
 import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.StyleMode;
@@ -37,8 +38,11 @@ public class SettingsController {
     @FXML
     private CheckBox dyslexicCheckBox;
 
+    private ToggleGroup toggleGroup;
 
     private final StyleHandler styleHandler = StyleHandler.getInstance();
+    private final StyleConfiguration styleConfig = styleHandler.getStyleConfiguration();
+
 
 
     @FXML
@@ -59,7 +63,7 @@ public class SettingsController {
     @FXML
     public void initialize()
     {
-        ToggleGroup toggleGroup = new ToggleGroup();
+        this.toggleGroup = new ToggleGroup();
         this.lightModeToggle.setToggleGroup(toggleGroup);
         this.darkModeToggle.setToggleGroup(toggleGroup);
         this.customModeToggle.setToggleGroup(toggleGroup);
@@ -69,30 +73,22 @@ public class SettingsController {
         this.foreground_color.disableProperty().bind(this.customModeToggle.selectedProperty().not());
         this.text_color.disableProperty().bind(this.customModeToggle.selectedProperty().not());
 
-        //THIS PART OF CODE IS USED TO BIND THE CURRENT STYLE CONFIGURATION WITH THE SETTINGS
+        this.foreground_color.setValue(this.styleConfig.foregroundColor);
+        this.background_color.setValue(this.styleConfig.backgroundColor);
+        this.text_color.setValue(this.styleConfig.textColor);
+        this.dyslexicCheckBox.setSelected(this.styleConfig.dyslexic);
 
-        //update the color pickers with the current style
-        this.foreground_color.valueProperty().set(styleHandler.getPrimaryColor().get());
-        this.background_color.valueProperty().set(styleHandler.getSecondaryColor().get());
-        this.text_color.valueProperty().set(styleHandler.getTextColor().get());
-        this.dyslexicCheckBox.selectedProperty().set(styleHandler.getDyslexicFont().get());
 
-        styleHandler.getPrimaryColor().bind(this.foreground_color.valueProperty());
-        styleHandler.getSecondaryColor().bind(this.background_color.valueProperty());
-        styleHandler.getTextColor().bind(this.text_color.valueProperty());
-        styleHandler.getDyslexicFont().bind(this.dyslexicCheckBox.selectedProperty());
-
-        this.lightModeToggle.setSelected(styleHandler.getCurrentStyle().get() == StyleMode.LIGHT);
-        this.darkModeToggle.setSelected(styleHandler.getCurrentStyle().get() == StyleMode.DARK);
-        this.customModeToggle.setSelected(styleHandler.getCurrentStyle().get() == StyleMode.CUSTOM);
+        this.lightModeToggle.setSelected(styleConfig.styleMode == StyleMode.LIGHT);
+        this.darkModeToggle.setSelected(styleConfig.styleMode == StyleMode.DARK);
+        this.customModeToggle.setSelected(styleConfig.styleMode == StyleMode.CUSTOM);
 
         //THIS PART OF CODE HANDLEL THE UPDATE OF THE STYLE----------
 
         //the style mode
         toggleGroup.selectedToggleProperty().addListener((observableValue, toggle, selectedRadio) ->
         {
-            StyleMode selectedMode = selectedRadio == lightModeToggle ? StyleMode.LIGHT : (selectedRadio == darkModeToggle ? StyleMode.DARK : StyleMode.CUSTOM);
-            styleHandler.getCurrentStyle().set(selectedMode);
+            styleConfig.styleMode = selectedRadio == lightModeToggle ? StyleMode.LIGHT : (selectedRadio == darkModeToggle ? StyleMode.DARK : StyleMode.CUSTOM);
             saveConfigurationAndUpdate();
         });
         //dyslexic mode
@@ -109,10 +105,17 @@ public class SettingsController {
 
     private void saveConfigurationAndUpdate()
     {
-        styleHandler.updateScene(this.background_color.getScene());
         try
         {
+            Toggle selectedRadio = toggleGroup.getSelectedToggle();
+            styleConfig.styleMode = selectedRadio == lightModeToggle ? StyleMode.LIGHT : (selectedRadio == darkModeToggle ? StyleMode.DARK : StyleMode.CUSTOM);
+            this.styleConfig.foregroundColor = this.foreground_color.getValue();
+            this.styleConfig.backgroundColor = this.background_color.getValue();
+            this.styleConfig.textColor = this.text_color.getValue();
+            this.styleConfig.dyslexic = this.dyslexicCheckBox.isSelected();
             styleHandler.saveConfigurationOnFile(new Properties());
+            styleHandler.updateScene(this.background_color.getScene());
+
         } catch (IOException e)
         {
             e.printStackTrace();
