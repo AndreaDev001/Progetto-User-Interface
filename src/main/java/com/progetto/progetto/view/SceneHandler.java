@@ -152,7 +152,6 @@ public class SceneHandler {
 
     public void loadFilmScene()
     {
-        this.filmStage.hide();
         Parent root = loadRootFromFXML("FilmView.fxml");
         if(root == null)
             return;

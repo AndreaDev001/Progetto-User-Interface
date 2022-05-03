@@ -3,14 +3,40 @@
     -text-color: white;
     -text-background-color: rgb(24,24,24);
     -text-foreground-color: rgb(60,60,60);
+    -combo-foreground-color: derive(-text-foreground-color,-30%);
 }
-
 *
 {
     -fx-text-fill: -text-color;
     -fx-focus-color: transparent;
 }
-
+.titled-pane
+{
+   -fx-font-size: 12px;
+   -fx-font-weight: bold;
+   -fx-text-fill: -text-color;
+}
+.titled-pane > .title
+{
+   -fx-background-color: -text-background-color;
+   -fx-font-size: 17px;
+   -fx-padding: 0px;
+}
+.titled-pane > .title > .arrow-button {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+}
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-padding: 0px;
+    -fx-shape: "";
+}
+.titled-pane > *.content
+{
+    -fx-background-color: -text-background-color;
+    -fx-cursor: hand;
+ }
 .tooltip
 {
     -fx-show-duration: 10s;
@@ -18,12 +44,18 @@
     -fx-font-size: 16px;
     -fx-background-color: -text-foreground-color;
 }
-
+.card
+{
+  -fx-cursor: hand;
+  -fx-background-color: derive(-text-foreground-color,-30%);
+  -fx-padding: 8px 8px;
+  -fx-border-width: 1px;
+  -fx-background-radius: 10px;
+}
 .background
 {
     -fx-background-color: -text-background-color;
 }
-
 .foreground
 {
     -fx-background-color: derive(-text-foreground-color,-30%);
@@ -48,8 +80,7 @@
    -fx-cursor: hand;
 }
 .button:hover{
-   -fx-border-width: 1px;
-   -fx-border-color: white;
+   -fx-underline: true;
 }
 .text-area, .text-area .content {
     -fx-background-color: -text-foreground-color;
@@ -118,4 +149,30 @@
 .scroll-pane
 {
   -fx-background-color: -text-background-color;
+}
+.combo-box-base {
+    -fx-background-color: -text-foreground-color;
+    -fx-text-fill: -text-color;
+    -fx-pref-width: 100;
+    -fx-pref-height: 30;
+}
+.combo-box .list-cell
+{
+    -fx-background: -combo-foreground-color;
+    -fx-background-color: -combo-foreground-color;
+    -fx-text-fill: -text-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: 300;
+    -fx-padding: 3 0 2 7;
+    -fx-cell-size: 1.66667em;
+    -fx-pref-height: 30;
+}
+.combo-box-popup .list-view
+{
+    -fx-background-color: -combo-foreground-color;
+}
+.combo-box .list-cell:hover
+{
+   -fx-cursor: hand;
+   -fx-underline: true;
 }

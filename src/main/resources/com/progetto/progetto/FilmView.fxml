@@ -48,12 +48,18 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filmLanguage" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Language">
+                        <HBox fx:id="flagHolder" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" prefWidth="200.0" spacing="5.0" />
+                        <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating">
+                        <Label fx:id="filmPopularity" layoutX="20.0" layoutY="312.0" maxWidth="1.7976931348623157E308" text="Film Popularity">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="filmRuntime" maxWidth="1.7976931348623157E308" text="Film Runtime">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -74,6 +80,23 @@
                               <Font name="System Bold Italic" size="12.0" />
                            </font>
                         </TextArea>
+                        <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <Label fx:id="filmBudget" maxWidth="1.7976931348623157E308" text="Film Budget">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="filmRevenue" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" text="Film Revenue">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add to library">
                            <font>
                               <Font size="14.0" />

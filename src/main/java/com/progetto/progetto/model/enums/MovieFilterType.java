@@ -2,6 +2,7 @@ package com.progetto.progetto.model.enums;
 
 public enum MovieFilterType
 {
-    GENRE,
+    SINGLE_GENRE,
+    MULTIPLE_GENRES,
     NAME,
 }

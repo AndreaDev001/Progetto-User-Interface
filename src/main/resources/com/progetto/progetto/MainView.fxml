@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -18,19 +21,57 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
                <children>
-                  <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
+                        <TitledPane text="List">
+                           <content>
+                              <VBox fx:id="listHolder" spacing="5.0" />
+                           </content>
+                        </TitledPane>
+                        <VBox fx:id="sortingHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="Sort by">
+                                 <font>
+                                    <Font name="System Bold" size="17.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="sortComboBox" prefWidth="150.0" />
+                              <ComboBox fx:id="sortOrderComboBox" layoutX="10.0" layoutY="39.0" prefWidth="150.0" />
+                           </children>
+                        </VBox>
+                        <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
+                           <children>
+                              <Label fx:id="expandCategories" maxWidth="1.7976931348623157E308" text="Filters" wrapText="true">
+                                 <font>
+                                    <Font name="System Bold" size="17.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
+                           </children>
+                        </VBox>
+                        <TitledPane expanded="false" text="Advanced">
+                           <content>
+                              <VBox fx:id="advancedHolder" spacing="5.0">
+                                 <children>
+                                    <Button fx:id="advancedSearchButton" mnemonicParsing="false" text="Search" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </TitledPane>
+                     </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
-                     <children>
-                        <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                     </children>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0">
                <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="background" vgap="5.0">
                            <padding>
@@ -47,61 +88,59 @@
    <top>
       <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" spacing="20.0" styleClass="foreground" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="homeBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="65.0">
-               <children>
-                  <Label fx:id="filmsButton" text="Home">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
-               <opaqueInsets>
+            <Label fx:id="homeBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0" text="Home">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+               <HBox.margin>
                   <Insets />
-               </opaqueInsets>
+               </HBox.margin>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
-            </HBox>
-            <HBox fx:id="libraryBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="70.0">
-               <children>
-                  <Label fx:id="libraryButton" text="Library">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
+            </Label>
+            <Label fx:id="libraryBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0" text="Library">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
-            </HBox>
-            <HBox fx:id="settingsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0">
-               <children>
-                  <Label fx:id="settingsButton" text="Settings">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
+            </Label>
+            <Label fx:id="settingsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0" text="Settings">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
-            </HBox>
-            <HBox fx:id="quitBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="60.0">
-               <children>
-                  <Label fx:id="logoutButton" text="Quit">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Label>
-               </children>
+            </Label>
+            <Label fx:id="quitBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="80.0" text="Quit">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
-            </HBox>
+            </Label>
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </HBox>
    </top>
+   <bottom>
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="10.0" spacing="5.0" style="-fx-background-color: rgba(0,0,0,0); -fx-background: transparent;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
+            <Button layoutX="125.0" layoutY="20.0" mnemonicParsing="false" onAction="#loadPreviousPage" text="Previous Page" />
+            <Button mnemonicParsing="false" onAction="#loadNextPage" text="Next Page" />
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>
