@@ -5,8 +5,8 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -21,7 +21,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.Objects;
 
 public class SceneHandler {
@@ -35,6 +34,13 @@ public class SceneHandler {
     private Stage stage;
     private Scene scene;
 
+    /**
+        this pane contains the selected page
+        which is picked from {@link PageEnum}
+     */
+
+    private StackPane menuPane;
+    private final ReadOnlyObjectWrapper<PageEnum> currentPageProperty = new ReadOnlyObjectWrapper<>(null);
 
     private SceneHandler(){}
 
@@ -42,7 +48,7 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.stage = stage;
-        this.loadMainScene();
+        this.loadApplicationScene();
         this.stage.setScene(this.scene);
         this.stage.show();
     }
@@ -58,49 +64,66 @@ public class SceneHandler {
         return null;
     }
 
-    private String currentPage;
-
-    public void loadPage(StackPane stackPane,String pageToLoad)
+    /**
+     * this method loads a new page from fxml with a sliding animation using a stack pane and interpolating
+     * between the two pages.
+     * @return true means the page loaded successfully;
+     */
+    public boolean loadPage(PageEnum page)
     {
-        Parent newPage = loadRootFromFXML(pageToLoad);
-        stackPane.getChildren().add(newPage);
-        Node currentNode = stackPane.getChildren().get(0);
+        if(stage == null)
+            return false;
 
-        if(currentPage == null || currentPage.equals(pageToLoad))
-        {
-            currentPage = pageToLoad;
-            return;
+        PageEnum currentPage = this.currentPageProperty.get();
+
+        if(page.equals(currentPage))
+            return false;
+
+        Parent newPage = loadRootFromFXML(page.getFxml());
+        menuPane.getChildren().add(newPage);
+
+        if(currentPage == null) {
+            this.currentPageProperty.set(PageEnum.MAIN);
+            return true;
         }
-        currentPage = pageToLoad;
+        Node currentNode = menuPane.getChildren().get(0);
+        int slideRightVal = page.ordinal() > currentPage.ordinal() ? -1 : 1;
 
-        newPage.setTranslateX(stage.getWidth());
-
-
+        newPage.setTranslateX(stage.getWidth() * -slideRightVal);
         Timeline timeline = new Timeline();
-
         KeyValue keyValue = new KeyValue(newPage.translateXProperty(),0, Interpolator.EASE_IN);
         KeyFrame keyFrame = new KeyFrame(Duration.millis(450),keyValue);
+        KeyValue keyValue2 = new KeyValue(currentNode.translateXProperty(),stage.getWidth() * slideRightVal, Interpolator.EASE_IN);
+        KeyFrame keyFrame2 = new KeyFrame(Duration.millis(450),keyValue2);
+
         timeline.getKeyFrames().add(keyFrame);
-        timeline.setOnFinished(event -> stackPane.getChildren().remove(currentNode));
+        timeline.getKeyFrames().add(keyFrame2);
+        timeline.setOnFinished(event -> menuPane.getChildren().remove(0));
         timeline.play();
+        currentPageProperty.set(page);
+        return true;
+    }
 
-
-
+    public ReadOnlyObjectProperty<PageEnum> currentPageProperty() {
+        return currentPageProperty.getReadOnlyProperty();
     }
 
 
+    /**
+     * generic alert message it uses the same stylesheet
+     */
     public Alert createAlertMessage(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType,message);
         alert.setTitle(title);
         alert.setAlertType(alertType);
+        alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
         alert.showAndWait();
         return alert;
     }
 
     //---------------------------SCENES------------------------------//
-    public void loadMainScene()
+    private void loadApplicationScene()
     {
-        stage.hide();
         Parent root = loadRootFromFXML("MenuView.fxml");
         if(root == null)
             return;
@@ -108,7 +131,6 @@ public class SceneHandler {
             this.scene = new Scene(root);
             StyleHandler.getInstance().init(this.scene);
         }
-        this.scene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
         stage.setMinWidth(640);
@@ -119,6 +141,9 @@ public class SceneHandler {
         stage.show();
         stage.setWidth(1280);
         stage.setHeight(720);
+
+        this.menuPane = (StackPane) scene.lookup("#stackPane");
+        this.loadPage(PageEnum.MAIN);
     }
 
 
@@ -131,7 +156,6 @@ public class SceneHandler {
         stage.initModality(Modality.APPLICATION_MODAL);
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(scene);
         scene.setRoot(root);
 

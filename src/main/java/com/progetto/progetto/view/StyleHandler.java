@@ -1,31 +1,19 @@
 package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
-import com.progetto.progetto.model.handlers.ProfileHandler;
 import com.progetto.progetto.model.records.StyleConfiguration;
-import com.progetto.progetto.model.records.User;
-import com.progetto.progetto.model.sql.SQLGetter;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
-import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -88,8 +76,7 @@ public class StyleHandler {
     //this is called when we need to re-apply the style, in our cause this is called when a new scene is showed
     //or when we change the style configurations in runtime.
     public void updateScene(Scene scene) {
-        //DELETE (IF EXIST) THE OLD STYLES
-        scene.getStylesheets().removeIf(styleString -> Arrays.stream(StyleMode.values()).anyMatch(styleMode -> styleString.endsWith(styleMode.getName() + ".css")));
+        scene.getStylesheets().clear();
         //ADD NEW CSS PATH
         scene.getStylesheets().add(getCssPath(this.styleConfiguration.styleMode));
 
