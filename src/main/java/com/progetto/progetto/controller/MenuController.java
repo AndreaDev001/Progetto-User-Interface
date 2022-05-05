@@ -84,7 +84,7 @@ public class MenuController {
 
     private void updateButtonSelection(Button button,PageEnum newPage,PageEnum pageEnum)
     {
-        if(newPage == null || pageEnum.equals(newPage))
+        if(pageEnum.equals(newPage))
             button.getStyleClass().add("highlight");
         else
             button.getStyleClass().remove("highlight");

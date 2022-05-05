@@ -21,7 +21,9 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class SceneHandler {
 
@@ -54,7 +56,9 @@ public class SceneHandler {
     }
 
     private <T> T loadRootFromFXML(String resourceName) {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(resourceName));
+        //in the docs it is stated that the resource bundle is cached,it is perfectly fine to call this method many times as needed
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("com.progetto.progetto.lang.film", StyleHandler.getInstance().getCurrentLanguage(),MainApplication.class.getClassLoader());
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(resourceName),resourceBundle);
         try {
             return fxmlLoader.load();
         } catch (IOException e) {
@@ -80,24 +84,23 @@ public class SceneHandler {
             return false;
 
         Parent newPage = loadRootFromFXML(page.getFxml());
+        newPage.requestFocus();
         menuPane.getChildren().add(newPage);
 
         if(currentPage == null) {
-            this.currentPageProperty.set(PageEnum.MAIN);
+            this.currentPageProperty.set(page);
             return true;
         }
         Node currentNode = menuPane.getChildren().get(0);
         int slideRightVal = page.ordinal() > currentPage.ordinal() ? -1 : 1;
 
         newPage.setTranslateX(stage.getWidth() * -slideRightVal);
-        Timeline timeline = new Timeline();
-        KeyValue keyValue = new KeyValue(newPage.translateXProperty(),0, Interpolator.EASE_IN);
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(450),keyValue);
-        KeyValue keyValue2 = new KeyValue(currentNode.translateXProperty(),stage.getWidth() * slideRightVal, Interpolator.EASE_IN);
-        KeyFrame keyFrame2 = new KeyFrame(Duration.millis(450),keyValue2);
+        KeyValue newPageKeyValue = new KeyValue(newPage.translateXProperty(),0, Interpolator.EASE_IN);
+        KeyFrame newPageKeyFrame = new KeyFrame(Duration.millis(450),newPageKeyValue);
+        KeyValue oldPageKeyValue = new KeyValue(currentNode.translateXProperty(),stage.getWidth() * slideRightVal, Interpolator.EASE_IN);
+        KeyFrame oldPageKeyFrame = new KeyFrame(Duration.millis(450),oldPageKeyValue);
 
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.getKeyFrames().add(keyFrame2);
+        Timeline timeline = new Timeline(newPageKeyFrame,oldPageKeyFrame);
         timeline.setOnFinished(event -> menuPane.getChildren().remove(0));
         timeline.play();
         currentPageProperty.set(page);
@@ -144,6 +147,16 @@ public class SceneHandler {
 
         this.menuPane = (StackPane) scene.lookup("#stackPane");
         this.loadPage(PageEnum.MAIN);
+    }
+
+    //this is used to reload all resources like the language resource bundle when locale is changed.
+    public void reloadApplication()
+    {
+        this.currentPageProperty.set(null);
+        Parent root = loadRootFromFXML("MenuView.fxml");
+        this.scene.setRoot(root);
+        this.menuPane = (StackPane) scene.lookup("#stackPane");
+        this.loadPage(PageEnum.SETTINGS);
     }
 
 

@@ -14,8 +14,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 //STYLE HANDLER CLASS written by Pierlugi, aka PierKnight
 //FOR the moment the config file is saved in the home folder inside a directory named "film_app"
@@ -29,6 +28,10 @@ public class StyleHandler {
 
     private StyleConfiguration styleConfiguration = new StyleConfiguration();
 
+    private Locale currentLanguage = Locale.ENGLISH;
+
+    //immutable list of supported languages
+    public final List<Locale> supportedLanguages = List.of(Locale.ENGLISH, Locale.ITALIAN);
 
     private StyleHandler() {
     }
@@ -43,10 +46,14 @@ public class StyleHandler {
             Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
             Properties properties = new Properties();
 
-            if (!Files.exists(filePath))
+            if (!Files.exists(filePath)) {
+                //Use system language if it is supported by the app
+                if (this.supportedLanguages.contains(Locale.getDefault()))
+                    this.currentLanguage = Locale.getDefault();
                 saveConfigurationOnFile(properties);
+            }
 
-            if(scene == null)
+            if (scene == null)
                 return;
 
             FileReader fileReader = new FileReader(filePath.toFile());
@@ -54,13 +61,14 @@ public class StyleHandler {
             this.styleConfiguration.dyslexic = properties.getProperty("use_dyslexic_font", "false").equals("true");
             this.styleConfiguration.foregroundColor = Color.web(properties.getProperty("primary_color", "0XFFFFFFFF"));
             this.styleConfiguration.backgroundColor = Color.web(properties.getProperty("secondary_color", "0XFFFFFFFF"));
-            this.styleConfiguration.textColor = Color.web(properties.getProperty("text_color","0X00000000"));
+            this.styleConfiguration.textColor = Color.web(properties.getProperty("text_color", "0X00000000"));
             this.styleConfiguration.styleMode = StyleMode.values()[Integer.parseInt(properties.getProperty("style_file", "0"))];
+
+            String localeTag = properties.getProperty("language");
+            if(localeTag != null)
+                this.setLanguage(Locale.forLanguageTag(localeTag));
+
             StyleHandler.getInstance().updateScene(scene);
-
-
-            //LOAD FONT FOR DYSLEXIC
-            //Font.loadFont(Objects.requireNonNull(MainApplication.class.getResource("fonts/OpenDyslexic3-Regular.ttf")).toExternalForm(),10);
 
         } catch (IOException e) {
         }
@@ -73,21 +81,9 @@ public class StyleHandler {
         return styleConfiguration;
     }
 
-    //this is called when we need to re-apply the style, in our cause this is called when a new scene is showed
-    //or when we change the style configurations in runtime.
-    public void updateScene(Scene scene) {
-        scene.getStylesheets().clear();
-        //ADD NEW CSS PATH
-        scene.getStylesheets().add(getCssPath(this.styleConfiguration.styleMode));
-
-        //--------dyslexic font----------
-        String dyslexic_style = Objects.requireNonNull(MainApplication.class.getResource("css/dyslexic.css")).toExternalForm();
-        if(this.styleConfiguration.dyslexic)
-            scene.getStylesheets().add(dyslexic_style);
-        else
-            scene.getStylesheets().remove(dyslexic_style);
+    public Locale getCurrentLanguage() {
+        return currentLanguage;
     }
-
 
     public void saveConfigurationOnFile(Properties properties) throws IOException {
         Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
@@ -96,9 +92,41 @@ public class StyleHandler {
         properties.setProperty("primary_color", this.styleConfiguration.foregroundColor.toString());
         properties.setProperty("secondary_color", this.styleConfiguration.backgroundColor.toString());
         properties.setProperty("text_color", this.styleConfiguration.textColor.toString());
+        properties.setProperty("language",this.getCurrentLanguage().toLanguageTag());
         properties.store(new FileWriter(filePath.toFile()), "FILM APP CONFIGURATION");
         saveCustomCSS();
     }
+
+    public boolean setLanguage(Locale locale) {
+        if (this.supportedLanguages.contains(locale)) {
+            this.currentLanguage = locale;
+            //this sets the interpreter language
+            //with this even java libraries display elements in the correct language
+            Locale.setDefault(locale);
+            return true;
+        }
+        return false;
+    }
+
+    //this is called when we need to re-apply the style, in our cause this is called when a new scene is showed
+    //or when we change the style configurations in runtime.
+    public void updateScene(Scene scene) {
+        if(scene == null)
+            return;
+
+        scene.getStylesheets().clear();
+
+        //--------dyslexic font----------
+        String dyslexic_style = Objects.requireNonNull(MainApplication.class.getResource("css/dyslexic.css")).toExternalForm();
+        if(this.styleConfiguration.dyslexic)
+            scene.getStylesheets().add(dyslexic_style);
+        else
+            scene.getStylesheets().remove(dyslexic_style);
+
+        //ADD NEW CSS PATH
+        scene.getStylesheets().add(getCssPath(this.styleConfiguration.styleMode));
+    }
+
     private void saveCustomCSS() throws IOException {
         URL cssCopy = Objects.requireNonNull(MainApplication.class.getResource("css/dark.css"));
 
