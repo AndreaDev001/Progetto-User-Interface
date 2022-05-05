@@ -47,6 +47,9 @@ public class SettingsController {
     private final StyleHandler styleHandler = StyleHandler.getInstance();
     private final StyleConfiguration styleConfig = styleHandler.getStyleConfiguration();
 
+    //used to represent the language combo box correctly
+    private final LocaleConverter localeConverter = new LocaleConverter();
+
 
     @FXML
     public void initialize()
@@ -66,17 +69,7 @@ public class SettingsController {
             this.languageBox.getItems().add(locale);
 
         //this is to represent the language name inside the language box
-        this.languageBox.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Locale object) {
-                return object.getDisplayName();
-            }
-
-            @Override
-            public Locale fromString(String string) {
-                return languageBox.getItems().stream().filter(loc -> loc.getDisplayName().equals(string)).findAny().orElse(null);
-            }
-        });
+        this.languageBox.setConverter(localeConverter);
 
         //update control values according to the config file
         this.foreground_color.setValue(this.styleConfig.foregroundColor);
@@ -137,6 +130,19 @@ public class SettingsController {
         } catch (IOException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    private class LocaleConverter extends StringConverter<Locale> {
+
+        @Override
+        public String toString(Locale object) {
+            return object.getDisplayName(object);
+        }
+
+        @Override
+        public Locale fromString(String string) {
+            return languageBox.getItems().stream().filter(loc -> loc.getDisplayName(loc).equals(string)).findAny().orElse(null);
         }
     }
 }
