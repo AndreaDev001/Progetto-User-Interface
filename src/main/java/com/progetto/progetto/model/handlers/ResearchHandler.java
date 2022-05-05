@@ -58,14 +58,15 @@ public class ResearchHandler
         this.currentFilterType = MovieFilterType.SINGLE_GENRE;
         this.updateValue(true,true);
     }
-    public void setCurrentFilterType(MovieFilterType currentFilterType) {
+    public void setCurrentFilterType(MovieFilterType currentFilterType,boolean update) {
         this.currentFilterType = currentFilterType;
-        this.updateValue(true,true);
+        if(update)
+           this.updateValue(true,true);
     }
-    public void setCurrentGenre(String currentGenre) {
+    public void setCurrentGenre(String currentGenre,boolean update) {
         this.currentGenre = currentGenre;
-        this.currentFilterType = MovieFilterType.SINGLE_GENRE;
-        this.updateValue(true,true);
+        if(update)
+           this.updateValue(true,true);
     }
     public void setCurrentText(String currentText) {
         this.currentFilterType = MovieFilterType.NAME;

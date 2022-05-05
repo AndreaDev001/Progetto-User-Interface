@@ -58,6 +58,10 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
+        advancedSearchButton.setOnAction((event) -> {
+            ResearchHandler.getInstance().setCurrentGenre(getMultipleGenres(),false);
+            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES,true);
+        });
         ResearchHandler.getInstance().addListener(this);
         ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
         if(ResearchHandler.getInstance().getCurrentText().isEmpty())
@@ -88,8 +92,7 @@ public class MainController implements IResearchListener
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase())));
         sortComboBox.getSelectionModel().select(2);
         genresComboBox.getSelectionModel().select(0);
-        genresComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem()));
-        advancedSearchButton.setOnAction((event) -> ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES));
+        genresComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem(),true));
         sortOrderComboBox.getSelectionModel().select(1);
         for(MovieListType movieListType : MovieListType.values())
         {
@@ -103,7 +106,6 @@ public class MainController implements IResearchListener
             genresComboBox.getItems().add(current);
             CheckBox checkBox = new CheckBox(current);
             checkBox.setLineSpacing(100);
-            checkBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
             checkBox.setTooltip(createToolTip("Add filter by" + " " + current + " " + "to advanced research"));
             checkBox.setAlignment(Pos.CENTER);
             checkBoxes.add(checkBox);

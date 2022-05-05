@@ -82,6 +82,8 @@ public class FilmHandler
     public List<MovieDb> makeSearch(String value, String language,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
         List<MovieDb> result = new ArrayList<>();
+        System.out.println("Current Filter:" + movieFilterType.toString());
+        System.out.println("Current Value:" + value);
         switch (movieFilterType)
         {
             case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,page).getResults();
