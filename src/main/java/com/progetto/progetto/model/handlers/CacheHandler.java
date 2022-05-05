@@ -41,7 +41,7 @@ public class CacheHandler {
     public VBox getFilmBox(Integer id,String title,String releaseDate,String language,String path)
     {
         VBox vBox = VBOX_CACHE.get(id);
-        releaseDate = releaseDate.isEmpty() ? "Coming soon" : releaseDate;
+        releaseDate = releaseDate == null || releaseDate.isEmpty() ? "Coming soon" : releaseDate;
         if(vBox == null)
         {
             Image image = getImage(path);

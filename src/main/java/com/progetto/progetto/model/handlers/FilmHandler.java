@@ -84,7 +84,7 @@ public class FilmHandler
         List<MovieDb> result = new ArrayList<>();
         switch (movieFilterType)
         {
-            case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,1).getResults();
+            case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,page).getResults();
             case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
             case MULTIPLE_GENRES -> {
                 String[] values = value.split(",");
@@ -103,13 +103,13 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,film not found");
         return result;
     }
+    public MovieDb getMovie(int id,String language)
+    {
+        return movies.getMovie(id,language, TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
+    }
     public String getPosterPath(MovieDb movieDb)
     {
         return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
-    }
-    public MovieDb getMovie(int id,String language)
-    {
-        return tmdbApi.getMovies().getMovie(id,language, TmdbMovies.MovieMethod.images);
     }
     public void selectFilm(int id,String language)
     {
