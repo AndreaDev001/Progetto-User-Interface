@@ -13,8 +13,9 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -50,16 +51,23 @@ public class MainController implements IResearchListener
     @FXML
     private Button advancedSearchButton;
 
-
     private final List<CheckBox> checkBoxes = new ArrayList<>();
     private List<MovieDb> currentLoaded = new ArrayList<>();
-    private final List<Integer> integerList = new ArrayList<>();
 
     @FXML
     private void initialize()
     {
         advancedSearchButton.setOnAction((event) -> {
-            ResearchHandler.getInstance().setCurrentGenre(getMultipleGenres(),false);
+            String value = getMultipleGenres();
+            if(value.isEmpty())
+                return;
+            sortOrderComboBox.setDisable(false);
+            sortComboBox.setDisable(false);
+            sortOrderComboBox.setTooltip(null);
+            sortComboBox.setTooltip(null);
+            searchField.clear();
+            searchField.setPromptText("Write a name");
+            ResearchHandler.getInstance().setCurrentGenre(value,false);
             ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES,true);
         });
         ResearchHandler.getInstance().addListener(this);
@@ -71,6 +79,10 @@ public class MainController implements IResearchListener
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
             if(e.getCode() != KeyCode.ENTER)
                 return;
+            clearCheckBoxes();
+            sortComboBox.setDisable(true);
+            sortOrderComboBox.setDisable(true);
+            genresComboBox.getSelectionModel().clearSelection();
             ResearchHandler.getInstance().setCurrentText(searchField.getText());
         });
         initBoxes();
@@ -84,6 +96,11 @@ public class MainController implements IResearchListener
         }
         this.searchField.setPromptText("Write a name");
     }
+    private void clearCheckBoxes()
+    {
+        for(CheckBox current : checkBoxes)
+            current.setSelected(false);
+    }
     private void initBoxes()
     {
         initDropdown(MovieSortType.values(),sortComboBox);
@@ -92,13 +109,25 @@ public class MainController implements IResearchListener
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase())));
         sortComboBox.getSelectionModel().select(2);
         genresComboBox.getSelectionModel().select(0);
-        genresComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem(),true));
+        genresComboBox.setOnAction((event) -> {
+            clearCheckBoxes();
+            searchField.clear();
+            searchField.setPromptText("Write a name");
+            sortComboBox.setDisable(false);
+            sortOrderComboBox.setDisable(false);
+            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE,false);
+            ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem(),true);
+        });
         sortOrderComboBox.getSelectionModel().select(1);
         for(MovieListType movieListType : MovieListType.values())
         {
             String value = movieListType.name().toLowerCase();
             Label label = new Label(value);
-            label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> ResearchHandler.getInstance().setCurrentListType(movieListType));
+            label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+                sortComboBox.setDisable(false);
+                sortOrderComboBox.setDisable(false);
+                ResearchHandler.getInstance().setCurrentListType(movieListType);
+            });
             listHolder.getChildren().add(label);
         }
         for(String current : FilmHandler.getInstance().getGenres())
@@ -113,7 +142,7 @@ public class MainController implements IResearchListener
         }
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
-        genresComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentGenre());
+        genresComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentFilterType() != MovieFilterType.MULTIPLE_GENRES ? ResearchHandler.getInstance().getCurrentGenre() : "");
     }
     private void createFilms(List<MovieDb> movieDbs)
     {
@@ -121,9 +150,6 @@ public class MainController implements IResearchListener
         {
             String path = FilmHandler.getInstance().getPosterPath(current);
             VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),current.getReleaseDate(),"en",path);
-            if(integerList.contains(current.getId()))
-                continue;
-            integerList.add(current.getId());
             flowPane.getChildren().add(vBox);
         }
     }
@@ -158,7 +184,6 @@ public class MainController implements IResearchListener
             e.printStackTrace();
         }
         flowPane.getChildren().clear();
-        integerList.clear();
         createFilms(movieDbs);
     }
     @FXML
@@ -189,14 +214,12 @@ public class MainController implements IResearchListener
         KeyFrame keyFrame = new KeyFrame(Duration.millis(450),keyValue);
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
-        integerList.clear();
         flowPane.getChildren().clear();
         currentLoaded = result;
         createFilms(currentLoaded);
     }
     @Override
     public void OnResearchFailed() {
-        integerList.clear();
         flowPane.getChildren().clear();
         VBox vBox = new VBox();
         Label label = new Label("Empty Set");

@@ -6,6 +6,8 @@ import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.model.MovieDb;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class ResearchHandler
 {
     private static ResearchHandler instance = new ResearchHandler();
+    private BooleanProperty booleanProperty = new SimpleBooleanProperty();
     private MovieListType currentListType = MovieListType.MOST_POPULAR;
     private MovieSortType currentSortType = MovieSortType.POPULARITY;
     private MovieSortOrder currentSortOrder = MovieSortOrder.DESC;
@@ -34,6 +37,7 @@ public class ResearchHandler
     {
         try
         {
+            booleanProperty.set(!currentText.isEmpty());
             List<MovieDb> result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType,"en") : FilmHandler.getInstance().makeSearch(currentText.isEmpty() ? currentGenre : currentText,"en",currentPage,currentSortType,currentFilterType,currentSortOrder);
             for(IResearchListener current : researchListeners)
                 current.OnResearchCompleted(result);
@@ -49,13 +53,15 @@ public class ResearchHandler
         this.updateValue(false,true);
     }
     public void setCurrentSortType(MovieSortType currentSortType) {
+        if(!currentText.isEmpty())
+            return;
         this.currentSortType = currentSortType;
-        this.currentFilterType = MovieFilterType.SINGLE_GENRE;
         this.updateValue(true,true);
     }
     public void setCurrentSortOrder(MovieSortOrder currentSortOrder) {
+        if(!currentText.isEmpty())
+            return;
         this.currentSortOrder = currentSortOrder;
-        this.currentFilterType = MovieFilterType.SINGLE_GENRE;
         this.updateValue(true,true);
     }
     public void setCurrentFilterType(MovieFilterType currentFilterType,boolean update) {
@@ -88,7 +94,9 @@ public class ResearchHandler
     public String getCurrentText() {return currentText;}
     public MovieSortType getCurrentSortType() {return currentSortType;}
     public MovieSortOrder getCurrentSortOrder() {return currentSortOrder;}
+    public MovieFilterType getCurrentFilterType() {return currentFilterType;}
     public MovieListType getCurrentListType() {return currentListType;}
     public String getCurrentGenre() {return currentGenre;}
+    public final BooleanProperty getBooleanProperty() {return booleanProperty;}
     public static ResearchHandler getInstance() {return instance;}
 }
