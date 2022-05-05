@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -71,6 +73,14 @@ public class CacheHandler {
                 FilmHandler.getInstance().selectFilm(id,language);
                 SceneHandler.getInstance().loadFilmScene();
             });
+            vBox.addEventHandler(KeyEvent.KEY_PRESSED,(e) ->
+            {
+                if(e.getCode() == KeyCode.ENTER) {
+                    FilmHandler.getInstance().selectFilm(id, language);
+                    SceneHandler.getInstance().loadFilmScene();
+                }
+            });
+            vBox.setFocusTraversable(true);
             VBOX_CACHE.put(id,vBox);
         }
         return vBox;
