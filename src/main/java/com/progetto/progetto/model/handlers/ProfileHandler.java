@@ -4,10 +4,13 @@ import com.progetto.progetto.model.records.StyleConfiguration;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.ITaskResult;
 import com.progetto.progetto.model.sql.SQLGetter;
+import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.StyleMode;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
@@ -30,14 +33,13 @@ public class ProfileHandler {
         return instance;
     }
 
-    private ObjectProperty<User> loggedUser = new SimpleObjectProperty<>(null);
-
+    private final ReadOnlyObjectWrapper<User> loggedUserProperty = new ReadOnlyObjectWrapper<>(null);
     public boolean login(String username, String password, boolean bypass) {
 
         if (bypass)
             return true;
 
-        if (loggedUser != null)
+        if (loggedUserProperty.get() != null)
             return false;
 
         try {
@@ -45,7 +47,7 @@ public class ProfileHandler {
             if (result.next()) {
                 String dbPassword = result.getString(2);
                 if (BCrypt.checkpw(password,dbPassword)) {
-                    this.loggedUser.set(new User(username));
+                    this.loggedUserProperty.set(new User(username));
                     return true;
                 }
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Password", Alert.AlertType.ERROR);
@@ -60,8 +62,8 @@ public class ProfileHandler {
     }
 
     public boolean logout() {
-        if (this.loggedUser.get() != null) {
-            this.loggedUser.set(null);
+        if (this.loggedUserProperty.get() != null) {
+            this.loggedUserProperty.set(null);
             return true;
         }
         return false;
@@ -85,8 +87,8 @@ public class ProfileHandler {
         return false;
     }
 
-    public ObjectProperty<User> getLoggedUser() {
-        return this.loggedUser;
+    public ReadOnlyObjectProperty<User> getLoggedUser() {
+        return this.loggedUserProperty.getReadOnlyProperty();
     }
 
 

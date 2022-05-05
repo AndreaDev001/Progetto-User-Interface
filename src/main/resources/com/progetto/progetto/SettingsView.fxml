@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -15,11 +16,11 @@
 
 <BorderPane nodeOrientation="LEFT_TO_RIGHT" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
    <center>
-      <AnchorPane minHeight="0.0" minWidth="300.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorPane">
+      <AnchorPane styleClass="anchorPane">
          <children>
             <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <content>
-                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" spacing="30.0" styleClass="background">
+                  <VBox alignment="TOP_CENTER" spacing="30.0" styleClass="background">
                      <children>
                         <VBox spacing="10.0">
                            <children>
@@ -66,6 +67,7 @@
                            <tooltip>
                               <Tooltip text="Text will be formatted to be more comfortable to dyslexic users, no underlined text" />
                            </tooltip></CheckBox>
+                        <ComboBox fx:id="languageBox" promptText="Select Language" />
                      </children>
                      <padding>
                         <Insets left="10.0" top="10.0" />

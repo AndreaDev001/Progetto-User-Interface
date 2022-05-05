@@ -1,11 +1,9 @@
 package com.progetto.progetto.controller;
 
 import com.progetto.progetto.model.handlers.ProfileHandler;
+import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -48,7 +46,6 @@ public class RegisterController {
         {
             //close current stage
             this.registerButton.getScene().getWindow().hide();
-            SceneHandler.getInstance().loadMainScene();
         }
     }
 
