@@ -78,4 +78,9 @@ public class CacheHandler {
         }
         return vBox;
     }
+    public void reset()
+    {
+        IMAGE_CACHE.clear();
+        VBOX_CACHE.clear();
+    }
 }

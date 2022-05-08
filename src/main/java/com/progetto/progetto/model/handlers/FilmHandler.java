@@ -44,11 +44,15 @@ public class FilmHandler
         }
         if(movieDbs == null || movieDbs.getResults().size() == 0)
             throw new FilmNotFoundException("An error has occured,result is empty");
-        List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         List<MovieDb> result = new ArrayList<>(movieDbs.getResults());
+        return result;
+    }
+    public void updateGenres()
+    {
+        stringGenreMap.clear();
+        List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         for(Genre current : genres)
             stringGenreMap.put(current.getName(),current);
-        return result;
     }
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType)
     {

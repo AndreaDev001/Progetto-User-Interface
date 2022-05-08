@@ -5,10 +5,12 @@ import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.handlers.*;
+import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.model.records.Library;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
 import info.movito.themoviedbapi.model.MovieDb;
+import javafx.animation.TranslateTransition;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -62,6 +64,8 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
+        CacheHandler.getInstance().reset();
+        FilmHandler.getInstance().updateGenres();
         loadNextPageButton.setTooltip(createToolTip("Load Next Page"));
         loadNextPageButton.setGraphic(new FontIcon("fas-arrow-right"));
         loadNextPageButton.setOnAction(event -> loadNext(true));
@@ -236,9 +240,9 @@ public class MainController implements IResearchListener
             currentGenre.setWrapText(true);
             currentSortType.setWrapText(true);
             currentSortOrder.setWrapText(true);
-            currentGenre.getStyleClass().add("test");
-            currentSortType.getStyleClass().add("test");
-            currentSortOrder.getStyleClass().add("test");
+            currentGenre.getStyleClass().add("showCurrent");
+            currentSortType.getStyleClass().add("showCurrent");
+            currentSortOrder.getStyleClass().add("showCurrent");
             showCurrentHolder.getChildren().addAll(currentGenre,currentSortType,currentSortOrder);
         }
         else
