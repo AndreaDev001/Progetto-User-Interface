@@ -13,10 +13,11 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <children>
-            <Button mnemonicParsing="false" onAction="#onHomePressed" text="Home" />
+            <Button fx:id="homeButton" mnemonicParsing="false" onAction="#onHomePressed" text="Home" />
             <Button fx:id="libraryButton" mnemonicParsing="false" onAction="#onLibraryPressed" text="Library" />
-            <Button mnemonicParsing="false" onAction="#onSettingsPressed" text="Settings" />
-            <Button mnemonicParsing="false" onAction="#onLoginPressed" text="Login" />
+            <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#onSettingsPressed" text="Settings" />
+            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLoginPressed" text="Login" />
+            <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#onLogoutPressed" text="Logout" />
          </children>
       </HBox>
    </top>

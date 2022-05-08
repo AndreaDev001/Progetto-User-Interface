@@ -15,6 +15,26 @@
     -fx-text-fill: -text-color;
     -fx-focus-color: transparent;
 }
+
+
+.button:armed
+{
+    -fx-background-color: derive(-text-foreground-color,15%);;
+}
+
+.button:focused,
+.text-field:focused,
+.radio-button:focused,
+.combo-box:focused,
+.check-box:focused,
+.card:focused,
+.highlight
+{
+    -fx-font-weight: bold;
+    -fx-border-color: derive(-text-color, -10%);
+    -fx-border-radius: 1px;
+}
+
 .titled-pane
 {
    -fx-font-size: 12px;
@@ -68,10 +88,12 @@
   -fx-border-width: 1px;
   -fx-background-radius: 10px;
 }
+.header-panel,
 .background
 {
     -fx-background-color: -text-background-color;
 }
+.dialog-pane,
 .foreground
 {
     -fx-background-color: derive(-text-foreground-color,-30%);

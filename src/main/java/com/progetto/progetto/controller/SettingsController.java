@@ -10,8 +10,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 public class SettingsController {
@@ -25,7 +27,6 @@ public class SettingsController {
     @FXML
     private RadioButton lightModeToggle;
 
-
     @FXML
     private ColorPicker background_color;
 
@@ -37,6 +38,9 @@ public class SettingsController {
 
     @FXML
     private CheckBox dyslexicCheckBox;
+
+    @FXML
+    private ComboBox<Locale> languageBox;
 
     private ToggleGroup toggleGroup;
 
@@ -57,10 +61,29 @@ public class SettingsController {
         this.foreground_color.disableProperty().bind(this.customModeToggle.selectedProperty().not());
         this.text_color.disableProperty().bind(this.customModeToggle.selectedProperty().not());
 
+        //setup possible languages in the combo box
+        for(Locale locale : styleHandler.supportedLanguages)
+            this.languageBox.getItems().add(locale);
+
+        //this is to represent the language name inside the language box
+        this.languageBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Locale object) {
+                return object.getDisplayName();
+            }
+
+            @Override
+            public Locale fromString(String string) {
+                return languageBox.getItems().stream().filter(loc -> loc.getDisplayName().equals(string)).findAny().orElse(null);
+            }
+        });
+
+        //update control values according to the config file
         this.foreground_color.setValue(this.styleConfig.foregroundColor);
         this.background_color.setValue(this.styleConfig.backgroundColor);
         this.text_color.setValue(this.styleConfig.textColor);
         this.dyslexicCheckBox.setSelected(this.styleConfig.dyslexic);
+        this.languageBox.setValue(styleHandler.getCurrentLanguage());
 
 
         this.lightModeToggle.setSelected(styleConfig.styleMode == StyleMode.LIGHT);
@@ -83,10 +106,20 @@ public class SettingsController {
         this.background_color.valueProperty().addListener((observableValue, aBoolean, t1) -> saveConfigurationAndUpdate());
         this.text_color.valueProperty().addListener((observableValue, aBoolean, t1) -> saveConfigurationAndUpdate());
 
+        //update language
+        this.languageBox.valueProperty().addListener((observable, oldValue, newValue) ->
+        {
+            this.saveConfigurationAndUpdate();
+            SceneHandler.getInstance().reloadApplication();
+        });
+
+
 
     }
 
 
+    //I preferred using this method since if We need to update via a button we can simply call this
+    /** save current settings inside the config file and in the style handler*/
     private void saveConfigurationAndUpdate()
     {
         try
@@ -97,8 +130,9 @@ public class SettingsController {
             this.styleConfig.backgroundColor = this.background_color.getValue();
             this.styleConfig.textColor = this.text_color.getValue();
             this.styleConfig.dyslexic = this.dyslexicCheckBox.isSelected();
-            styleHandler.saveConfigurationOnFile(new Properties());
-            styleHandler.updateScene(this.background_color.getScene());
+            this.styleHandler.setLanguage(this.languageBox.getValue());
+            this.styleHandler.updateScene(this.background_color.getScene());
+            this.styleHandler.saveConfigurationOnFile(new Properties());
 
         } catch (IOException e)
         {
