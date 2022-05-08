@@ -9,12 +9,7 @@ import com.progetto.progetto.model.records.Library;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -50,6 +45,16 @@ public class MainController implements IResearchListener
     private ComboBox<String> genresComboBox = new ComboBox<>();
     @FXML
     private Button advancedSearchButton;
+    @FXML
+    private TitledPane first;
+    @FXML
+    private TitledPane second;
+    @FXML
+    private Button loadPreviousPageButton;
+    @FXML
+    private Button loadNextPageButton;
+    @FXML
+    private VBox showCurrentHolder;
 
     private final List<CheckBox> checkBoxes = new ArrayList<>();
     private List<MovieDb> currentLoaded = new ArrayList<>();
@@ -57,16 +62,19 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
+        loadNextPageButton.setTooltip(createToolTip("Load Next Page"));
+        loadNextPageButton.setGraphic(new FontIcon("fas-arrow-right"));
+        loadNextPageButton.setOnAction(event -> loadNext(true));
+        loadPreviousPageButton.setTooltip(createToolTip("Load Previous Page"));
+        loadPreviousPageButton.setGraphic(new FontIcon("fas-arrow-left"));
+        loadPreviousPageButton.setOnAction(event -> loadNext(false));
         advancedSearchButton.setOnAction((event) -> {
             String value = getMultipleGenres();
             if(value.isEmpty())
                 return;
-            sortOrderComboBox.setDisable(false);
-            sortComboBox.setDisable(false);
-            sortOrderComboBox.setTooltip(null);
-            sortComboBox.setTooltip(null);
-            searchField.clear();
+            searchField.setText("");
             searchField.setPromptText("Write a name");
+            genresComboBox.getSelectionModel().clearSelection();
             ResearchHandler.getInstance().setCurrentGenre(value,false);
             ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES,true);
         });
@@ -80,11 +88,11 @@ public class MainController implements IResearchListener
             if(e.getCode() != KeyCode.ENTER)
                 return;
             clearCheckBoxes();
-            sortComboBox.setDisable(true);
-            sortOrderComboBox.setDisable(true);
             genresComboBox.getSelectionModel().clearSelection();
             ResearchHandler.getInstance().setCurrentText(searchField.getText());
         });
+        first.expandedProperty().addListener((observableValue, aBoolean, t1) -> {if(observableValue.getValue().booleanValue()) second.setExpanded(false);});
+        second.expandedProperty().addListener((observableValue, aBoolean, t1) -> {if(observableValue.getValue().booleanValue()) first.setExpanded(false);});
         initBoxes();
     }
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values,ComboBox<String> comboBox)
@@ -110,13 +118,15 @@ public class MainController implements IResearchListener
         sortComboBox.getSelectionModel().select(2);
         genresComboBox.getSelectionModel().select(0);
         genresComboBox.setOnAction((event) -> {
+            if(genresComboBox.getValue() == null || genresComboBox.getValue().isEmpty())
+                return;
             clearCheckBoxes();
-            searchField.clear();
+            searchField.setText("");
             searchField.setPromptText("Write a name");
             sortComboBox.setDisable(false);
             sortOrderComboBox.setDisable(false);
-            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE,false);
-            ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem(),true);
+            ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem(),false);
+            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE,true);
         });
         sortOrderComboBox.getSelectionModel().select(1);
         for(MovieListType movieListType : MovieListType.values())
@@ -186,15 +196,9 @@ public class MainController implements IResearchListener
         flowPane.getChildren().clear();
         createFilms(movieDbs);
     }
-    @FXML
-    private void loadPreviousPage()
+    private void loadNext(boolean positive)
     {
-        ResearchHandler.getInstance().updateCurrentPage(false);
-    }
-    @FXML
-    private void loadNextPage()
-    {
-        ResearchHandler.getInstance().updateCurrentPage(true);
+        ResearchHandler.getInstance().updateCurrentPage(positive);
     }
     private Tooltip createToolTip(String value)
     {
@@ -208,15 +212,43 @@ public class MainController implements IResearchListener
     }
     @Override
     public void OnResearchCompleted(List<MovieDb> result) {
-        flowPane.setTranslateY(-1000);
-        Timeline timeline = new Timeline();
-        KeyValue keyValue = new KeyValue(flowPane.translateYProperty(),0,Interpolator.EASE_IN);
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(450),keyValue);
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.play();
         flowPane.getChildren().clear();
         currentLoaded = result;
         createFilms(currentLoaded);
+        showCurrentHolder.getChildren().clear();
+        if(ResearchHandler.getInstance().getCurrentListType() != null)
+        {
+            Label currentList = new Label("List:" + ResearchHandler.getInstance().getCurrentListType().getName());
+            currentList.setAlignment(Pos.CENTER);
+            currentList.setWrapText(true);
+            currentList.setWrapText(true);
+            currentList.getStyleClass().add("test");
+            showCurrentHolder.getChildren().add(currentList);
+        }
+        else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
+        {
+            Label currentGenre = new Label(ResearchHandler.getInstance().getCurrentGenre() == null || ResearchHandler.getInstance().getCurrentGenre().isEmpty() ? "" : "Filtred by genre:" + ResearchHandler.getInstance().getCurrentGenre());
+            Label currentSortType = new Label(ResearchHandler.getInstance().getCurrentSortType() == null ? "" : "Sorted by:" + ResearchHandler.getInstance().getCurrentSortType().getName());
+            Label currentSortOrder = new Label(ResearchHandler.getInstance().getCurrentSortOrder() == null ? "" : "Sort order:" + ResearchHandler.getInstance().getCurrentSortOrder().getName());
+            currentGenre.setAlignment(Pos.CENTER);
+            currentSortType.setAlignment(Pos.CENTER);
+            currentSortOrder.setAlignment(Pos.CENTER);
+            currentGenre.setWrapText(true);
+            currentSortType.setWrapText(true);
+            currentSortOrder.setWrapText(true);
+            currentGenre.getStyleClass().add("test");
+            currentSortType.getStyleClass().add("test");
+            currentSortOrder.getStyleClass().add("test");
+            showCurrentHolder.getChildren().addAll(currentGenre,currentSortType,currentSortOrder);
+        }
+        else
+        {
+            Label currentText = new Label("Search:" + ResearchHandler.getInstance().getCurrentText());
+            currentText.setAlignment(Pos.CENTER);
+            currentText.setWrapText(true);
+            currentText.getStyleClass().add("test");
+            showCurrentHolder.getChildren().add(currentText);
+        }
     }
     @Override
     public void OnResearchFailed() {

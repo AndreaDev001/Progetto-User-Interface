@@ -6,16 +6,12 @@ import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ResearchHandler
 {
-    private static ResearchHandler instance = new ResearchHandler();
-    private BooleanProperty booleanProperty = new SimpleBooleanProperty();
+    private static final ResearchHandler instance = new ResearchHandler();
     private MovieListType currentListType = MovieListType.MOST_POPULAR;
     private MovieSortType currentSortType = MovieSortType.POPULARITY;
     private MovieSortOrder currentSortOrder = MovieSortOrder.DESC;
@@ -37,8 +33,7 @@ public class ResearchHandler
     {
         try
         {
-            booleanProperty.set(!currentText.isEmpty());
-            List<MovieDb> result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType,"en") : FilmHandler.getInstance().makeSearch(currentText.isEmpty() ? currentGenre : currentText,"en",currentPage,currentSortType,currentFilterType,currentSortOrder);
+            List<MovieDb> result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType,"en") : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? currentGenre : currentText,"en",currentPage,currentSortType,currentFilterType,currentSortOrder);
             for(IResearchListener current : researchListeners)
                 current.OnResearchCompleted(result);
         }
@@ -97,6 +92,5 @@ public class ResearchHandler
     public MovieFilterType getCurrentFilterType() {return currentFilterType;}
     public MovieListType getCurrentListType() {return currentListType;}
     public String getCurrentGenre() {return currentGenre;}
-    public final BooleanProperty getBooleanProperty() {return booleanProperty;}
     public static ResearchHandler getInstance() {return instance;}
 }
