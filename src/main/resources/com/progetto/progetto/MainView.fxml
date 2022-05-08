@@ -23,12 +23,12 @@
                <children>
                   <VBox prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TitledPane fx:id="first" text="Search">
+                        <TitledPane fx:id="first" text="%searchTilted.name">
                            <content>
                               <VBox alignment="CENTER">
                                  <children>
                                     <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                                    <TitledPane text="List">
+                                    <TitledPane text="%listTilted.name">
                                        <content>
                                           <VBox fx:id="listHolder" spacing="5.0" />
                                        </content>
@@ -40,11 +40,11 @@
                               </VBox>
                            </content>
                         </TitledPane>
-                        <TitledPane fx:id="second" expanded="false" layoutX="20.0" layoutY="20.0" text="Filters">
+                        <TitledPane fx:id="second" expanded="false" layoutX="20.0" layoutY="20.0" text="%filterTilted.name">
                            <content>
                               <VBox fx:id="sortingHolder" alignment="CENTER" spacing="5.0">
                                  <children>
-                                    <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="Sort by">
+                                    <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="%sortByCombo.name">
                                        <font>
                                           <Font name="System Bold" size="17.0" />
                                        </font>
@@ -61,7 +61,7 @@
                                           <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
                                        </children>
                                     </VBox>
-                                    <TitledPane expanded="false" text="Advanced">
+                                    <TitledPane expanded="false" text="%advancedTilted.name">
                                        <content>
                                           <VBox fx:id="advancedHolder" spacing="5.0">
                                              <children>

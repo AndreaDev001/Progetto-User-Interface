@@ -185,7 +185,7 @@ public class MainController implements IResearchListener
             ResultSet query = SQLGetter.getInstance().makeQuery("SELECT filmId FROM LIBRARY-FILM WHERE libraryId=?", library.id());
             while (query.next()) {
                 int filmId = query.getInt(1);
-                MovieDb current = FilmHandler.getInstance().getMovie(filmId, "en");
+                MovieDb current = FilmHandler.getInstance().getMovie(filmId);
                 movieDbs.add(current);
             }
         }

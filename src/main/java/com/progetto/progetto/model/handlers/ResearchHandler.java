@@ -33,7 +33,7 @@ public class ResearchHandler
     {
         try
         {
-            List<MovieDb> result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType,"en") : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? currentGenre : currentText,"en",currentPage,currentSortType,currentFilterType,currentSortOrder);
+            List<MovieDb> result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? currentGenre : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
             for(IResearchListener current : researchListeners)
                 current.OnResearchCompleted(result);
         }

@@ -70,15 +70,8 @@ public class CacheHandler {
             vBox.getChildren().add(titleLabel);
             vBox.getChildren().add(releaseDateLabel);
             vBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-                FilmHandler.getInstance().selectFilm(id,language);
+                FilmHandler.getInstance().selectFilm(id);
                 SceneHandler.getInstance().loadFilmScene();
-            });
-            vBox.addEventHandler(KeyEvent.KEY_PRESSED,(e) ->
-            {
-                if(e.getCode() == KeyCode.ENTER) {
-                    FilmHandler.getInstance().selectFilm(id, language);
-                    SceneHandler.getInstance().loadFilmScene();
-                }
             });
             vBox.setFocusTraversable(true);
             VBOX_CACHE.put(id,vBox);

@@ -6,6 +6,7 @@ import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
+import com.progetto.progetto.view.StyleHandler;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
@@ -32,18 +33,18 @@ public class FilmHandler
         movies = tmdbApi.getMovies();
         defaultPath = "https://image.tmdb.org/t/p/w500";
     }
-    public List<MovieDb> getMovies(int page, MovieListType movieListType,String language) throws FilmNotFoundException
+    public List<MovieDb> getMovies(int page, MovieListType movieListType) throws FilmNotFoundException
     {
         MovieResultsPage movieDbs = null;
         switch (movieListType)
         {
-            case MOST_POPULAR ->  movieDbs = movies.getPopularMovies(language,page);
-            case UPCOMING_MOVIES -> movieDbs = movies.getUpcoming(language,page,null);
-            case TOP_RATED_MOVIES -> movieDbs = movies.getTopRatedMovies(language,page);
+            case MOST_POPULAR ->  movieDbs = movies.getPopularMovies(StyleHandler.getInstance().getCurrentLanguage().toString(),page);
+            case UPCOMING_MOVIES -> movieDbs = movies.getUpcoming(StyleHandler.getInstance().getCurrentLanguage().toString(),page,null);
+            case TOP_RATED_MOVIES -> movieDbs = movies.getTopRatedMovies(StyleHandler.getInstance().getCurrentLanguage().toString(),page);
         }
         if(movieDbs == null || movieDbs.getResults().size() == 0)
             throw new FilmNotFoundException("An error has occured,result is empty");
-        List<Genre> genres = tmdbApi.getGenre().getGenreList(language);
+        List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         List<MovieDb> result = new ArrayList<>(movieDbs.getResults());
         for(Genre current : genres)
             stringGenreMap.put(current.getName(),current);
@@ -79,13 +80,13 @@ public class FilmHandler
         }
         return result;
     }
-    public List<MovieDb> makeSearch(String value, String language,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
+    public List<MovieDb> makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
         List<MovieDb> result = new ArrayList<>();
         switch (movieFilterType)
         {
-            case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,language,false,page).getResults();
-            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
+            case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,StyleHandler.getInstance().getCurrentLanguage().toString(),false,page).getResults();
+            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
             case MULTIPLE_GENRES -> {
                 String[] values = value.split(",");
                 StringBuilder builder = new StringBuilder();
@@ -96,26 +97,28 @@ public class FilmHandler
                     if(i != values.length - 1)
                         builder.append(",");
                 }
-                result =  tmdbApi.getDiscover().getDiscover(page,language,movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,builder.toString(),"","","","","").getResults();
+                result =  tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,builder.toString(),"","","","","").getResults();
             }
         }
         if(result == null || result.isEmpty())
             throw new FilmNotFoundException("An error has occured,film not found");
         return result;
     }
-    public MovieDb getMovie(int id,String language)
-    {
-        return movies.getMovie(id,language, TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
-    }
     public String getPosterPath(MovieDb movieDb)
     {
         return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
     }
-    public void selectFilm(int id,String language)
+    public MovieDb getMovie(int filmId) {
+        return movies.getMovie(filmId,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
+    }
+    public void selectFilm(int id)
     {
-        this.currentSelectedFilm = movies.getMovie(id,language, TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
+        this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
     }
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
-    public Set<String> getGenres() {return stringGenreMap.keySet();}
+    public Set<String> getGenres() {
+        return stringGenreMap.keySet();
+    }
     public static FilmHandler getInstance() {return instance;}
+
 }
