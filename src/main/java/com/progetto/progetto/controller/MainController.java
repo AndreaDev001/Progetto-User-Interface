@@ -29,8 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainController implements IResearchListener
-{
+public class MainController implements IResearchListener {
     @FXML
     private VBox listHolder;
     @FXML
@@ -62,8 +61,7 @@ public class MainController implements IResearchListener
     private List<MovieDb> currentLoaded = new ArrayList<>();
 
     @FXML
-    private void initialize()
-    {
+    private void initialize() {
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
         loadNextPageButton.setTooltip(createToolTip("Load Next Page"));
@@ -74,68 +72,70 @@ public class MainController implements IResearchListener
         loadPreviousPageButton.setOnAction(event -> loadNext(false));
         advancedSearchButton.setOnAction((event) -> {
             String value = getMultipleGenres();
-            if(value.isEmpty())
+            if (value.isEmpty())
                 return;
             searchField.setText("");
             searchField.setPromptText("Write a name");
             genresComboBox.getSelectionModel().clearSelection();
-            ResearchHandler.getInstance().setCurrentGenre(value,false);
-            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES,true);
+            ResearchHandler.getInstance().setCurrentMultipleGenre(getMultipleGenres(),false);
+            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES, true);
         });
         ResearchHandler.getInstance().addListener(this);
         ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
-        if(ResearchHandler.getInstance().getCurrentText().isEmpty())
+        if (ResearchHandler.getInstance().getCurrentText().isEmpty())
             this.searchField.setPromptText("Write a name");
         else
             this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
-        this.searchField.addEventHandler(KeyEvent.KEY_PRESSED,(e) -> {
-            if(e.getCode() != KeyCode.ENTER)
+        this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+            if (e.getCode() != KeyCode.ENTER)
                 return;
             clearCheckBoxes();
             genresComboBox.getSelectionModel().clearSelection();
             ResearchHandler.getInstance().setCurrentText(searchField.getText());
         });
-        first.expandedProperty().addListener((observableValue, aBoolean, t1) -> {if(observableValue.getValue().booleanValue()) second.setExpanded(false);});
-        second.expandedProperty().addListener((observableValue, aBoolean, t1) -> {if(observableValue.getValue().booleanValue()) first.setExpanded(false);});
+        first.expandedProperty().addListener((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) second.setExpanded(false);
+        });
+        second.expandedProperty().addListener((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) first.setExpanded(false);
+        });
         initBoxes();
     }
-    private <T extends Enum<T>> void initDropdown(Enum<T>[] values,ComboBox<String> comboBox)
-    {
-        for(Enum<T> current : values)
-        {
+
+    private <T extends Enum<T>> void initDropdown(Enum<T>[] values, ComboBox<String> comboBox) {
+        for (Enum<T> current : values) {
             String value = current.toString().toLowerCase();
             comboBox.getItems().add(value);
         }
         this.searchField.setPromptText("Write a name");
     }
-    private void clearCheckBoxes()
-    {
-        for(CheckBox current : checkBoxes)
+
+    private void clearCheckBoxes() {
+        for (CheckBox current : checkBoxes)
             current.setSelected(false);
     }
-    private void initBoxes()
-    {
-        initDropdown(MovieSortType.values(),sortComboBox);
-        initDropdown(MovieSortOrder.values(),sortOrderComboBox);
+
+    private void initBoxes() {
+        initDropdown(MovieSortType.values(), sortComboBox);
+        initDropdown(MovieSortOrder.values(), sortOrderComboBox);
         sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase())));
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase())));
         sortComboBox.getSelectionModel().select(2);
         genresComboBox.getSelectionModel().select(0);
         genresComboBox.setOnAction((event) -> {
-            if(genresComboBox.getValue() == null || genresComboBox.getValue().isEmpty())
+            if (genresComboBox.getValue() == null || genresComboBox.getValue().isEmpty())
                 return;
             clearCheckBoxes();
             searchField.setText("");
             searchField.setPromptText("Write a name");
             sortComboBox.setDisable(false);
             sortOrderComboBox.setDisable(false);
-            ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedItem(),false);
-            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE,true);
+            ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedIndex(), false);
+            ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE, true);
         });
         sortOrderComboBox.getSelectionModel().select(1);
-        for(MovieListType movieListType : MovieListType.values())
-        {
-            String value = movieListType.name().toLowerCase();
+        for (MovieListType movieListType : MovieListType.values()) {
+            String value = movieListType.getName().toLowerCase();
             Label label = new Label(value);
             label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
                 sortComboBox.setDisable(false);
@@ -144,8 +144,7 @@ public class MainController implements IResearchListener
             });
             listHolder.getChildren().add(label);
         }
-        for(String current : FilmHandler.getInstance().getGenres())
-        {
+        for (String current : FilmHandler.getInstance().getGenres()) {
             genresComboBox.getItems().add(current);
             CheckBox checkBox = new CheckBox(current);
             checkBox.setLineSpacing(100);
@@ -156,29 +155,29 @@ public class MainController implements IResearchListener
         }
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
-        genresComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentFilterType() != MovieFilterType.MULTIPLE_GENRES ? ResearchHandler.getInstance().getCurrentGenre() : "");
+        genresComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentFilterType() != MovieFilterType.MULTIPLE_GENRES ? FilmHandler.getInstance().getGenres().get(ResearchHandler.getInstance().getCurrentGenre()) : "");
     }
-    private void createFilms(List<MovieDb> movieDbs)
-    {
-        for(MovieDb current : movieDbs)
-        {
+
+    private void createFilms(List<MovieDb> movieDbs) {
+        for (MovieDb current : movieDbs) {
             String path = FilmHandler.getInstance().getPosterPath(current);
-            VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(),current.getTitle(),current.getReleaseDate(),"en",path);
+            VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(), current.getTitle(), current.getReleaseDate(), "en", path);
             flowPane.getChildren().add(vBox);
         }
     }
-    private String getMultipleGenres()
-    {
+
+    private String getMultipleGenres() {
         StringBuilder stringBuilder = new StringBuilder();
-        for(CheckBox current : checkBoxes)
+        for(int i = 0;i < checkBoxes.size();i++)
         {
+            CheckBox current = checkBoxes.get(i);
             if(current.isSelected())
-                stringBuilder.append(current.getText()).append(",");
+                stringBuilder.append(String.valueOf(i)).append(",");
         }
         return stringBuilder.toString();
     }
-    private void loadLibrary()
-    {
+
+    private void loadLibrary() {
         User user = ProfileHandler.getInstance().getLoggedUser().get();
         Library library = null;
         List<MovieDb> movieDbs = new ArrayList<>();
@@ -192,20 +191,18 @@ public class MainController implements IResearchListener
                 MovieDb current = FilmHandler.getInstance().getMovie(filmId);
                 movieDbs.add(current);
             }
-        }
-        catch (SQLException | NullPointerException e)
-        {
+        } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
         }
         flowPane.getChildren().clear();
         createFilms(movieDbs);
     }
-    private void loadNext(boolean positive)
-    {
+
+    private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
-    private Tooltip createToolTip(String value)
-    {
+
+    private Tooltip createToolTip(String value) {
         Tooltip result = new Tooltip(value);
         result.setTextAlignment(TextAlignment.CENTER);
         result.setWrapText(true);
@@ -214,46 +211,34 @@ public class MainController implements IResearchListener
         result.setHideDelay(duration);
         return result;
     }
+    private Label createCurrentLabel(String fieldName,String value)
+    {
+        Label result = new Label(fieldName + ":" + value);
+        result.setAlignment(Pos.CENTER);
+        result.setWrapText(true);
+        result.getStyleClass().add("showCurrent");
+        return result;
+    }
     @Override
     public void OnResearchCompleted(List<MovieDb> result) {
         flowPane.getChildren().clear();
         currentLoaded = result;
         createFilms(currentLoaded);
         showCurrentHolder.getChildren().clear();
-        if(ResearchHandler.getInstance().getCurrentListType() != null)
-        {
-            Label currentList = new Label("List:" + ResearchHandler.getInstance().getCurrentListType().getName());
-            currentList.setAlignment(Pos.CENTER);
-            currentList.setWrapText(true);
-            currentList.setWrapText(true);
-            currentList.getStyleClass().add("test");
+        if (ResearchHandler.getInstance().getCurrentListType() != null) {
+            Label currentList = createCurrentLabel("List",ResearchHandler.getInstance().getCurrentListType().getName());
             showCurrentHolder.getChildren().add(currentList);
-        }
-        else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
-        {
-            Label currentGenre = new Label(ResearchHandler.getInstance().getCurrentGenre() == null || ResearchHandler.getInstance().getCurrentGenre().isEmpty() ? "" : "Filtred by genre:" + ResearchHandler.getInstance().getCurrentGenre());
-            Label currentSortType = new Label(ResearchHandler.getInstance().getCurrentSortType() == null ? "" : "Sorted by:" + ResearchHandler.getInstance().getCurrentSortType().getName());
-            Label currentSortOrder = new Label(ResearchHandler.getInstance().getCurrentSortOrder() == null ? "" : "Sort order:" + ResearchHandler.getInstance().getCurrentSortOrder().getName());
-            currentGenre.setAlignment(Pos.CENTER);
-            currentSortType.setAlignment(Pos.CENTER);
-            currentSortOrder.setAlignment(Pos.CENTER);
-            currentGenre.setWrapText(true);
-            currentSortType.setWrapText(true);
-            currentSortOrder.setWrapText(true);
-            currentGenre.getStyleClass().add("showCurrent");
-            currentSortType.getStyleClass().add("showCurrent");
-            currentSortOrder.getStyleClass().add("showCurrent");
-            showCurrentHolder.getChildren().addAll(currentGenre,currentSortType,currentSortOrder);
-        }
-        else
-        {
-            Label currentText = new Label("Search:" + ResearchHandler.getInstance().getCurrentText());
-            currentText.setAlignment(Pos.CENTER);
-            currentText.setWrapText(true);
-            currentText.getStyleClass().add("test");
+        } else if (ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty()) {
+            Label currentGenre = ResearchHandler.getInstance().getCurrentGenre() < 0 ? new Label("") : createCurrentLabel("Filtered by",FilmHandler.getInstance().getGenres().get(ResearchHandler.getInstance().getCurrentGenre()));
+            Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createCurrentLabel("Sorted by",ResearchHandler.getInstance().getCurrentSortType().getName());
+            Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createCurrentLabel("Sort order",ResearchHandler.getInstance().getCurrentSortOrder().getName());
+            showCurrentHolder.getChildren().addAll(currentGenre, currentSortType, currentSortOrder);
+        } else {
+            Label currentText = createCurrentLabel("Search:",ResearchHandler.getInstance().getCurrentText());
             showCurrentHolder.getChildren().add(currentText);
         }
     }
+
     @Override
     public void OnResearchFailed() {
         flowPane.getChildren().clear();

@@ -20,6 +20,7 @@ public class FilmHandler
 {
     private static final FilmHandler instance = new FilmHandler();
     private final Map<String,Genre> stringGenreMap = new HashMap<>();
+    private List<Genre> genres = new ArrayList<>();
     private final TmdbApi tmdbApi;
     private final TmdbMovies movies;
     private final String defaultPath;
@@ -44,8 +45,7 @@ public class FilmHandler
         }
         if(movieDbs == null || movieDbs.getResults().size() == 0)
             throw new FilmNotFoundException("An error has occured,result is empty");
-        List<MovieDb> result = new ArrayList<>(movieDbs.getResults());
-        return result;
+        return movieDbs.getResults();
     }
     public void updateGenres()
     {
@@ -53,6 +53,7 @@ public class FilmHandler
         List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         for(Genre current : genres)
             stringGenreMap.put(current.getName(),current);
+        this.genres = genres;
     }
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType)
     {
@@ -90,13 +91,13 @@ public class FilmHandler
         switch (movieFilterType)
         {
             case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,StyleHandler.getInstance().getCurrentLanguage().toString(),false,page).getResults();
-            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(stringGenreMap.get(value).getId()),"","","","","").getResults();
+            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType != null ? movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase() : "",false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(this.genres.get(Integer.parseInt(value)).getId()),"","","","","").getResults();
             case MULTIPLE_GENRES -> {
                 String[] values = value.split(",");
                 StringBuilder builder = new StringBuilder();
                 for(int i = 0;i < values.length;i++)
                 {
-                    int id = stringGenreMap.get(values[i]).getId();
+                    int id = genres.get(i).getId();
                     builder.append(id);
                     if(i != values.length - 1)
                         builder.append(",");
@@ -120,8 +121,11 @@ public class FilmHandler
         this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
     }
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
-    public Set<String> getGenres() {
-        return stringGenreMap.keySet();
+    public List <String> getGenres() {
+        List<String> values = new ArrayList<>();
+        for(Genre current : genres)
+            values.add(current.getName());
+        return values;
     }
     public static FilmHandler getInstance() {return instance;}
 
