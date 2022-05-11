@@ -6,6 +6,8 @@ import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.core.MovieResultsPage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class ResearchHandler
     private String currentMultipleGenre;
     private String currentText = "";
     private int currentPage = 1;
-    private int value = 0;
+    private int currentMaxPage = 1;
     private final List<IResearchListener> researchListeners = new ArrayList<>();
 
     private ResearchHandler()
@@ -38,9 +40,10 @@ public class ResearchHandler
             String value = String.valueOf(currentGenre);
             if(currentFilterType == MovieFilterType.MULTIPLE_GENRES)
                 value = currentMultipleGenre;
-            List<MovieDb> result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? value : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
+            MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? value : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
+            currentMaxPage = result.getTotalPages() - 1;
             for(IResearchListener current : researchListeners)
-                current.OnResearchCompleted(result);
+                current.OnResearchCompleted(result.getResults());
         }
         catch (FilmNotFoundException exception)
         {
@@ -94,14 +97,18 @@ public class ResearchHandler
     }
     public void updateCurrentPage(boolean positive)
     {
-        currentPage = positive ? currentPage + 1 : currentPage - 1;
+        currentPage = positive ? (currentPage + 1) % currentMaxPage : currentPage - 1;
+        currentPage = Math.max(currentPage,1);
+        System.out.println(currentPage);
         this.search(currentListType != null);
     }
-    public String getCurrentText() {return currentText;}
-    public MovieSortType getCurrentSortType() {return currentSortType;}
-    public MovieSortOrder getCurrentSortOrder() {return currentSortOrder;}
-    public MovieFilterType getCurrentFilterType() {return currentFilterType;}
-    public MovieListType getCurrentListType() {return currentListType;}
-    public int getCurrentGenre() {return currentGenre;}
+    public final String getCurrentText() {return currentText;}
+    public final MovieSortType getCurrentSortType() {return currentSortType;}
+    public final MovieSortOrder getCurrentSortOrder() {return currentSortOrder;}
+    public final MovieFilterType getCurrentFilterType() {return currentFilterType;}
+    public final MovieListType getCurrentListType() {return currentListType;}
+    public final int getCurrentGenre() {return currentGenre;}
+    public final int getCurrentPage() {return currentPage;}
+    public final int getCurrentMaxPage() {return currentMaxPage;}
     public static ResearchHandler getInstance() {return instance;}
 }

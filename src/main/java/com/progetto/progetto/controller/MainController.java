@@ -56,9 +56,13 @@ public class MainController implements IResearchListener {
     private Button loadNextPageButton;
     @FXML
     private VBox showCurrentHolder;
+    @FXML
+    private Label currentPageLabel;
+    @FXML
+    private Label maxPageLabel;
 
     private final List<CheckBox> checkBoxes = new ArrayList<>();
-    private List<MovieDb> currentLoaded = new ArrayList<>();
+    private static List<MovieDb> currentLoaded = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -224,6 +228,8 @@ public class MainController implements IResearchListener {
         flowPane.getChildren().clear();
         currentLoaded = result;
         createFilms(currentLoaded);
+        currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
+        maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
         showCurrentHolder.getChildren().clear();
         if (ResearchHandler.getInstance().getCurrentListType() != null) {
             Label currentList = createCurrentLabel("List",ResearchHandler.getInstance().getCurrentListType().getName());
