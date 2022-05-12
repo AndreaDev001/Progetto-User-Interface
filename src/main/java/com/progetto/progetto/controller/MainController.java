@@ -5,12 +5,13 @@ import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.handlers.*;
-import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.model.records.Library;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
+import com.progetto.progetto.view.nodes.FilmCard;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -62,12 +63,14 @@ public class MainController implements IResearchListener {
     private Label maxPageLabel;
 
     private final List<CheckBox> checkBoxes = new ArrayList<>();
-    private static List<MovieDb> currentLoaded = new ArrayList<>();
+    private static final BooleanProperty disableSorting = new SimpleBooleanProperty();
 
     @FXML
     private void initialize() {
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
+        sortComboBox.disableProperty().bind(disableSorting);
+        sortOrderComboBox.disableProperty().bind(disableSorting);
         loadNextPageButton.setTooltip(createToolTip("Load Next Page"));
         loadNextPageButton.setGraphic(new FontIcon("fas-arrow-right"));
         loadNextPageButton.setOnAction(event -> loadNext(true));
@@ -95,6 +98,7 @@ public class MainController implements IResearchListener {
                 return;
             clearCheckBoxes();
             genresComboBox.getSelectionModel().clearSelection();
+            disableSorting.set(false);
             ResearchHandler.getInstance().setCurrentText(searchField.getText());
         });
         first.expandedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -113,12 +117,10 @@ public class MainController implements IResearchListener {
         }
         this.searchField.setPromptText("Write a name");
     }
-
     private void clearCheckBoxes() {
         for (CheckBox current : checkBoxes)
             current.setSelected(false);
     }
-
     private void initBoxes() {
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
@@ -132,8 +134,7 @@ public class MainController implements IResearchListener {
             clearCheckBoxes();
             searchField.setText("");
             searchField.setPromptText("Write a name");
-            sortComboBox.setDisable(false);
-            sortOrderComboBox.setDisable(false);
+            disableSorting.set(false);
             ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedIndex(), false);
             ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE, true);
         });
@@ -142,8 +143,8 @@ public class MainController implements IResearchListener {
             String value = movieListType.getName().toLowerCase();
             Label label = new Label(value);
             label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-                sortComboBox.setDisable(false);
-                sortOrderComboBox.setDisable(false);
+                disableSorting.set(false);
+                genresComboBox.getSelectionModel().clearSelection();
                 ResearchHandler.getInstance().setCurrentListType(movieListType);
             });
             listHolder.getChildren().add(label);
@@ -164,23 +165,20 @@ public class MainController implements IResearchListener {
 
     private void createFilms(List<MovieDb> movieDbs) {
         for (MovieDb current : movieDbs) {
-            String path = FilmHandler.getInstance().getPosterPath(current);
-            VBox vBox = CacheHandler.getInstance().getFilmBox(current.getId(), current.getTitle(), current.getReleaseDate(), "en", path);
-            flowPane.getChildren().add(vBox);
+            FilmCard filmCard = CacheHandler.getInstance().getFilmBox(current);
+            flowPane.getChildren().add(filmCard);
         }
     }
-
     private String getMultipleGenres() {
         StringBuilder stringBuilder = new StringBuilder();
         for(int i = 0;i < checkBoxes.size();i++)
         {
             CheckBox current = checkBoxes.get(i);
             if(current.isSelected())
-                stringBuilder.append(String.valueOf(i)).append(",");
+                stringBuilder.append(i).append(",");
         }
         return stringBuilder.toString();
     }
-
     private void loadLibrary() {
         User user = ProfileHandler.getInstance().getLoggedUser().get();
         Library library = null;
@@ -201,11 +199,9 @@ public class MainController implements IResearchListener {
         flowPane.getChildren().clear();
         createFilms(movieDbs);
     }
-
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
-
     private Tooltip createToolTip(String value) {
         Tooltip result = new Tooltip(value);
         result.setTextAlignment(TextAlignment.CENTER);
@@ -226,36 +222,45 @@ public class MainController implements IResearchListener {
     @Override
     public void OnResearchCompleted(List<MovieDb> result) {
         flowPane.getChildren().clear();
-        currentLoaded = result;
-        createFilms(currentLoaded);
+        createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
+        showCurrent();
+    }
+    private void showCurrent()
+    {
         showCurrentHolder.getChildren().clear();
-        if (ResearchHandler.getInstance().getCurrentListType() != null) {
+        if(ResearchHandler.getInstance().getCurrentListType() != null)
+        {
             Label currentList = createCurrentLabel("List",ResearchHandler.getInstance().getCurrentListType().getName());
             showCurrentHolder.getChildren().add(currentList);
-        } else if (ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty()) {
+            disableSorting.set(true);
+        } else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
+        {
             Label currentGenre = ResearchHandler.getInstance().getCurrentGenre() < 0 ? new Label("") : createCurrentLabel("Filtered by",FilmHandler.getInstance().getGenres().get(ResearchHandler.getInstance().getCurrentGenre()));
             Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createCurrentLabel("Sorted by",ResearchHandler.getInstance().getCurrentSortType().getName());
             Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createCurrentLabel("Sort order",ResearchHandler.getInstance().getCurrentSortOrder().getName());
             showCurrentHolder.getChildren().addAll(currentGenre, currentSortType, currentSortOrder);
-        } else {
+        }
+        else
+        {
             Label currentText = createCurrentLabel("Search:",ResearchHandler.getInstance().getCurrentText());
             showCurrentHolder.getChildren().add(currentText);
         }
     }
-
     @Override
-    public void OnResearchFailed() {
+    public void OnResearchFailed()
+    {
         flowPane.getChildren().clear();
+        showCurrent();
         VBox vBox = new VBox();
         Label label = new Label("Empty Set");
         label.setStyle("-fx-font-size: 30px;-fx-font-weight: bold");
         Button button = new Button("Back to Home");
         button.setStyle("-fx-padding: 10px 10px");
         button.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            flowPane.getChildren().clear();
-            createFilms(currentLoaded);
+            ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
+            disableSorting.set(false);
         });
         vBox.getChildren().add(label);
         vBox.getChildren().add(button);
