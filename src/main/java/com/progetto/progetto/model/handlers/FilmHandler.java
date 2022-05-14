@@ -19,7 +19,6 @@ import java.util.*;
 public class FilmHandler
 {
     private static final FilmHandler instance = new FilmHandler();
-    private final Map<String,Genre> stringGenreMap = new HashMap<>();
     private List<Genre> genres = new ArrayList<>();
     private final TmdbApi tmdbApi;
     private final TmdbMovies movies;
@@ -49,10 +48,7 @@ public class FilmHandler
     }
     public void updateGenres()
     {
-        stringGenreMap.clear();
         List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
-        for(Genre current : genres)
-            stringGenreMap.put(current.getName(),current);
         this.genres = genres;
     }
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType)

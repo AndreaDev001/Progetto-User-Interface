@@ -8,7 +8,9 @@ import com.progetto.progetto.model.handlers.*;
 import com.progetto.progetto.model.records.Library;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
+import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.nodes.FilmCard;
+import com.progetto.progetto.view.nodes.FilmContainer;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,6 +31,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class MainController implements IResearchListener {
     @FXML
@@ -36,7 +39,7 @@ public class MainController implements IResearchListener {
     @FXML
     private VBox advancedHolder;
     @FXML
-    private FlowPane flowPane;
+    private ScrollPane scrollPane;
     @FXML
     private TextField searchField;
     @FXML
@@ -82,7 +85,7 @@ public class MainController implements IResearchListener {
             if (value.isEmpty())
                 return;
             searchField.setText("");
-            searchField.setPromptText("Write a name");
+            searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
             genresComboBox.getSelectionModel().clearSelection();
             ResearchHandler.getInstance().setCurrentMultipleGenre(getMultipleGenres(),false);
             ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.MULTIPLE_GENRES, true);
@@ -90,7 +93,7 @@ public class MainController implements IResearchListener {
         ResearchHandler.getInstance().addListener(this);
         ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
         if (ResearchHandler.getInstance().getCurrentText().isEmpty())
-            this.searchField.setPromptText("Write a name");
+            this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
         else
             this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
@@ -112,10 +115,10 @@ public class MainController implements IResearchListener {
 
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values, ComboBox<String> comboBox) {
         for (Enum<T> current : values) {
-            String value = current.toString().toLowerCase();
+            String value = StyleHandler.getInstance().getResourceBundle().getString(current.toString() + ".name");
             comboBox.getItems().add(value);
         }
-        this.searchField.setPromptText("Write a name");
+        this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
     }
     private void clearCheckBoxes() {
         for (CheckBox current : checkBoxes)
@@ -124,8 +127,8 @@ public class MainController implements IResearchListener {
     private void initBoxes() {
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
-        sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.valueOf(sortComboBox.getSelectionModel().getSelectedItem().toUpperCase())));
-        sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.valueOf(sortOrderComboBox.getSelectionModel().getSelectedItem().toUpperCase())));
+        sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.values()[sortComboBox.getSelectionModel().getSelectedIndex()]));
+        sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
         sortComboBox.getSelectionModel().select(2);
         genresComboBox.getSelectionModel().select(0);
         genresComboBox.setOnAction((event) -> {
@@ -140,7 +143,7 @@ public class MainController implements IResearchListener {
         });
         sortOrderComboBox.getSelectionModel().select(1);
         for (MovieListType movieListType : MovieListType.values()) {
-            String value = movieListType.getName().toLowerCase();
+            String value = movieListType.getLocalizedName();
             Label label = new Label(value);
             label.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
                 disableSorting.set(false);
@@ -164,10 +167,8 @@ public class MainController implements IResearchListener {
     }
 
     private void createFilms(List<MovieDb> movieDbs) {
-        for (MovieDb current : movieDbs) {
-            FilmCard filmCard = CacheHandler.getInstance().getFilmBox(current);
-            flowPane.getChildren().add(filmCard);
-        }
+        FilmContainer filmContainer = new FilmContainer(movieDbs);
+        scrollPane.setContent(filmContainer);
     }
     private String getMultipleGenres() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -196,7 +197,7 @@ public class MainController implements IResearchListener {
         } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
         }
-        flowPane.getChildren().clear();
+        scrollPane.setContent(null);
         createFilms(movieDbs);
     }
     private void loadNext(boolean positive) {
@@ -221,7 +222,7 @@ public class MainController implements IResearchListener {
     }
     @Override
     public void OnResearchCompleted(List<MovieDb> result) {
-        flowPane.getChildren().clear();
+        scrollPane.setContent(null);
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
@@ -232,28 +233,29 @@ public class MainController implements IResearchListener {
         showCurrentHolder.getChildren().clear();
         if(ResearchHandler.getInstance().getCurrentListType() != null)
         {
-            Label currentList = createCurrentLabel("List",ResearchHandler.getInstance().getCurrentListType().getName());
+            Label currentList = createCurrentLabel(StyleHandler.getInstance().getResourceBundle().getString("currentList.name"),ResearchHandler.getInstance().getCurrentListType().getLocalizedName());
             showCurrentHolder.getChildren().add(currentList);
             disableSorting.set(true);
         } else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
         {
-            Label currentGenre = ResearchHandler.getInstance().getCurrentGenre() < 0 ? new Label("") : createCurrentLabel("Filtered by",FilmHandler.getInstance().getGenres().get(ResearchHandler.getInstance().getCurrentGenre()));
-            Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createCurrentLabel("Sorted by",ResearchHandler.getInstance().getCurrentSortType().getName());
-            Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createCurrentLabel("Sort order",ResearchHandler.getInstance().getCurrentSortOrder().getName());
+            Label currentGenre = ResearchHandler.getInstance().getCurrentGenre() < 0 ? new Label("") : createCurrentLabel(StyleHandler.getInstance().getResourceBundle().getString("currentGenre.name"),FilmHandler.getInstance().getGenres().get(ResearchHandler.getInstance().getCurrentGenre()));
+            Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createCurrentLabel(StyleHandler.getInstance().getResourceBundle().getString("currentSort.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortType().toString() + ".name"));
+            Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createCurrentLabel(StyleHandler.getInstance().getResourceBundle().getString("currentOrder.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortOrder().toString() + ".name"));
             showCurrentHolder.getChildren().addAll(currentGenre, currentSortType, currentSortOrder);
         }
         else
         {
-            Label currentText = createCurrentLabel("Search:",ResearchHandler.getInstance().getCurrentText());
+            Label currentText = createCurrentLabel(StyleHandler.getInstance().getResourceBundle().getString("currentSearch.name"),ResearchHandler.getInstance().getCurrentText());
             showCurrentHolder.getChildren().add(currentText);
         }
     }
     @Override
     public void OnResearchFailed()
     {
-        flowPane.getChildren().clear();
+        scrollPane.setContent(null);
         showCurrent();
         VBox vBox = new VBox();
+        vBox.getStyleClass().add("background");
         Label label = new Label("Empty Set");
         label.setStyle("-fx-font-size: 30px;-fx-font-weight: bold");
         Button button = new Button("Back to Home");
@@ -264,6 +266,6 @@ public class MainController implements IResearchListener {
         });
         vBox.getChildren().add(label);
         vBox.getChildren().add(button);
-        flowPane.getChildren().add(vBox);
+        scrollPane.setContent(vBox);
     }
 }

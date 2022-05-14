@@ -41,7 +41,7 @@ public class ResearchHandler
             if(currentFilterType == MovieFilterType.MULTIPLE_GENRES)
                 value = currentMultipleGenre;
             MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? value : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
-            currentMaxPage = result.getTotalPages();
+            currentMaxPage = Math.max(1,result.getTotalPages());
             for(IResearchListener current : researchListeners)
                 current.OnResearchCompleted(result.getResults());
         }
