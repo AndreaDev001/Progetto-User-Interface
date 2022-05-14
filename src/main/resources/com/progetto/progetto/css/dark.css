@@ -5,18 +5,20 @@
     -text-foreground-color: rgb(60,60,60);
     -combo-foreground-color: derive(-text-foreground-color,-30%);
 }
+.showCurrent
+{
+   -fx-font-weight: 300;
+   -fx-font-size: 14px;
+}
 *
 {
     -fx-text-fill: -text-color;
     -fx-focus-color: transparent;
 }
-
-
 .button:armed
 {
     -fx-background-color: derive(-text-foreground-color,15%);;
 }
-
 .button:focused,
 .text-field:focused,
 .radio-button:focused,
@@ -64,6 +66,17 @@
     -fx-font-size: 16px;
     -fx-background-color: -text-foreground-color;
 }
+.check-box .box {
+-fx-background-color: -text-foreground-color;
+-fx-border-radius: 3px;
+}
+.check-box:selected .mark {
+-fx-background-color: white;
+}
+.check-box:selected .box {
+-fx-border-color: -text-color;
+-fx-background-color: -text-background-color;
+}
 .card
 {
   -fx-cursor: hand;
@@ -82,7 +95,6 @@
 {
     -fx-background-color: derive(-text-foreground-color,-30%);
 }
-
 .card
 {
     -fx-background-color: derive(-text-foreground-color,-30%);

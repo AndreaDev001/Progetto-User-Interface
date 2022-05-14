@@ -17,48 +17,64 @@
 
 <BorderPane nodeOrientation="LEFT_TO_RIGHT" style="-fx-border-width: 0px;" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MainController">
    <center>
-      <SplitPane dividerPositions="0.5" style="-fx-box-border: transparent;" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5" style="-fx-box-border: transparent;" styleClass="background" BorderPane.alignment="CENTER">
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
                <children>
                   <VBox prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                        <TitledPane text="List">
+                        <TitledPane fx:id="first" text="%searchTilted.name">
                            <content>
-                              <VBox fx:id="listHolder" spacing="5.0" />
+                              <VBox alignment="CENTER">
+                                 <children>
+                                    <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
+                                    <TitledPane text="%listTilted.name">
+                                       <content>
+                                          <VBox fx:id="listHolder" spacing="5.0" />
+                                       </content>
+                                    </TitledPane>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </VBox>
                            </content>
                         </TitledPane>
-                        <VBox fx:id="sortingHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="5.0">
-                           <children>
-                              <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="Sort by">
-                                 <font>
-                                    <Font name="System Bold" size="17.0" />
-                                 </font>
-                              </Label>
-                              <ComboBox fx:id="sortComboBox" prefWidth="150.0" />
-                              <ComboBox fx:id="sortOrderComboBox" layoutX="10.0" layoutY="39.0" prefWidth="150.0" />
-                           </children>
-                        </VBox>
-                        <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
-                           <children>
-                              <Label fx:id="expandCategories" maxWidth="1.7976931348623157E308" text="Filters" wrapText="true">
-                                 <font>
-                                    <Font name="System Bold" size="17.0" />
-                                 </font>
-                              </Label>
-                              <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
-                           </children>
-                        </VBox>
-                        <TitledPane expanded="false" text="Advanced">
+                        <TitledPane fx:id="second" expanded="false" layoutX="20.0" layoutY="20.0" text="%filterTilted.name">
                            <content>
-                              <VBox fx:id="advancedHolder" spacing="5.0">
+                              <VBox fx:id="sortingHolder" alignment="CENTER" spacing="5.0">
                                  <children>
-                                    <Button fx:id="advancedSearchButton" mnemonicParsing="false" text="Search" />
+                                    <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="%sortByCombo.name">
+                                       <font>
+                                          <Font name="System Bold" size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="sortComboBox" prefWidth="150.0" />
+                                    <ComboBox fx:id="sortOrderComboBox" layoutX="10.0" layoutY="39.0" prefWidth="150.0" />
+                                    <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
+                                       <children>
+                                          <Label fx:id="expandCategories" maxWidth="1.7976931348623157E308" text="%genreCombo.name" wrapText="true">
+                                             <font>
+                                                <Font name="System Bold" size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
+                                       </children>
+                                    </VBox>
+                                    <TitledPane expanded="false" text="%advancedTilted.name">
+                                       <content>
+                                          <VBox fx:id="advancedHolder" spacing="5.0">
+                                             <children>
+                                                <Button fx:id="advancedSearchButton" mnemonicParsing="false" text="Search" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
                                  </children>
                               </VBox>
                            </content>
                         </TitledPane>
+                        <VBox fx:id="showCurrentHolder" alignment="BOTTOM_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -69,31 +85,45 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0">
+            <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
                <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <content>
-                        <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="background" vgap="5.0">
+                  <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" VBox.vgrow="ALWAYS">
+                           <content>
+                              <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="background" vgap="5.0">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </FlowPane>
+                           </content>
+                        </ScrollPane>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                 <children>
+                                    <Label fx:id="currentPageLabel" text="CurrentPage" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="currentPageLabel1" layoutX="10.0" layoutY="10.0" text="/" />
+                                    <Label fx:id="maxPageLabel" text="MaxPage" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="81.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="loadPreviousPageButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" />
+                                    <Button fx:id="loadNextPageButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="162.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0" spacing="5.0" />
+                           </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
-                        </FlowPane>
-                     </content>
-                  </ScrollPane>
+                        </HBox>
+                     </children>
+                  </VBox>
                </children>
             </AnchorPane>
          </items>
       </SplitPane>
    </center>
-   <bottom>
-      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="10.0" spacing="5.0" style="-fx-background-color: rgba(0,0,0,0); -fx-background: transparent;" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-         <children>
-            <Button layoutX="125.0" layoutY="20.0" mnemonicParsing="false" onAction="#loadPreviousPage" text="Previous Page" />
-            <Button mnemonicParsing="false" onAction="#loadNextPage" text="Next Page" />
-         </children>
-      </HBox>
-   </bottom>
 </BorderPane>

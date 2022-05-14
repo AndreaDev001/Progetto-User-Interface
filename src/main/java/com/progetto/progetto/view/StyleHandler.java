@@ -31,7 +31,7 @@ public class StyleHandler {
     private Locale currentLanguage = Locale.ENGLISH;
 
     //immutable list of supported languages
-    public final List<Locale> supportedLanguages = List.of(Locale.ENGLISH, Locale.ITALIAN);
+    public final List<Locale> supportedLanguages = List.of(Locale.ENGLISH, Locale.ITALIAN,Locale.GERMAN,Locale.FRENCH,Locale.forLanguageTag("es"));
 
     private StyleHandler() {
     }
@@ -80,7 +80,9 @@ public class StyleHandler {
             styleConfiguration = new StyleConfiguration();
         return styleConfiguration;
     }
-
+    public ResourceBundle getResourceBundle() {
+        return ResourceBundle.getBundle("com.progetto.progetto.lang.film",currentLanguage,MainApplication.class.getClassLoader());
+    }
     public Locale getCurrentLanguage() {
         return currentLanguage;
     }
@@ -153,8 +155,6 @@ public class StyleHandler {
         }
         return getCssPath(StyleMode.DARK);
     }
-
-
     private String getFolderPath()
     {
         return System.getProperty("user.home") + File.separator + ".film_app";

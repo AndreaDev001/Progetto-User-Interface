@@ -24,7 +24,7 @@
                      <children>
                         <VBox spacing="10.0">
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxWidth="1.7976931348623157E308" text="Application Color Mode" wrapText="true">
+                              <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxWidth="1.7976931348623157E308" text="%applicationColor.name" wrapText="true">
                                  <font>
                                     <Font size="21.0" />
                                  </font>
@@ -32,18 +32,18 @@
                                     <Tooltip text="In this section you can select your preferred style mode!" />
                                  </tooltip>
                               </Label>
-                              <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="Light Mode">
+                              <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="%lightMode.name">
                                  <tooltip>
                                     <Tooltip text="The Classic LightMode" />
                                  </tooltip></RadioButton>
-                              <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="Dark Mode">
+                              <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="%darkMode.name">
                                  <tooltip>
                                     <Tooltip text="This is especially useful during night" />
 
                                  </tooltip></RadioButton>
                               <HBox alignment="CENTER_LEFT" spacing="30.0" VBox.vgrow="NEVER">
                                  <children>
-                                    <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="Custom Mode">
+                                    <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="%costumMode.name">
                                        <tooltip>
                                           <Tooltip text="Here You can use a custom color pattern! " />
                                        </tooltip></RadioButton>
@@ -63,7 +63,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <CheckBox fx:id="dyslexicCheckBox" mnemonicParsing="false" text="Use dyslexic font">
+                        <CheckBox fx:id="dyslexicCheckBox" mnemonicParsing="false" text="%dyslexicMode.name">
                            <tooltip>
                               <Tooltip text="Text will be formatted to be more comfortable to dyslexic users, no underlined text" />
                            </tooltip></CheckBox>
