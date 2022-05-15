@@ -89,7 +89,7 @@
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" VBox.vgrow="ALWAYS">
                            <content>
                               <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="background" vgap="5.0">
                                  <padding>
