@@ -1,17 +1,8 @@
 package com.progetto.progetto.model.handlers;
 
-import com.progetto.progetto.view.SceneHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import com.progetto.progetto.view.nodes.FilmCard;
+import info.movito.themoviedbapi.model.MovieDb;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +17,7 @@ public class CacheHandler {
 
     //THIS IS THE MEMORY CACHE
     private final Map<String, Image> IMAGE_CACHE = new HashMap<>();
-    private final Map<Integer, VBox> VBOX_CACHE = new HashMap<>();
+    private final Map<MovieDb, FilmCard> CARD_CACHE = new HashMap<>();
 
 
     public Image getImage(String url)
@@ -40,49 +31,19 @@ public class CacheHandler {
         }
         return image;
     }
-    public VBox getFilmBox(Integer id,String title,String releaseDate,String language,String path)
+    public FilmCard getFilmBox(MovieDb id)
     {
-        VBox vBox = VBOX_CACHE.get(id);
-        releaseDate = releaseDate.isEmpty() ? "Coming soon" : releaseDate;
-        if(vBox == null)
+        FilmCard card = CARD_CACHE.get(id);
+        if(card == null)
         {
-            Image image = getImage(path);
-            ImageView imageView = new ImageView(image);
-            Label titleLabel = new Label(title);
-            Label releaseDateLabel = new Label(releaseDate);
-            vBox = new VBox();
-            vBox.setAlignment(Pos.CENTER);
-            vBox.setPrefWidth(30);
-            vBox.setPrefHeight(30);
-            vBox.setMinWidth(Region.USE_COMPUTED_SIZE);
-            vBox.setMinHeight(Region.USE_COMPUTED_SIZE);
-            vBox.setMaxWidth(Region.USE_COMPUTED_SIZE);
-            vBox.setMaxHeight(Region.USE_COMPUTED_SIZE);
-            vBox.setFillWidth(true);
-            titleLabel.getStyleClass().add("card-label");
-            releaseDateLabel.getStyleClass().add("card-label");
-            imageView.setFitWidth(135);
-            imageView.setPreserveRatio(false);
-            imageView.setSmooth(true);
-            imageView.setFitHeight(150);
-            vBox.getStyleClass().add("card");
-            vBox.getChildren().add(imageView);
-            vBox.getChildren().add(titleLabel);
-            vBox.getChildren().add(releaseDateLabel);
-            vBox.addEventHandler(MouseEvent.MOUSE_CLICKED,(e) -> {
-                FilmHandler.getInstance().selectFilm(id,language);
-                SceneHandler.getInstance().loadFilmScene();
-            });
-            vBox.addEventHandler(KeyEvent.KEY_PRESSED,(e) ->
-            {
-                if(e.getCode() == KeyCode.ENTER) {
-                    FilmHandler.getInstance().selectFilm(id, language);
-                    SceneHandler.getInstance().loadFilmScene();
-                }
-            });
-            vBox.setFocusTraversable(true);
-            VBOX_CACHE.put(id,vBox);
+            card = new FilmCard(id);
+            CARD_CACHE.put(id,card);
         }
-        return vBox;
+        return card;
+    }
+    public void reset()
+    {
+        IMAGE_CACHE.clear();
+        CARD_CACHE.clear();
     }
 }

@@ -4,6 +4,7 @@ module com.progetto.progetto {
     requires themoviedbapi;
     requires java.sql;
     requires spring.security.crypto;
+    requires org.kordamp.ikonli.javafx;
 
 
     opens com.progetto.progetto to javafx.fxml;

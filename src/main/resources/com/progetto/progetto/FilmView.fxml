@@ -97,7 +97,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add to library">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%addToLibrary.name">
                            <font>
                               <Font size="14.0" />
                            </font>
