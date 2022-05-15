@@ -5,6 +5,11 @@
     -text-foreground-color: rgb(60,60,60);
     -combo-foreground-color: derive(-text-foreground-color,-30%);
 }
+.test
+{
+   -fx-background-color: -text-background-color;
+   -fx-padding: 5px 5px;
+}
 .showCurrent
 {
    -fx-font-weight: 300;

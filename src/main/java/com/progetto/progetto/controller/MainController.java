@@ -136,7 +136,7 @@ public class MainController implements IResearchListener {
                 return;
             clearCheckBoxes();
             searchField.setText("");
-            searchField.setPromptText("Write a name");
+            searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
             disableSorting.set(false);
             ResearchHandler.getInstance().setCurrentGenre(genresComboBox.getSelectionModel().getSelectedIndex(), false);
             ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.SINGLE_GENRE, true);

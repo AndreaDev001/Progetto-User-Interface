@@ -6,7 +6,8 @@ public enum MovieSortType
     RELEASE_DATE ("release date"),
     POPULARITY ("popularity"),
     VOTE_AVERAGE ("vote average"),
-    VOTE_COUNT ("vote count");
+    VOTE_COUNT ("vote count"),
+    REVENUE("revenue");
 
     private final String name;
     MovieSortType(String name) {this.name = name;}
