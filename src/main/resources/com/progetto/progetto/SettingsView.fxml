@@ -1,81 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.progetto.progetto.view.ColorBarPicker?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane nodeOrientation="LEFT_TO_RIGHT" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
+<BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="405.0" prefWidth="660.0" styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.SettingsController">
    <center>
       <AnchorPane styleClass="anchorPane">
-         <children>
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <content>
-                  <VBox alignment="TOP_CENTER" spacing="30.0" styleClass="background">
-                     <children>
-                        <VBox spacing="10.0">
-                           <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxWidth="1.7976931348623157E308" text="%applicationColor.name" wrapText="true">
-                                 <font>
-                                    <Font size="21.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip text="In this section you can select your preferred style mode!" />
-                                 </tooltip>
-                              </Label>
-                              <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="%lightMode.name">
-                                 <tooltip>
-                                    <Tooltip text="The Classic LightMode" />
-                                 </tooltip></RadioButton>
-                              <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="%darkMode.name">
-                                 <tooltip>
-                                    <Tooltip text="This is especially useful during night" />
-
-                                 </tooltip></RadioButton>
-                              <HBox alignment="CENTER_LEFT" spacing="30.0" VBox.vgrow="NEVER">
-                                 <children>
-                                    <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="%costumMode.name">
-                                       <tooltip>
-                                          <Tooltip text="Here You can use a custom color pattern! " />
-                                       </tooltip></RadioButton>
-                                    <ColorPicker fx:id="foreground_color">
-                                       <tooltip>
-                                          <Tooltip text="Customize Foreground Color" />
-                                       </tooltip></ColorPicker>
-                                    <ColorPicker fx:id="background_color">
-                                       <tooltip>
-                                          <Tooltip text="Customize Background Color" />
-                                       </tooltip></ColorPicker>
-                                    <ColorPicker fx:id="text_color">
-                                       <tooltip>
-                                          <Tooltip text="Customize Text Color" />
-                                       </tooltip></ColorPicker>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                        <CheckBox fx:id="dyslexicCheckBox" mnemonicParsing="false" text="%dyslexicMode.name">
-                           <tooltip>
-                              <Tooltip text="Text will be formatted to be more comfortable to dyslexic users, no underlined text" />
-                           </tooltip></CheckBox>
-                        <ComboBox fx:id="languageBox" promptText="Select Language" />
-                     </children>
-                     <padding>
-                        <Insets left="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
-         </children>
+         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0"
+                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                     AnchorPane.topAnchor="0.0">
+            <content>
+               <VBox alignment="TOP_CENTER" spacing="30.0" styleClass="background">
+                  <children>
+                     <VBox alignment="TOP_CENTER" maxWidth="500.0" spacing="10.0" styleClass="card" VBox.vgrow="NEVER">
+                        <children>
+                           <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false"
+                                  maxWidth="1.7976931348623157E308" text="eeee" wrapText="true">
+                              <font>
+                                 <Font size="21.0"/>
+                              </font>
+                           </Label>
+                           <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false"
+                                        text="Light Mode"/>
+                           <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="Dark Mode"/>
+                           <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="Custom Mode"/>
+                           <ColorBarPicker fx:id="colorPicker" maxHeight="13.0">
+                              <VBox.margin>
+                                 <Insets left="20.0" right="20.0"/>
+                              </VBox.margin>
+                           </ColorBarPicker>
+                        </children>
+                        <VBox.margin>
+                           <Insets left="15.0" right="15.0" top="10.0"/>
+                        </VBox.margin>
+                     </VBox>
+                     <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="10.0" styleClass="card">
+                        <VBox.margin>
+                           <Insets left="10.0" right="10.0"/>
+                        </VBox.margin>
+                        <children>
+                           <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false"
+                                  maxWidth="1.7976931348623157E308" text="eeee" wrapText="true">
+                              <font>
+                                 <Font size="21.0"/>
+                              </font>
+                           </Label>
+                           <CheckBox fx:id="dyslexicCheckBox" mnemonicParsing="false" text="Use dyslexic font"/>
+                           <ComboBox fx:id="languageBox" promptText="Select Language"/>
+                        </children>
+                     </VBox>
+                  </children>
+               </VBox>
+            </content>
+         </ScrollPane>
       </AnchorPane>
    </center>
 </BorderPane>

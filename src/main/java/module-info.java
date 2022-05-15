@@ -11,4 +11,5 @@ module com.progetto.progetto {
     exports com.progetto.progetto;
     exports com.progetto.progetto.controller;
     opens com.progetto.progetto.controller to javafx.fxml;
+    opens com.progetto.progetto.view to javafx.fxml;
 }
