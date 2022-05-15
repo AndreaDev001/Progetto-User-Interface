@@ -1,7 +1,6 @@
 package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
-import com.progetto.progetto.model.records.StyleConfiguration;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 
@@ -26,7 +25,9 @@ public class StyleHandler {
         return STYLE_HANDLER;
     }
 
-    private StyleConfiguration styleConfiguration = new StyleConfiguration();
+    public StyleMode styleMode = StyleMode.DARK;
+    public double customHue = 0;
+    public boolean dyslexic = false;
 
     private Locale currentLanguage = Locale.ENGLISH;
 
@@ -58,11 +59,9 @@ public class StyleHandler {
 
             FileReader fileReader = new FileReader(filePath.toFile());
             properties.load(fileReader);
-            this.styleConfiguration.dyslexic = properties.getProperty("use_dyslexic_font", "false").equals("true");
-            this.styleConfiguration.foregroundColor = Color.web(properties.getProperty("primary_color", "0XFFFFFFFF"));
-            this.styleConfiguration.backgroundColor = Color.web(properties.getProperty("secondary_color", "0XFFFFFFFF"));
-            this.styleConfiguration.textColor = Color.web(properties.getProperty("text_color", "0X00000000"));
-            this.styleConfiguration.styleMode = StyleMode.values()[Integer.parseInt(properties.getProperty("style_file", "0"))];
+            this.dyslexic = properties.getProperty("use_dyslexic_font", "false").equals("true");
+            this.customHue = Double.parseDouble(properties.getProperty("custom_color", String.valueOf(this.customHue)));
+            this.styleMode = StyleMode.values()[Integer.parseInt(properties.getProperty("style_file", "0"))];
 
             String localeTag = properties.getProperty("language");
             if(localeTag != null)
@@ -74,29 +73,22 @@ public class StyleHandler {
         }
 
     }
-
-    public StyleConfiguration getStyleConfiguration() {
-        if(styleConfiguration == null)
-            styleConfiguration = new StyleConfiguration();
-        return styleConfiguration;
-    }
     public ResourceBundle getResourceBundle() {
         return ResourceBundle.getBundle("com.progetto.progetto.lang.film",currentLanguage,MainApplication.class.getClassLoader());
-    }
-    public Locale getCurrentLanguage() {
-        return currentLanguage;
     }
 
     public void saveConfigurationOnFile(Properties properties) throws IOException {
         Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
-        properties.setProperty("use_dyslexic_font", String.valueOf(this.styleConfiguration.dyslexic));
-        properties.setProperty("style_file", String.valueOf(this.styleConfiguration.styleMode.ordinal()));
-        properties.setProperty("primary_color", this.styleConfiguration.foregroundColor.toString());
-        properties.setProperty("secondary_color", this.styleConfiguration.backgroundColor.toString());
-        properties.setProperty("text_color", this.styleConfiguration.textColor.toString());
+        properties.setProperty("use_dyslexic_font", String.valueOf(this.dyslexic));
+        properties.setProperty("style_file", String.valueOf(this.styleMode.ordinal()));
+        properties.setProperty("custom_color", String.valueOf(this.customHue));
         properties.setProperty("language",this.getCurrentLanguage().toLanguageTag());
         properties.store(new FileWriter(filePath.toFile()), "FILM APP CONFIGURATION");
         saveCustomCSS();
+    }
+
+    public Locale getCurrentLanguage() {
+        return currentLanguage;
     }
 
     public boolean setLanguage(Locale locale) {
@@ -117,16 +109,18 @@ public class StyleHandler {
             return;
 
         scene.getStylesheets().clear();
+        //ADD NEW CSS PATH
+        scene.getStylesheets().add(getCssPath(this.styleMode));
 
         //--------dyslexic font----------
         String dyslexic_style = Objects.requireNonNull(MainApplication.class.getResource("css/dyslexic.css")).toExternalForm();
-        if(this.styleConfiguration.dyslexic)
+        if(this.dyslexic)
             scene.getStylesheets().add(dyslexic_style);
         else
             scene.getStylesheets().remove(dyslexic_style);
 
-        //ADD NEW CSS PATH
-        scene.getStylesheets().add(getCssPath(this.styleConfiguration.styleMode));
+        scene.getStylesheets().add(String.valueOf(Objects.requireNonNull(MainApplication.class.getResource("css/base_style.css")).toExternalForm()));
+
     }
 
     private void saveCustomCSS() throws IOException {
@@ -134,10 +128,7 @@ public class StyleHandler {
 
         try {
             String cssString = Files.readString(Path.of(cssCopy.toURI()));
-            //DANNATAMENTE INEFFICENTE TODO: da fixare il substitute nel custom css
-            cssString = cssString.replace("rgb(24,24,24)","#" + this.styleConfiguration.foregroundColor.toString().substring(2));
-            cssString = cssString.replace("rgb(60,60,60)","#" + this.styleConfiguration.backgroundColor.toString().substring(2));
-            cssString = cssString.replace("white","#" + this.styleConfiguration.textColor.toString().substring(2));
+            cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
             Files.writeString(Path.of(getFolderPath() + File.separator + "custom.css"),cssString);
         } catch (URISyntaxException e) {
             e.printStackTrace();
