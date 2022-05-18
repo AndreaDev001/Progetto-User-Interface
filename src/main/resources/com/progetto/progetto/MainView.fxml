@@ -21,7 +21,7 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
                <children>
-                  <VBox prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <TitledPane fx:id="first" text="%searchTilted.name">
                            <content>
@@ -58,23 +58,12 @@
                                                 <Font name="System Bold" size="17.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
                                        </children>
                                     </VBox>
-                                    <TitledPane expanded="false" text="%advancedTilted.name">
-                                       <content>
-                                          <VBox fx:id="advancedHolder" spacing="5.0">
-                                             <children>
-                                                <Button fx:id="advancedSearchButton" mnemonicParsing="false" text="Search" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
                                  </children>
                               </VBox>
                            </content>
                         </TitledPane>
-                        <VBox fx:id="showCurrentHolder" alignment="BOTTOM_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -85,7 +74,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
+            <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>

@@ -1,27 +1,16 @@
 package com.progetto.progetto.model.handlers;
 
-import com.progetto.progetto.model.records.StyleConfiguration;
 import com.progetto.progetto.model.records.User;
-import com.progetto.progetto.model.sql.ITaskResult;
 import com.progetto.progetto.model.sql.SQLGetter;
-import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
-import com.progetto.progetto.view.StyleHandler;
-import com.progetto.progetto.view.StyleMode;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
-import javafx.scene.paint.Color;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Properties;
 
 public class ProfileHandler {
     private static final ProfileHandler instance = new ProfileHandler();

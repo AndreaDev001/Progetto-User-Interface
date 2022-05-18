@@ -87,19 +87,7 @@ public class FilmHandler
         switch (movieFilterType)
         {
             case NAME -> result = tmdbApi.getSearch().searchMovie(value,null,StyleHandler.getInstance().getCurrentLanguage().toString(),false,page);
-            case SINGLE_GENRE -> result = tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType != null ? movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase() : "",false,0,0,1000,0,value.isEmpty() ? "" : String.valueOf(this.genres.get(Integer.parseInt(value)).getId()),"","","","","");
-            case MULTIPLE_GENRES -> {
-                String[] values = value.split(",");
-                StringBuilder builder = new StringBuilder();
-                for(int i = 0;i < values.length;i++)
-                {
-                    int id = genres.get(i).getId();
-                    builder.append(id);
-                    if(i != values.length - 1)
-                        builder.append(",");
-                }
-                result =  tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase(),false,0,0,1000,0,builder.toString(),"","","","","");
-            }
+            case GENRE-> result = tmdbApi.getDiscover().getDiscover(page,StyleHandler.getInstance().getCurrentLanguage().toString(),movieSortType != null ? movieSortType.name().toLowerCase() + "." + movieSortOrder.name().toLowerCase() : "",false,0,0,1000,0,value.isEmpty() ? "" : value,"","","","","");
         }
         if(result == null || result.getResults().isEmpty())
             throw new FilmNotFoundException("An error has occured,film not found");
@@ -117,6 +105,9 @@ public class FilmHandler
         this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
     }
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
+    public List<Genre> getValues(){
+        return genres;
+    }
     public List <String> getGenres() {
         List<String> values = new ArrayList<>();
         for(Genre current : genres)

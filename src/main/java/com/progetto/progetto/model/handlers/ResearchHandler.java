@@ -5,7 +5,6 @@ import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
-import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
 import java.util.ArrayList;
@@ -17,9 +16,8 @@ public class ResearchHandler
     private MovieListType currentListType = MovieListType.MOST_POPULAR;
     private MovieSortType currentSortType = MovieSortType.POPULARITY;
     private MovieSortOrder currentSortOrder = MovieSortOrder.DESC;
-    private MovieFilterType currentFilterType = MovieFilterType.SINGLE_GENRE;
-    private int currentGenre;
-    private String currentMultipleGenre;
+    private MovieFilterType currentFilterType = MovieFilterType.GENRE;
+    private String currentGenre;
     private String currentText = "";
     private int currentPage = 1;
     private int currentMaxPage = 1;
@@ -37,13 +35,25 @@ public class ResearchHandler
     {
         try
         {
-            String value = String.valueOf(currentGenre);
-            if(currentFilterType == MovieFilterType.MULTIPLE_GENRES)
-                value = currentMultipleGenre;
-            MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? value : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
+            StringBuilder builder = new StringBuilder();
+            if(currentGenre == null)
+                currentGenre = "";
+            else
+            {
+                if(!currentGenre.isEmpty())
+                {
+                    String[] values = currentGenre.split(",");
+                    for(int i = 0;i < values.length;i++)
+                    {
+                        int value = FilmHandler.getInstance().getValues().get(Integer.parseInt(values[i])).getId();
+                        builder.append(String.valueOf(value)).append(i != values.length - 1 ? "," : "");
+                    }
+                }
+            }
+            MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? builder.toString() : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
             currentMaxPage = Math.max(1,result.getTotalPages());
             for(IResearchListener current : researchListeners)
-                current.OnResearchCompleted(result.getResults());
+                current.OnResearchCompleted(result.getResults(),!(currentText == null || currentText.isEmpty()));
         }
         catch (FilmNotFoundException exception)
         {
@@ -72,7 +82,7 @@ public class ResearchHandler
         if(update)
             this.updateValue(true,true);
     }
-    public void setCurrentGenre(int currentGenre,boolean update) {
+    public void setCurrentGenre(String currentGenre,boolean update) {
         this.currentGenre = currentGenre;
         if(update)
             this.updateValue(true,true);
@@ -81,12 +91,6 @@ public class ResearchHandler
         this.currentFilterType = MovieFilterType.NAME;
         this.currentText = currentText;
         this.updateValue(true,false);
-    }
-    public void setCurrentMultipleGenre(String value,boolean update)
-    {
-        this.currentMultipleGenre = value;
-        if(update)
-            this.updateValue(true,true);
     }
     public void updateValue(boolean resetListType,boolean resetText)
     {
@@ -98,7 +102,8 @@ public class ResearchHandler
     public void updateCurrentPage(boolean positive)
     {
         currentPage = positive ? (currentPage + 1) % currentMaxPage : currentPage - 1;
-        currentPage = Math.max(currentPage,1);
+        if(currentPage < 0)
+            currentPage = (((currentPage % currentMaxPage) + currentMaxPage) % currentMaxPage);
         this.search(currentListType != null);
     }
     public final String getCurrentText() {return currentText;}
@@ -106,7 +111,7 @@ public class ResearchHandler
     public final MovieSortOrder getCurrentSortOrder() {return currentSortOrder;}
     public final MovieFilterType getCurrentFilterType() {return currentFilterType;}
     public final MovieListType getCurrentListType() {return currentListType;}
-    public final int getCurrentGenre() {return currentGenre;}
+    public final String getCurrentGenre() {return currentGenre;}
     public final int getCurrentPage() {return currentPage;}
     public final int getCurrentMaxPage() {return currentMaxPage;}
     public static ResearchHandler getInstance() {return instance;}

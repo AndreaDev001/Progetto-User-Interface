@@ -31,13 +31,9 @@ public class FilmCard extends VBox
         titleLabel = new Label(movieDb.getTitle());
         releaseDateLabel = new Label(movieDb.getReleaseDate());
         this.setAlignment(Pos.CENTER);
-        this.setPrefWidth(30);
-        this.setPrefHeight(30);
-        this.setMinWidth(Region.USE_COMPUTED_SIZE);
-        this.setMinHeight(Region.USE_COMPUTED_SIZE);
-        this.setMaxWidth(Region.USE_COMPUTED_SIZE);
-        this.setMaxHeight(Region.USE_COMPUTED_SIZE);
-        this.setFillWidth(true);
+        this.setPrefSize(100,50);
+        this.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
+        this.setMaxSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
         titleLabel.getStyleClass().add("card-label");
         releaseDateLabel.getStyleClass().add("card-label");
         imageView.setFitWidth(135);
