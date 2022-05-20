@@ -3,18 +3,20 @@ package com.progetto.progetto.view.nodes;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.ResearchHandler;
 import com.progetto.progetto.view.StyleHandler;
+import javafx.geometry.NodeOrientation;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class CurrentSearch extends VBox
 {
     public CurrentSearch()
     {
-        this.setFillWidth(true);
-        this.setAlignment(Pos.BOTTOM_LEFT);
+        this.setAlignment(Pos.CENTER);
         this.init();
     }
     private void init()
@@ -23,7 +25,8 @@ public class CurrentSearch extends VBox
         {
             Label currentList = createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentList.name"),ResearchHandler.getInstance().getCurrentListType().getLocalizedName());
             this.getChildren().add(currentList);
-        } else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
+        }
+        else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
         {
             StringBuilder stringBuilder = new StringBuilder();
             if(ResearchHandler.getInstance().getCurrentGenre().isEmpty())
@@ -36,9 +39,15 @@ public class CurrentSearch extends VBox
                     stringBuilder.append(",");
             }
             Label currentGenre = createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentGenre.name"), stringBuilder.toString());
+            currentGenre.setTooltip(new HelpTooltip("Filter by" + " " + stringBuilder.toString(), Duration.millis(0),Duration.millis(0),Duration.millis(0),false));
+            HBox hBox = new HBox();
+            hBox.setSpacing(5);
+            hBox.setAlignment(Pos.CENTER);
+            this.getChildren().add(currentGenre);
             Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentSort.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortType().toString() + ".name"));
             Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentOrder.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortOrder().toString() + ".name"));
-            this.getChildren().addAll(currentGenre,currentSortType,currentSortOrder);
+            hBox.getChildren().addAll(currentSortType,currentSortOrder);
+            this.getChildren().add(hBox);
         }
         else
         {
@@ -49,7 +58,6 @@ public class CurrentSearch extends VBox
     private Label createLabel(String fieldName,String value)
     {
         Label result = new Label(fieldName + ":" + value);
-        result.setAlignment(Pos.CENTER);
         result.setWrapText(true);
         result.getStyleClass().add("showCurrent");
         return result;

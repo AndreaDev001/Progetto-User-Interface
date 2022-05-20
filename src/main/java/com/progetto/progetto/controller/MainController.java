@@ -13,6 +13,7 @@ import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.fxml.FXML;
@@ -57,8 +58,11 @@ public class MainController implements IResearchListener {
     private Label currentPageLabel;
     @FXML
     private Label maxPageLabel;
+    @FXML
+    private HBox boxHolder;
 
-    private static final BooleanProperty firstExpanded = new SimpleBooleanProperty();
+    private static final BooleanProperty sortingDisabled = new SimpleBooleanProperty();
+    private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();
 
     private GenreList genreList;
@@ -105,8 +109,10 @@ public class MainController implements IResearchListener {
         ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
         genreHolder.getChildren().add(genreList);
         currentSearch = new CurrentSearch();
-        leftHolder.getChildren().add(currentSearch);
+        boxHolder.getChildren().add(currentSearch);
         initBoxes();
+        sortComboBox.disableProperty().bind(sortingDisabled);
+        sortOrderComboBox.disableProperty().bind(sortingDisabled);
         for(Node current : leftHolder.getChildren())
             VBox.setVgrow(current,Priority.ALWAYS);
     }
@@ -125,7 +131,7 @@ public class MainController implements IResearchListener {
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
         sortComboBox.getSelectionModel().select(2);
         sortOrderComboBox.getSelectionModel().select(1);
-        ValueList<MovieListType> valueList = new ValueList<MovieListType>(Arrays.stream(MovieListType.values()).toList());
+        ValueList<MovieListType> valueList = new ValueList<>(Arrays.stream(MovieListType.values()).toList());
         for(int i = 0;i < valueList.getChildren().size();i++)
         {
             int finalI = i;
@@ -167,12 +173,16 @@ public class MainController implements IResearchListener {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
     @Override
-    public void OnResearchCompleted(List<MovieDb> result,boolean isText)
+    public void OnResearchCompleted(List<MovieDb> result,boolean isGenre)
     {
-        if(isText)
+        if(!isGenre)
+        {
+            sortingDisabled.set(true);
             genreList.clearList();
+        }
         else
         {
+            sortingDisabled.set(false);
             searchField.clear();
             searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
         }

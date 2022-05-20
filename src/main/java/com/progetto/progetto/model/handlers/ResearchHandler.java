@@ -52,8 +52,9 @@ public class ResearchHandler
             }
             MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? builder.toString() : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
             currentMaxPage = Math.max(1,result.getTotalPages());
+            boolean value = (currentText == null || currentText.isEmpty()) && !isList;
             for(IResearchListener current : researchListeners)
-                current.OnResearchCompleted(result.getResults(),!(currentText == null || currentText.isEmpty()));
+                current.OnResearchCompleted(result.getResults(),value);
         }
         catch (FilmNotFoundException exception)
         {

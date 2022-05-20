@@ -59,7 +59,7 @@
 .tooltip
 {
     -fx-show-duration: 10s;
-    -fx-show-delay: 0.1s;
+    -fx-show-delay: 0.1s
     -fx-font-size: 16px;
     -fx-background-color: -thirty-color;
 }
