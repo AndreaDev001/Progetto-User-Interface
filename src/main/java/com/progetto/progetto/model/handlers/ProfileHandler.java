@@ -1,5 +1,7 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.client.Client;
+import com.progetto.progetto.client.ConnectionException;
 import com.progetto.progetto.model.records.User;
 import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
@@ -8,6 +10,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.Alert;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -31,8 +34,9 @@ public class ProfileHandler {
         if (loggedUserProperty.get() != null)
             return false;
 
-        try {
-            ResultSet result = SQLGetter.getInstance().makeQuery("SELECT * FROM USER WHERE username = ?", username);
+        try
+        {
+            /**ResultSet result = SQLGetter.getInstance().makeQuery("SELECT * FROM USER WHERE username = ?", username);
             if (result.next()) {
                 String dbPassword = result.getString(2);
                 if (BCrypt.checkpw(password,dbPassword)) {
@@ -43,15 +47,22 @@ public class ProfileHandler {
             }
             else
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Username", Alert.AlertType.ERROR);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+             **/
+            Client.getInstance().login(username,password);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+            SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid User",Alert.AlertType.ERROR);
         }
         return false;
     }
 
-    public boolean logout() {
-        if (this.loggedUserProperty.get() != null) {
+    public boolean logout() throws IOException, ConnectionException {
+        if (this.loggedUserProperty.get() != null)
+        {
+            Client.getInstance().logout();
             this.loggedUserProperty.set(null);
             return true;
         }

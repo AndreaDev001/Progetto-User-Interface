@@ -43,13 +43,13 @@
 }
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;
+    -fx-effect: null;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-padding: 0;
+    -fx-padding: 0px 10px;
 }
 .titled-pane > .title > .arrow-button .arrow {
-    -fx-padding: 0px;
-    -fx-shape: "";
+    -fx-effect: null;
 }
 .titled-pane > *.content
 {
@@ -59,7 +59,7 @@
 .tooltip
 {
     -fx-show-duration: 10s;
-    -fx-show-delay: 0.1s
+    -fx-show-delay: 0.1s;
     -fx-font-size: 16px;
     -fx-background-color: -thirty-color;
 }

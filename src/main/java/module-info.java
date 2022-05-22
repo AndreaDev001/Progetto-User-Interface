@@ -5,6 +5,7 @@ module com.progetto.progetto {
     requires java.sql;
     requires spring.security.crypto;
     requires org.kordamp.ikonli.javafx;
+    requires json;
 
 
     opens com.progetto.progetto to javafx.fxml;

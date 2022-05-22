@@ -103,8 +103,7 @@ public class ResearchHandler
     public void updateCurrentPage(boolean positive)
     {
         currentPage = positive ? (currentPage + 1) % currentMaxPage : currentPage - 1;
-        if(currentPage < 0)
-            currentPage = (((currentPage % currentMaxPage) + currentMaxPage) % currentMaxPage);
+        currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
     public final String getCurrentText() {return currentText;}

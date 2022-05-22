@@ -1,6 +1,8 @@
 package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
+import com.progetto.progetto.client.Client;
+import com.progetto.progetto.client.ConnectionException;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -34,6 +36,7 @@ public class SceneHandler {
     }
 
     private Stage stage;
+    private Stage filmStage;
     private Scene scene;
 
     /**
@@ -49,10 +52,19 @@ public class SceneHandler {
     //with this we initialize a new stage
     public void init(Stage stage)
     {
+        this.filmStage = new Stage(StageStyle.DECORATED);
         this.stage = stage;
         this.loadApplicationScene();
         this.stage.setScene(this.scene);
         this.stage.show();
+        this.stage.setOnCloseRequest((event) -> {
+            try
+            {
+                Client.getInstance().close();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        });
     }
 
     private <T> T loadRootFromFXML(String resourceName) {
@@ -184,7 +196,7 @@ public class SceneHandler {
 
     public void loadFilmScene()
     {
-        Stage filmStage = new Stage(StageStyle.DECORATED);
+        this.filmStage.hide();
         Parent root = loadRootFromFXML("FilmView.fxml");
         if(root == null)
             return;
@@ -199,7 +211,7 @@ public class SceneHandler {
         filmStage.setWidth(640);
         filmStage.setHeight(480);
         centerStage(filmStage,filmStage.getWidth(),filmStage.getHeight());
-        filmStage.show();
+        this.filmStage.show();
     }
     public void centerStage(Stage stage,double width,double height)
     {
