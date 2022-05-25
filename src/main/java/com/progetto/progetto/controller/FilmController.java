@@ -1,7 +1,10 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
+import com.progetto.progetto.client.util.JSONUtil;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
+import com.progetto.progetto.model.records.Film;
 import info.movito.themoviedbapi.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -9,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import org.json.JSONObject;
 
 public class FilmController
 {
@@ -36,6 +40,7 @@ public class FilmController
     private Label filmRuntime;
 
     private String title;
+    private int id;
     private String releaseDate;
     private String language;
     private String overview;
@@ -49,6 +54,7 @@ public class FilmController
     private void initialize()
     {
         MovieDb film = FilmHandler.getInstance().getCurrentSelectedFilm();
+        id = film.getId();
         title = film.getTitle();
         releaseDate = film.getReleaseDate().isEmpty() ? "Coming soon" : film.getReleaseDate();
         language = film.getOriginalLanguage();
@@ -84,5 +90,23 @@ public class FilmController
             imageView.setPreserveRatio(true);
             flagHolder.getChildren().add(imageView);
         }
+    }
+    @FXML
+    private void AddFilm()
+    {
+        Film film = new Film(id,title,overview,"");
+        try {
+            JSONObject object = new JSONObject();
+            object.put("id",film.id());
+            Client.getInstance().insert("film",object,(success) -> {
+                System.out.println("GG");
+            },(error) -> {
+                error.printStackTrace();
+                System.out.println("Failed");
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

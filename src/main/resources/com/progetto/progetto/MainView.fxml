@@ -21,14 +21,14 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
                <children>
-                  <VBox prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TitledPane fx:id="first" text="%searchTilted.name">
+                        <TitledPane fx:id="first" alignment="TOP_LEFT" text="%searchTilted.name">
                            <content>
                               <VBox alignment="CENTER">
                                  <children>
                                     <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                                    <TitledPane text="%listTilted.name">
+                                    <TitledPane alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
                                        <content>
                                           <VBox fx:id="listHolder" spacing="5.0" />
                                        </content>
@@ -58,26 +58,15 @@
                                                 <Font name="System Bold" size="17.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="genresComboBox" prefWidth="150.0" promptText="Genre" />
                                        </children>
                                     </VBox>
-                                    <TitledPane expanded="false" text="%advancedTilted.name">
-                                       <content>
-                                          <VBox fx:id="advancedHolder" spacing="5.0">
-                                             <children>
-                                                <Button fx:id="advancedSearchButton" mnemonicParsing="false" text="Search" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
                                  </children>
                               </VBox>
                            </content>
                         </TitledPane>
-                        <VBox fx:id="showCurrentHolder" alignment="BOTTOM_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </VBox>
                </children>
@@ -85,10 +74,15 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
+            <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
+                        <HBox fx:id="boxHolder" alignment="CENTER" layoutX="10.0" layoutY="140.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" VBox.vgrow="ALWAYS">
                            <content>
                               <FlowPane fx:id="flowPane" hgap="5.0" prefWrapLength="500.0" rowValignment="TOP" style="-fx-border-width: 0px;" styleClass="background" vgap="5.0">
@@ -98,7 +92,7 @@
                               </FlowPane>
                            </content>
                         </ScrollPane>
-                        <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0">
+                        <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>

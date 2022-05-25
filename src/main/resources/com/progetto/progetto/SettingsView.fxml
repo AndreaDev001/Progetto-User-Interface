@@ -24,15 +24,15 @@
                      <VBox alignment="TOP_CENTER" maxWidth="500.0" spacing="10.0" styleClass="card" VBox.vgrow="NEVER">
                         <children>
                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false"
-                                  maxWidth="1.7976931348623157E308" text="eeee" wrapText="true">
+                                  maxWidth="1.7976931348623157E308" text="%applicationColor.name" wrapText="true">
                               <font>
                                  <Font size="21.0"/>
                               </font>
                            </Label>
                            <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false"
-                                        text="Light Mode"/>
-                           <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="Dark Mode"/>
-                           <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="Custom Mode"/>
+                                        text="%lightMode.name"/>
+                           <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="%darkMode.name"/>
+                           <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="%costumMode.name"/>
                            <ColorBarPicker fx:id="colorPicker" maxHeight="13.0">
                               <VBox.margin>
                                  <Insets left="20.0" right="20.0"/>
@@ -49,7 +49,7 @@
                         </VBox.margin>
                         <children>
                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false"
-                                  maxWidth="1.7976931348623157E308" text="eeee" wrapText="true">
+                                  maxWidth="1.7976931348623157E308" text= "%accessibility.name" wrapText="true">
                               <font>
                                  <Font size="21.0"/>
                               </font>

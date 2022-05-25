@@ -3,24 +3,20 @@
     -fx-text-fill: -text-color;
     -fx-focus-color: transparent;
 }
-
 .ikonli-font-icon
 {
     -fx-icon-color: -text-color;
 }
-
 #color-bar-indicator {
     -fx-border-radius: 0.333333em;
     -fx-border-color: -text-color;
     -fx-effect: dropshadow(three-pass-box, black, 2, 0.0, 0, 1);
     -fx-pref-width: 2em;
 }
-
 .button:armed
 {
     -fx-background-color: -ten-color;
 }
-
 .button:focused,
 .text-field:focused,
 .radio-button:focused,
@@ -33,7 +29,6 @@
     -fx-border-color: derive(-text-color, -10%);
     -fx-border-radius: 1px;
 }
-
 .titled-pane
 {
    -fx-font-size: 12px;
@@ -48,13 +43,13 @@
 }
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;
+    -fx-effect: null;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-padding: 0;
+    -fx-padding: 0px 10px;
 }
 .titled-pane > .title > .arrow-button .arrow {
-    -fx-padding: 0px;
-    -fx-shape: "";
+    -fx-effect: null;
 }
 .titled-pane > *.content
 {
@@ -81,17 +76,25 @@
 {
     -fx-background-color: -scene-color;
 }
+.filmRow
+{
+   -fx-padding: 10px 10px;
+   -fx-background-color: -thirty-color;
+}
+.flowPane
+{
+   -fx-background-color: -scene-color;
+   -fx-padding: 5px;
+}
 .dialog-pane,
 .foreground
 {
     -fx-background-color: derive(-thirty-color,-30%);
 }
-
 .card
 {
     -fx-background-color: derive(-thirty-color,-30%);
 }
-
 .text-area .content {
  -fx-background-color : -scene-color;
 }
@@ -104,6 +107,10 @@
 {
    -fx-background-color: -ten-color;
    -fx-cursor: hand;
+}
+.text-field
+{
+  -fx-border-width: 1px;
 }
 .button:hover{
    -fx-underline: true;
@@ -181,6 +188,8 @@
     -fx-text-fill: -text-color;
     -fx-pref-width: 100;
     -fx-pref-height: 30;
+    -fx-border-width: 1px;
+    -fx-border-color: -text-color;
 }
 .combo-box .list-cell
 {
@@ -201,4 +210,17 @@
 {
    -fx-cursor: hand;
    -fx-underline: true;
+}
+.check-box .box
+{
+  -fx-background-color: -thirty-color;
+  -fx-border-radius: 3px;
+}
+.check-box:selected .mark
+{
+    -fx-background-color: -ten-color;
+}
+.check-box:selected .box
+{
+   -fx-background-color: -text-color;
 }

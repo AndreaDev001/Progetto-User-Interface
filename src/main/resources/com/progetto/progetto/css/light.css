@@ -1,0 +1,7 @@
+*
+{
+    -scene-color: white;
+    -thirty-color: derive(-scene-color,20%);
+    -ten-color: derive(-scene-color,40%);
+    -text-color: ladder(-scene-color, white 49%, black 50%);
+}

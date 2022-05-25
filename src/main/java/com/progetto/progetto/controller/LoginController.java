@@ -20,6 +20,11 @@ public class LoginController
         boolean result = ProfileHandler.getInstance().login(usernameField.getText(),passwordField.getText(),false);
         if(result)
             SceneHandler.getInstance().loadPage(PageEnum.MAIN);
+        else
+        {
+            usernameField.clear();
+            passwordField.clear();
+        }
     }
 
     @FXML
