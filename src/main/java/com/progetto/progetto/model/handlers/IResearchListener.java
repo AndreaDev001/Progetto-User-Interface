@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IResearchListener
 {
-    void OnResearchCompleted(List<MovieDb> result,boolean isText);
+    void OnResearchCompleted(List<MovieDb> result,boolean isText,boolean isLibrary);
     void OnResearchFailed();
 }

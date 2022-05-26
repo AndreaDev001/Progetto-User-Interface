@@ -1,16 +1,13 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.client.util.JSONUtil;
 import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.handlers.*;
-import com.progetto.progetto.model.records.Library;
-import com.progetto.progetto.model.records.User;
-import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.nodes.*;
 import info.movito.themoviedbapi.model.MovieDb;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
@@ -28,9 +25,8 @@ import javafx.util.Duration;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MainController implements IResearchListener {
     @FXML
@@ -145,37 +141,22 @@ public class MainController implements IResearchListener {
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
     }
-
     private void createFilms(List<MovieDb> movieDbs) {
         FilmContainer filmContainer = new FilmContainer(movieDbs,true);
         scrollPane.setContent(filmContainer);
-    }
-    private void loadLibrary() {
-        User user = ProfileHandler.getInstance().getLoggedUser().get();
-        Library library = null;
-        List<MovieDb> movieDbs = new ArrayList<>();
-        try {
-            ResultSet resultSet = SQLGetter.getInstance().makeQuery("SELECT * FROM LIBRARY WHERE id=?", user.username());
-            if (resultSet.next())
-                library = new Library(resultSet.getInt(1));
-            ResultSet query = SQLGetter.getInstance().makeQuery("SELECT filmId FROM LIBRARY-FILM WHERE libraryId=?", library.id());
-            while (query.next()) {
-                int filmId = query.getInt(1);
-                MovieDb current = FilmHandler.getInstance().getMovie(filmId);
-                movieDbs.add(current);
-            }
-        } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        scrollPane.setContent(null);
-        createFilms(movieDbs);
     }
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
     @Override
-    public void OnResearchCompleted(List<MovieDb> result,boolean isGenre)
+    public void OnResearchCompleted(List<MovieDb> result,boolean isGenre,boolean isLibrary)
     {
+        if(isLibrary)
+        {
+            sortingDisabled.set(false);
+            Platform.runLater(() -> createFilms(result));
+            return;
+        }
         if(!isGenre)
         {
             sortingDisabled.set(true);
@@ -187,7 +168,6 @@ public class MainController implements IResearchListener {
             searchField.clear();
             searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
         }
-        scrollPane.setContent(null);
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));

@@ -4,13 +4,17 @@ import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
+import javafx.animation.*;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class FilmCard extends VBox
 {
@@ -18,10 +22,14 @@ public class FilmCard extends VBox
     private ImageView imageView;
     private Label titleLabel;
     private Label releaseDateLabel;
+    private double defaultScaleX;
+    private double defaultScaleY;
 
     public FilmCard(MovieDb movieDb)
     {
         this.movieDb = movieDb;
+        this.defaultScaleX = this.getScaleX();
+        this.defaultScaleY = this.getScaleY();
         this.init();
     }
     private void init()
@@ -49,6 +57,15 @@ public class FilmCard extends VBox
         this.getChildren().add(titleLabel);
         this.getChildren().add(releaseDateLabel);
         this.setFocusTraversable(true);
+        this.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> {
+            DropShadow dropShadow = new DropShadow();
+            dropShadow.setRadius(5.0);
+            dropShadow.setOffsetX(3.0);
+            dropShadow.setOffsetY(3.0);
+            dropShadow.setColor(Color.valueOf("#ffa200"));
+            this.setEffect(dropShadow);
+        });
+        this.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> this.setEffect(null));
     }
     public final ImageView getImageView() {return imageView;}
     public final Label getTitleLabel() {return titleLabel;}

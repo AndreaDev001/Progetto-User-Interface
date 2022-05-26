@@ -6,6 +6,7 @@ import com.progetto.progetto.view.StyleHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -38,7 +39,7 @@ public class CurrentSearch extends VBox
             Label currentGenre = createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentGenre.name"), stringBuilder.toString());
             currentGenre.setTooltip(new HelpTooltip("Filter by" + " " + stringBuilder.toString(), Duration.millis(0),Duration.millis(0),Duration.millis(0),false));
             HBox hBox = new HBox();
-            hBox.setSpacing(5);
+            hBox.setSpacing(10);
             hBox.setAlignment(Pos.CENTER);
             this.getChildren().add(currentGenre);
             Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentSort.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortType().toString() + ".name"));

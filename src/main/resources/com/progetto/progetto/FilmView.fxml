@@ -97,7 +97,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#AddFilm" text="%addToLibrary.name">
+                        <Button fx:id="addToLibrary" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%addToLibrary.name" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
                            <font>
                               <Font size="14.0" />
                            </font>

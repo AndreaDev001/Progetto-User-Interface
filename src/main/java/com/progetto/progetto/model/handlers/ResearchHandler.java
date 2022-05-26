@@ -1,11 +1,16 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
+import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import javafx.application.Platform;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +27,7 @@ public class ResearchHandler
     private int currentPage = 1;
     private int currentMaxPage = 1;
     private final List<IResearchListener> researchListeners = new ArrayList<>();
-
+    private boolean useLibrary;
     private ResearchHandler()
     {
         System.out.println("Instance of Research Handler created correctly");
@@ -38,23 +43,46 @@ public class ResearchHandler
             StringBuilder builder = new StringBuilder();
             if(currentGenre == null)
                 currentGenre = "";
-            else
-            {
-                if(!currentGenre.isEmpty())
-                {
+            else {
+                if (!currentGenre.isEmpty()) {
                     String[] values = currentGenre.split(",");
-                    for(int i = 0;i < values.length;i++)
-                    {
+                    for (int i = 0; i < values.length; i++) {
                         int value = FilmHandler.getInstance().getValues().get(Integer.parseInt(values[i])).getId();
                         builder.append(String.valueOf(value)).append(i != values.length - 1 ? "," : "");
                     }
                 }
             }
-            MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? builder.toString() : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
-            currentMaxPage = Math.max(1,result.getTotalPages());
-            boolean value = (currentText == null || currentText.isEmpty()) && !isList;
-            for(IResearchListener current : researchListeners)
-                current.OnResearchCompleted(result.getResults(),value);
+            if(!useLibrary)
+            {
+                MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? builder.toString() : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
+                currentMaxPage = Math.max(1,result.getTotalPages());
+                boolean value = (currentText == null || currentText.isEmpty()) && !isList;
+                for(IResearchListener current : researchListeners)
+                    current.OnResearchCompleted(result.getResults(),value,false);
+            }
+            else
+            {
+                Client.getInstance().get("films",success -> {
+                    List<MovieDb> result = new ArrayList<>();
+                    JSONObject jsonObject = success.result();
+                    JSONArray jsonArray = jsonObject.getJSONArray("films");
+                    for(int i = 0;i < jsonArray.length();i++)
+                    {
+                        JSONObject current = jsonArray.getJSONObject(i);
+                        int id = current.getInt("filmId");
+                        MovieDb movieDb = FilmHandler.getInstance().getMovie(id);
+                        result.add(movieDb);
+                    }
+                    try {
+                        result = FilmHandler.getInstance().filterMovies(result,currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
+                    } catch (FilmNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    result = FilmHandler.getInstance().sortMovies(result,currentSortType,currentSortOrder);
+                    for(IResearchListener current : researchListeners)
+                        current.OnResearchCompleted(result,false,true);
+                }, Throwable::printStackTrace);
+            }
         }
         catch (FilmNotFoundException exception)
         {
@@ -64,6 +92,7 @@ public class ResearchHandler
     }
     public void setCurrentListType(MovieListType currentListType) {
         this.currentListType = currentListType;
+        this.useLibrary = false;
         this.updateValue(false,true);
     }
     public void setCurrentSortType(MovieSortType currentSortType) {
@@ -106,6 +135,21 @@ public class ResearchHandler
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
+    public void toggleLibrary()
+    {
+        this.useLibrary = !useLibrary;
+        if(useLibrary)
+        {
+            this.currentListType = null;
+            this.currentFilterType = MovieFilterType.GENRE;
+            this.currentText = "";
+            this.search(false);
+        }
+        else
+        {
+            this.setCurrentListType(MovieListType.MOST_POPULAR);
+        }
+    }
     public final String getCurrentText() {return currentText;}
     public final MovieSortType getCurrentSortType() {return currentSortType;}
     public final MovieSortOrder getCurrentSortOrder() {return currentSortOrder;}
@@ -113,6 +157,6 @@ public class ResearchHandler
     public final MovieListType getCurrentListType() {return currentListType;}
     public final String getCurrentGenre() {return currentGenre;}
     public final int getCurrentPage() {return currentPage;}
-    public final int getCurrentMaxPage() {return currentMaxPage;}
+    public final int getCurrentMaxPage() {return Math.max(1,currentMaxPage - 1);}
     public static ResearchHandler getInstance() {return instance;}
 }

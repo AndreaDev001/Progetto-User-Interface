@@ -1,6 +1,9 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
+import com.progetto.progetto.client.ConnectionException;
 import com.progetto.progetto.model.handlers.ProfileHandler;
+import com.progetto.progetto.model.handlers.ResearchHandler;
 import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
 import javafx.beans.value.ChangeListener;
@@ -11,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+
+import java.io.IOException;
 
 public class MenuController {
 
@@ -37,11 +42,10 @@ public class MenuController {
     @FXML
     private void initialize()
     {
-        this.libraryButton.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
-
         this.loginButton.visibleProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
         this.logoutButton.visibleProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNotNull());
-
+        this.libraryButton.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
+        this.libraryButton.setOnAction((event) -> ResearchHandler.getInstance().toggleLibrary());
         this.loginButton.managedProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
         this.logoutButton.managedProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNotNull());
 
@@ -78,7 +82,11 @@ public class MenuController {
 
     @FXML
     void onLogoutPressed(ActionEvent event) {
-        ProfileHandler.getInstance().logout();
+        try {
+            ProfileHandler.getInstance().logout();
+        } catch (IOException | ConnectionException e) {
+            e.printStackTrace();
+        }
         SceneHandler.getInstance().loadPage(PageEnum.MAIN);
     }
 

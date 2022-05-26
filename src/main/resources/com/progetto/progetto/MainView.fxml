@@ -21,7 +21,7 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
                <children>
-                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                      <children>
                         <TitledPane fx:id="first" alignment="TOP_LEFT" text="%searchTilted.name">
                            <content>
@@ -76,7 +76,7 @@
             </AnchorPane>
             <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <HBox fx:id="boxHolder" alignment="CENTER" layoutX="10.0" layoutY="140.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
                            <padding>
