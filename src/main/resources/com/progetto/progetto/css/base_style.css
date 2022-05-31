@@ -17,22 +17,22 @@
 {
     -fx-background-color: -ten-color;
 }
-.button:focused,
-.text-field:focused,
+@font-face
+{
+   -fx-font-family: "Roboto";
+   src: url(../fonts/Roboto-Black.ttf);
+}
 .radio-button:focused,
 .combo-box:focused,
-.check-box:focused,
 .card:focused,
 .highlight
 {
     -fx-font-weight: bold;
-    -fx-border-color: derive(-text-color, -10%);
-    -fx-border-radius: 1px;
 }
 .titled-pane
 {
-   -fx-font-size: 12px;
-   -fx-font-weight: bold;
+   -fx-font-size: 14px;
+   -fx-font-weight: 200;
    -fx-text-fill: -text-color;
 }
 .titled-pane > .title
@@ -40,6 +40,11 @@
    -fx-background-color: -scene-color;
    -fx-font-size: 17px;
    -fx-padding: 0px;
+}
+.showCurrent
+{
+   -fx-font-size: 16px;
+   -fx-font-weight: 200;
 }
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;
@@ -53,14 +58,14 @@
 }
 .titled-pane > *.content
 {
-    -fx-background-color: -scene-color;
+    -fx-background-color: -thirty-color;
     -fx-cursor: hand;
  }
 .tooltip
 {
-    -fx-show-duration: 10s;
-    -fx-show-delay: 0.1s;
-    -fx-font-size: 16px;
+    -fx-show-delay: 0.0s;
+    -fx-hide-delay: 0.0s;
+    -fx-font-size: 17px;
     -fx-background-color: -thirty-color;
 }
 .card
@@ -84,7 +89,7 @@
 .flowPane
 {
    -fx-background-color: -scene-color;
-   -fx-padding: 5px;
+   -fx-padding: 5px 5px;
 }
 .dialog-pane,
 .foreground
@@ -106,18 +111,22 @@
 .button
 {
    -fx-background-color: -ten-color;
+   -fx-font-size: 15px;
+   -fx-font-weight: 300;
    -fx-cursor: hand;
+}
+.button:hover{
+   -fx-underline: true;
+   -fx-background-color: -thirty-color;
 }
 .text-field
 {
   -fx-border-width: 1px;
 }
-.button:hover{
-   -fx-underline: true;
-}
 .text-area, .text-area .content {
     -fx-background-color: -thirty-color;
     -fx-background-radius: 0px;
+    -fx-font-size: 12px;
 }
 .split-pane:horizontal > .split-pane-divider {
    -fx-background-color: transparent;
@@ -213,7 +222,7 @@
 }
 .check-box .box
 {
-  -fx-background-color: -thirty-color;
+  -fx-background-color: -scene-color;
   -fx-border-radius: 3px;
 }
 .check-box:selected .mark

@@ -1,16 +1,9 @@
 package com.progetto.progetto.model.handlers;
 
-import com.progetto.progetto.client.Client;
-import com.progetto.progetto.model.enums.MovieFilterType;
-import com.progetto.progetto.model.enums.MovieListType;
-import com.progetto.progetto.model.enums.MovieSortOrder;
-import com.progetto.progetto.model.enums.MovieSortType;
+import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
-import javafx.application.Platform;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +11,7 @@ import java.util.List;
 public class ResearchHandler
 {
     private static final ResearchHandler instance = new ResearchHandler();
+    private MovieViewMode movieViewMode = MovieViewMode.HOME;
     private MovieListType currentListType = MovieListType.MOST_POPULAR;
     private MovieSortType currentSortType = MovieSortType.POPULARITY;
     private MovieSortOrder currentSortOrder = MovieSortOrder.DESC;
@@ -26,20 +20,20 @@ public class ResearchHandler
     private String currentText = "";
     private int currentPage = 1;
     private int currentMaxPage = 1;
-    private final List<IResearchListener> researchListeners = new ArrayList<>();
-    private boolean useLibrary;
+    private IResearchListener researchListener;
     private ResearchHandler()
     {
         System.out.println("Instance of Research Handler created correctly");
     }
-    public void addListener(IResearchListener listener)
+    public void setListener(IResearchListener listener)
     {
-        researchListeners.add(listener);
+        researchListener = listener;
     }
     public void search(boolean isList)
     {
         try
         {
+            List<MovieDb> movies = new ArrayList<>();
             StringBuilder builder = new StringBuilder();
             if(currentGenre == null)
                 currentGenre = "";
@@ -48,51 +42,33 @@ public class ResearchHandler
                     String[] values = currentGenre.split(",");
                     for (int i = 0; i < values.length; i++) {
                         int value = FilmHandler.getInstance().getValues().get(Integer.parseInt(values[i])).getId();
-                        builder.append(String.valueOf(value)).append(i != values.length - 1 ? "," : "");
+                        builder.append(value).append(i != values.length - 1 ? "," : "");
                     }
                 }
             }
-            if(!useLibrary)
+            if(movieViewMode == MovieViewMode.HOME)
             {
                 MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? builder.toString() : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
                 currentMaxPage = Math.max(1,result.getTotalPages());
                 boolean value = (currentText == null || currentText.isEmpty()) && !isList;
-                for(IResearchListener current : researchListeners)
-                    current.OnResearchCompleted(result.getResults(),value,false);
+                movies = result.getResults();
+                researchListener.OnResearchCompleted(movies,value);
             }
             else
             {
-                Client.getInstance().get("films",success -> {
-                    List<MovieDb> result = new ArrayList<>();
-                    JSONObject jsonObject = success.result();
-                    JSONArray jsonArray = jsonObject.getJSONArray("films");
-                    for(int i = 0;i < jsonArray.length();i++)
-                    {
-                        JSONObject current = jsonArray.getJSONObject(i);
-                        int id = current.getInt("filmId");
-                        MovieDb movieDb = FilmHandler.getInstance().getMovie(id);
-                        result.add(movieDb);
-                    }
-                    try {
-                        result = FilmHandler.getInstance().filterMovies(result,currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
-                    } catch (FilmNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    result = FilmHandler.getInstance().sortMovies(result,currentSortType,currentSortOrder);
-                    for(IResearchListener current : researchListeners)
-                        current.OnResearchCompleted(result,false,true);
-                }, Throwable::printStackTrace);
+                movies = FilmHandler.getInstance().filterMovies(FilmHandler.getInstance().getCurrentLoaded(), currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
+                movies = FilmHandler.getInstance().sortMovies((currentGenre != null && !currentGenre.isEmpty() && currentFilterType == MovieFilterType.GENRE) || (currentText != null && !currentText.isEmpty() && currentFilterType == MovieFilterType.NAME) ? movies : FilmHandler.getInstance().getCurrentLoaded(),currentSortType,currentSortOrder);
+                researchListener.OnResearchCompleted(movies,false);
             }
         }
         catch (FilmNotFoundException exception)
         {
-            for(IResearchListener current : researchListeners)
-                current.OnResearchFailed();
+            this.currentMaxPage = 1;
+            researchListener.OnResearchFailed();
         }
     }
     public void setCurrentListType(MovieListType currentListType) {
         this.currentListType = currentListType;
-        this.useLibrary = false;
         this.updateValue(false,true);
     }
     public void setCurrentSortType(MovieSortType currentSortType) {
@@ -135,22 +111,17 @@ public class ResearchHandler
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
-    public void toggleLibrary()
+    public void setCurrentViewMode(MovieViewMode value,boolean update)
     {
-        this.useLibrary = !useLibrary;
-        if(useLibrary)
+        if(this.movieViewMode != value)
         {
-            this.currentListType = null;
-            this.currentFilterType = MovieFilterType.GENRE;
-            this.currentText = "";
-            this.search(false);
-        }
-        else
-        {
-            this.setCurrentListType(MovieListType.MOST_POPULAR);
+            this.movieViewMode = value;
+            if(update)
+                researchListener.OnViewChanged(movieViewMode);
         }
     }
     public final String getCurrentText() {return currentText;}
+    public final MovieViewMode getCurrentViewMode() {return movieViewMode;}
     public final MovieSortType getCurrentSortType() {return currentSortType;}
     public final MovieSortOrder getCurrentSortOrder() {return currentSortOrder;}
     public final MovieFilterType getCurrentFilterType() {return currentFilterType;}

@@ -11,6 +11,8 @@ import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,9 @@ public class FilmHandler
     private final TmdbMovies movies;
     private final String defaultPath;
     private MovieDb currentSelectedFilm;
+    private List<MovieDb> currentLoaded = new Vector<>();
+    private Map<MovieDb,String> movieElementId = new HashMap<>();
+    private boolean requiresUpdate = true;
 
     private FilmHandler()
     {
@@ -84,7 +89,7 @@ public class FilmHandler
     }
     public List<MovieDb> filterMovies(List<MovieDb> movies,MovieFilterType movieFilterType,String value) throws FilmNotFoundException
     {
-        if(value.length() == 0)
+        if(value == null || value.isEmpty())
             return movies;
         List<MovieDb> result = new ArrayList<>();
         switch (movieFilterType)
@@ -102,8 +107,6 @@ public class FilmHandler
                     if(current.getGenres().containsAll(selectedGenres))
                         result.add(current);
                 }
-                if(result.size() == 0)
-                    throw new FilmNotFoundException("Result Set is Empty");
             }
             case NAME -> {
                 for(MovieDb current : movies)
@@ -111,6 +114,8 @@ public class FilmHandler
                         result.add(current);
             }
         }
+        if(result.size() == 0)
+            throw new FilmNotFoundException("Result Set is Empty");
         return result;
     }
     public MovieResultsPage makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
@@ -136,6 +141,24 @@ public class FilmHandler
     {
         this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
     }
+    public void loadMovies(JSONArray jsonArray)
+    {
+        this.currentLoaded.clear();
+        movieElementId.clear();
+        for(int i = 0;i < jsonArray.length();i++)
+        {
+            JSONObject current = jsonArray.getJSONObject(i);
+            int id = current.getInt("filmId");
+            MovieDb movieDb = this.getMovie(id);
+            movieElementId.put(movieDb,current.getString("element_id"));
+            currentLoaded.add(movieDb);
+        }
+        this.requiresUpdate = false;
+    }
+    public void setRequiresUpdate(boolean value)
+    {
+        this.requiresUpdate = value;
+    }
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
     public List<Genre> getValues(){
         return genres;
@@ -146,6 +169,9 @@ public class FilmHandler
             values.add(current.getName());
         return values;
     }
+    public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
+    public final boolean RequiresUpdate() {return requiresUpdate;}
+    public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
     public static FilmHandler getInstance() {return instance;}
 
 }

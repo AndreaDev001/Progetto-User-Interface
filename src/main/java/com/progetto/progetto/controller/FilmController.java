@@ -6,9 +6,9 @@ import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.ProfileHandler;
 import com.progetto.progetto.model.records.Film;
+import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
 import info.movito.themoviedbapi.model.*;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,10 +16,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class FilmController
 {
@@ -50,74 +50,54 @@ public class FilmController
 
     private String title;
     private int id;
-    private String releaseDate;
-    private String language;
-    private String overview;
-    private long budget;
-    private long revenue;
-    private int rating;
-    private float popularity;
-    private int runtime;
     private String elementId;
 
     @FXML
     private void initialize()
     {
         String pattern = "###,###.###";
+        MovieDb film = FilmHandler.getInstance().getCurrentSelectedFilm();
+        id = film.getId();
+        title = film.getTitle();
         addToLibrary.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
         addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name"));
         addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name")));
         if(!addToLibrary.isDisable())
         {
-            Client.getInstance().get("films",success -> {
-                JSONObject jsonObject = success.result();
-                JSONArray jsonArray = jsonObject.getJSONArray("films");
-                boolean contains = false;
-                for(int i = 0;i < jsonArray.length() && !contains;i++)
+            List<MovieDb> movies = FilmHandler.getInstance().getCurrentLoaded();
+            boolean contains = movies.contains(film);
+            addToLibrary.setOnAction((event) ->
+            {
+                if(movies.contains(film))
                 {
-                    JSONObject current = jsonArray.getJSONObject(i);
-                    int id = current.getInt("filmId");
-                    if(id == this.id)
-                    {
-                        elementId = current.getString("element_id");
-                        contains = true;
-                    }
+                    elementId = FilmHandler.getInstance().getMovieElementId().get(film);
+                    RemoveFilm();
                 }
-                boolean finalContains = contains;
-                Platform.runLater(() -> {
-                    addToLibrary.setOnAction((event) -> {
-                        if(finalContains)
-                            RemoveFilm();
-                        else
-                            AddFilm();
-                    });
-                    addToLibrary.setText(finalContains ? StyleHandler.getInstance().getResourceBundle().getString("alreadyAdded.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name"));
-                });
-            },Throwable::printStackTrace);
+                else
+                    AddFilm();
+                SceneHandler.getInstance().getFilmStage().close();
+            });
+            addToLibrary.setText(contains ? StyleHandler.getInstance().getResourceBundle().getString("alreadyAdded.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name"));
         }
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        MovieDb film = FilmHandler.getInstance().getCurrentSelectedFilm();
-        id = film.getId();
-        title = film.getTitle();
-        releaseDate = film.getReleaseDate().isEmpty() ? StyleHandler.getInstance().getResourceBundle().getString("missingRelease.name") : film.getReleaseDate();
-        language = film.getOriginalLanguage();
-        overview = film.getOverview().isEmpty() ? StyleHandler.getInstance().getResourceBundle().getString("missingOverview.name") : film.getOverview();
+        String releaseDate = film.getReleaseDate().isEmpty() ? StyleHandler.getInstance().getResourceBundle().getString("missingRelease.name") : film.getReleaseDate();
+        String overview = film.getOverview().isEmpty() ? StyleHandler.getInstance().getResourceBundle().getString("missingOverview.name") : film.getOverview();
         float rating = film.getVoteAverage();
-        budget = film.getBudget();
-        revenue = film.getRevenue();
-        popularity = film.getPopularity();
-        runtime = film.getRuntime();
+        long budget = film.getBudget();
+        long revenue = film.getRevenue();
+        float popularity = film.getPopularity();
+        int runtime = film.getRuntime();
         String path = FilmHandler.getInstance().getPosterPath(film);
         filmImage.setImage(CacheHandler.getInstance().getImage(path));
         filmNameTop.setText(title);
         filmNameLeft.setText(title);
         filmReleaseDate.setText(releaseDate);
-        filmRating.setText(String.valueOf(rating));
+        filmRating.setText(StyleHandler.getInstance().getResourceBundle().getString("rating.name") + ":" + " " + String.valueOf(rating));
         filmDescription.setText(overview);
         filmBudget.setText(StyleHandler.getInstance().getResourceBundle().getString("filmBudget.name") + ":" + " " + (budget > 0 ? decimalFormat.format(budget) : "-"));
         filmRevenue.setText(StyleHandler.getInstance().getResourceBundle().getString("filmRevenue.name") + ":" + " " + (revenue > 0 ? decimalFormat.format(revenue) : "-"));
-        filmPopularity.setText(String.valueOf(popularity));
-        filmRuntime.setText(StyleHandler.getInstance().getResourceBundle().getString("filmRuntime.name") + ":" + " " + (runtime > 0 ? String.valueOf(runtime) + " " + "min" : "-"));
+        filmPopularity.setText(StyleHandler.getInstance().getResourceBundle().getString("popularity.name") + ":" + " " + String.valueOf(popularity));
+        filmRuntime.setText(StyleHandler.getInstance().getResourceBundle().getString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
         createFlags(film);
     }
     private void createFlags(MovieDb film)
@@ -137,7 +117,9 @@ public class FilmController
     private void AddFilm()
     {
         Film film = new Film(id,title);
-        try {
+        try
+        {
+            FilmHandler.getInstance().setRequiresUpdate(true);
             JSONObject object = JSONUtil.toJSON(film);
             Client.getInstance().insert("films",object,success -> System.out.println("success"),error -> System.out.println("error"));
 
@@ -147,8 +129,7 @@ public class FilmController
     }
     private void RemoveFilm()
     {
-        Client.getInstance().remove("films",elementId,success -> {
-            System.out.println("Film removed from library");
-        },Throwable::printStackTrace);
+        FilmHandler.getInstance().setRequiresUpdate(true);
+        Client.getInstance().remove("films",elementId,success -> System.out.println("Removed Movie"),Throwable::printStackTrace);
     }
 }

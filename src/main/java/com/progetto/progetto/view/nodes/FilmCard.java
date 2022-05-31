@@ -4,7 +4,6 @@ import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.animation.*;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -14,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 public class FilmCard extends VBox
 {
@@ -22,14 +20,10 @@ public class FilmCard extends VBox
     private ImageView imageView;
     private Label titleLabel;
     private Label releaseDateLabel;
-    private double defaultScaleX;
-    private double defaultScaleY;
 
     public FilmCard(MovieDb movieDb)
     {
         this.movieDb = movieDb;
-        this.defaultScaleX = this.getScaleX();
-        this.defaultScaleY = this.getScaleY();
         this.init();
     }
     private void init()
@@ -56,6 +50,7 @@ public class FilmCard extends VBox
         this.getChildren().add(imageView);
         this.getChildren().add(titleLabel);
         this.getChildren().add(releaseDateLabel);
+        this.getChildren().add(new MovieRating(movieDb.getVoteAverage()));
         this.setFocusTraversable(true);
         this.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> {
             DropShadow dropShadow = new DropShadow();
