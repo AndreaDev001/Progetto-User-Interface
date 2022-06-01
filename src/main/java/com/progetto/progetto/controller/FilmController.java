@@ -2,9 +2,11 @@ package com.progetto.progetto.controller;
 
 import com.progetto.progetto.client.Client;
 import com.progetto.progetto.client.util.JSONUtil;
+import com.progetto.progetto.model.enums.MovieViewMode;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.ProfileHandler;
+import com.progetto.progetto.model.handlers.ResearchHandler;
 import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
@@ -129,7 +131,9 @@ public class FilmController
     }
     private void RemoveFilm()
     {
-        FilmHandler.getInstance().setRequiresUpdate(true);
-        Client.getInstance().remove("films",elementId,success -> System.out.println("Removed Movie"),Throwable::printStackTrace);
+        Client.getInstance().remove("films",elementId,success -> {
+            FilmHandler.getInstance().setRequiresUpdate(true);
+            ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,true);
+        },Throwable::printStackTrace);
     }
 }

@@ -161,6 +161,8 @@ public class MainController implements IResearchListener {
             showCurrent();
             return;
         }
+        else
+            bottomHolder.setVisible(true);
         if(!isGenre)
         {
             sortingDisabled.set(true);
@@ -188,6 +190,7 @@ public class MainController implements IResearchListener {
     public void OnResearchFailed()
     {
         showCurrent();
+        bottomHolder.setVisible(false);
         ErrorPage errorPage = new ErrorPage("errorText.name","errorButton.name",true);
         errorPage.getErrorButton().setOnAction((event) -> {
             genreList.clearList();

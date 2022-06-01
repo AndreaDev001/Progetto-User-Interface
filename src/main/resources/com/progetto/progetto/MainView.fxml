@@ -21,11 +21,11 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
                <children>
-                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                      <children>
                         <TitledPane fx:id="first" alignment="TOP_LEFT" text="%searchTilted.name">
                            <content>
-                              <VBox alignment="CENTER">
+                              <VBox alignment="CENTER" spacing="10.0">
                                  <children>
                                     <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
                                     <TitledPane alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
@@ -76,11 +76,11 @@
             </AnchorPane>
             <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <HBox fx:id="boxHolder" alignment="CENTER" layoutX="10.0" layoutY="140.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                        <HBox fx:id="boxHolder" alignment="CENTER" layoutX="10.0" layoutY="140.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" spacing="5.0">
                            <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                            </padding>
                         </HBox>
                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" VBox.vgrow="ALWAYS">
@@ -92,7 +92,7 @@
                               </FlowPane>
                            </content>
                         </ScrollPane>
-                        <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                        <HBox fx:id="bottomHolder" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>

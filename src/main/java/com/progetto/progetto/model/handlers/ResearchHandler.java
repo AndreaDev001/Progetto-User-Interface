@@ -111,9 +111,9 @@ public class ResearchHandler
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
-    public void setCurrentViewMode(MovieViewMode value,boolean update)
+    public void setCurrentViewMode(MovieViewMode value,boolean update,boolean force)
     {
-        if(this.movieViewMode != value)
+        if(this.movieViewMode != value || force)
         {
             this.movieViewMode = value;
             if(update)
