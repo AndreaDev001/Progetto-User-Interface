@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.text.Font;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -68,6 +69,12 @@ public class MainController implements IResearchListener {
     @FXML
     private void initialize()
     {
+        FontIcon firstIcon = new FontIcon("mdi2m-magnify");
+        FontIcon secondIcon = new FontIcon("mdi2m-movie-filter");
+        firstIcon.setIconSize(25);
+        secondIcon.setIconSize(25);
+        first.setGraphic(firstIcon);
+        second.setGraphic(secondIcon);
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
@@ -137,6 +144,7 @@ public class MainController implements IResearchListener {
                 ResearchHandler.getInstance().setCurrentListType(current);
             });
             label.setWrapText(true);
+            label.setStyle("-fx-font-size: 15px;-fx-font-family: 'Roboto',Arial,sans-serif");
             label.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadList.name") + " " + current.getLocalizedName().toLowerCase() + " " + (!current.getLocalizedName().toLowerCase().contains(StyleHandler.getInstance().getResourceBundle().getString("movies.name")) ? StyleHandler.getInstance().getResourceBundle().getString("movies.name") : "")));
             label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setUnderline(true));
             label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setUnderline(false));

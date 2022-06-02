@@ -3,6 +3,7 @@ package com.progetto.progetto.view;
 import com.progetto.progetto.MainApplication;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.io.File;
 import java.io.FileReader;
@@ -38,7 +39,8 @@ public class StyleHandler {
     }
 
     //read the config file and update the scene along with it
-    public void init(Scene scene) {
+    public void init(Scene scene)
+    {
         try {
 
             Path folderPath = Path.of(getFolderPath());
