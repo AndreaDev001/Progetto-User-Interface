@@ -19,8 +19,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import org.json.JSONObject;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 public class FilmController
@@ -91,6 +93,12 @@ public class FilmController
         int runtime = film.getRuntime();
         String path = FilmHandler.getInstance().getPosterPath(film);
         filmImage.setImage(CacheHandler.getInstance().getImage(path));
+        filmPopularity.setGraphic(StyleHandler.getInstance().createIcon("mdi2a-account-group",22));
+        filmNameTop.setGraphic(StyleHandler.getInstance().createIcon("mdi2m-movie",22));
+        filmRuntime.setGraphic(StyleHandler.getInstance().createIcon("mdi2c-clock-time-three",22));
+        filmReleaseDate.setGraphic(StyleHandler.getInstance().createIcon("mdi2c-calendar",22));
+        filmRating.setGraphic(StyleHandler.getInstance().createIcon("mdi2v-vote",22));
+        filmNameLeft.setGraphic(StyleHandler.getInstance().createIcon("mdi2m-movie",22));
         filmNameTop.setText(title);
         filmNameLeft.setText(title);
         filmReleaseDate.setText(releaseDate);

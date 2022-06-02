@@ -1,5 +1,6 @@
 package com.progetto.progetto.view.nodes;
 
+import com.progetto.progetto.view.StyleHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -23,15 +24,10 @@ public class MovieRating extends HBox
         String[] values = value.split("\\.");
         int firstPart = Integer.parseInt(values[0])/2;
         int secondPart = Integer.parseInt(values[1]);
-        for (int i = 0; i < firstPart; i++) {
-            FontIcon fontIcon = new FontIcon("mdi2s-star");
-            fontIcon.setIconSize(22);
-            this.getChildren().add(fontIcon);
-        }
+        for (int i = 0; i < firstPart; i++)
+            this.getChildren().add(StyleHandler.getInstance().createIcon("mdi2s-star",22));
         if (values[1].length() == 1 && Integer.parseInt(values[1]) >= 5 || values[1].length() == 2 && Integer.parseInt(values[1]) >= 50) {
-            FontIcon fontIcon = new FontIcon("mdi2s-star-half-full");
-            fontIcon.setIconSize(22);
-            this.getChildren().add(fontIcon);
+            this.getChildren().add(StyleHandler.getInstance().createIcon("mdi2s-star-half-full",22));
         }
     }
     public final double getRating() {return rating;}

@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.FilmController">
+<BorderPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.FilmController">
    <top>
       <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0" prefWidth="200.0" styleClass="foreground" BorderPane.alignment="CENTER">
          <padding>
@@ -38,28 +38,28 @@
                      </padding>
                      <children>
                         <ImageView fx:id="filmImage" fitHeight="180.0" fitWidth="160.0" pickOnBounds="true" />
-                        <Label fx:id="filmNameLeft" maxWidth="1.7976931348623157E308" text="Film name">
+                        <Label fx:id="filmNameLeft" maxWidth="1.7976931348623157E308" text="Film name" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filmReleaseDate" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" text="Film Release Date">
+                        <Label fx:id="filmReleaseDate" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" text="Film Release Date" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox fx:id="flagHolder" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" prefWidth="200.0" spacing="5.0" />
-                        <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating">
+                        <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filmPopularity" layoutX="20.0" layoutY="312.0" maxWidth="1.7976931348623157E308" text="Film Popularity">
+                        <Label fx:id="filmPopularity" layoutX="20.0" layoutY="312.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Film Popularity" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filmRuntime" maxWidth="1.7976931348623157E308" text="Film Runtime">
+                        <Label fx:id="filmRuntime" maxWidth="1.7976931348623157E308" text="Film Runtime" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
