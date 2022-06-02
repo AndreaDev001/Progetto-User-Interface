@@ -78,7 +78,6 @@ public class MenuController {
 
     @FXML
     void onLogoutPressed(ActionEvent event) {
-        ProfileHandler.getInstance().logout();
         SceneHandler.getInstance().loadPage(PageEnum.MAIN);
     }
 

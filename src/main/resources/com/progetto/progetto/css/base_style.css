@@ -3,10 +3,25 @@
     -fx-text-fill: -text-color;
     -fx-focus-color: transparent;
 }
+
+.ikonli-font-icon.eye-icon
+{
+    -fx-font-size: 17
+}
+.toggle-button.toggle-eye
+{
+    -fx-background-color: transparent;
+}
+.toggle-button.toggle-eye:hover
+{
+    -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
+}
+
 .ikonli-font-icon
 {
     -fx-icon-color: -text-color;
 }
+
 #color-bar-indicator {
     -fx-border-radius: 0.333333em;
     -fx-border-color: -text-color;
@@ -17,8 +32,6 @@
 {
     -fx-background-color: -ten-color;
 }
-.button:focused,
-.text-field:focused,
 .radio-button:focused,
 .combo-box:focused,
 .check-box:focused,
@@ -29,6 +42,7 @@
     -fx-border-color: derive(-text-color, -10%);
     -fx-border-radius: 1px;
 }
+
 .titled-pane
 {
    -fx-font-size: 12px;
