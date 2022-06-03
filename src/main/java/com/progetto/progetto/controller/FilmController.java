@@ -19,10 +19,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import org.json.JSONObject;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.List;
 
 public class FilmController
@@ -63,6 +61,7 @@ public class FilmController
         MovieDb film = FilmHandler.getInstance().getCurrentSelectedFilm();
         id = film.getId();
         title = film.getTitle();
+        addToLibrary.setGraphic(StyleHandler.getInstance().createIcon("mdi2l-library-shelves",22));
         addToLibrary.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
         addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name"));
         addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name")));

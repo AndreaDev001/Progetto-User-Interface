@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.text.Font;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -88,6 +87,7 @@ public class MainController implements IResearchListener {
         loadPreviousPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadPrevious.name")));
         loadPreviousPageButton.setGraphic(new FontIcon("fas-arrow-left"));
         loadPreviousPageButton.setOnAction(event -> loadNext(false));
+        this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
         ResearchHandler.getInstance().setListener(this);
         if (ResearchHandler.getInstance().getCurrentText().isEmpty())
             this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
@@ -227,21 +227,11 @@ public class MainController implements IResearchListener {
                 sortingDisabled.set(false);
                 if(FilmHandler.getInstance().RequiresUpdate())
                 {
-                    Client.getInstance().get("films", new EventHandler<WorkerStateEvent>()
-                    {
-                        @Override
-                        public void handle(WorkerStateEvent workerStateEvent)
-                        {
-                            JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
-                            FilmHandler.getInstance().loadMovies(jsonArray);
-                            createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY,MovieSortOrder.DESC));
-                        }
-                    }, new EventHandler<WorkerStateEvent>() {
-                        @Override
-                        public void handle(WorkerStateEvent workerStateEvent) {
-                            System.out.println("Error");
-                        }
-                    });
+                    Client.getInstance().get("films",(workerStateEvent) -> {
+                        JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
+                        FilmHandler.getInstance().loadMovies(jsonArray);
+                        createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY,MovieSortOrder.DESC));
+                    },(workerStateEvent) -> System.out.println("error"));
                 }
                 else
                 {

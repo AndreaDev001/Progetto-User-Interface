@@ -19,60 +19,61 @@
    <center>
       <SplitPane dividerPositions="0.5" style="-fx-box-border: transparent;" styleClass="background" BorderPane.alignment="CENTER">
          <items>
-            <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="140.0" styleClass="background">
+            <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="150.0" styleClass="background">
                <children>
-                  <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
-                     <children>
-                        <TitledPane fx:id="first" alignment="TOP_LEFT" text="%searchTilted.name">
-                           <content>
-                              <VBox alignment="CENTER" spacing="10.0">
-                                 <children>
-                                    <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                                    <TitledPane alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
-                                       <content>
-                                          <VBox fx:id="listHolder" spacing="5.0" />
-                                       </content>
-                                    </TitledPane>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </TitledPane>
-                        <TitledPane fx:id="second" expanded="false" layoutX="20.0" layoutY="20.0" text="%filterTilted.name">
-                           <content>
-                              <VBox fx:id="sortingHolder" alignment="CENTER" spacing="5.0">
-                                 <children>
-                                    <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="%sortByCombo.name">
-                                       <font>
-                                          <Font name="System Bold" size="17.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="sortComboBox" prefWidth="150.0" />
-                                    <ComboBox fx:id="sortOrderComboBox" layoutX="10.0" layoutY="39.0" prefWidth="150.0" />
-                                    <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                     <content>
+                        <VBox fx:id="leftHolder" prefWidth="100.0" spacing="3.0" styleClass="background">
+                           <children>
+                              <TitledPane fx:id="first" alignment="TOP_LEFT" text="%searchTilted.name">
+                                 <content>
+                                    <VBox alignment="CENTER" spacing="10.0">
                                        <children>
-                                          <Label fx:id="expandCategories" maxWidth="1.7976931348623157E308" text="%genreCombo.name" wrapText="true">
+                                          <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
+                                          <TitledPane alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
+                                             <content>
+                                                <VBox fx:id="listHolder" spacing="5.0" />
+                                             </content>
+                                          </TitledPane>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane fx:id="second" expanded="false" layoutX="20.0" layoutY="20.0" text="%filterTilted.name">
+                                 <content>
+                                    <VBox fx:id="sortingHolder" alignment="CENTER" spacing="5.0">
+                                       <children>
+                                          <Label fx:id="expandSorting" maxWidth="1.7976931348623157E308" text="%sortByCombo.name">
                                              <font>
                                                 <Font name="System Bold" size="17.0" />
                                              </font>
                                           </Label>
+                                          <ComboBox fx:id="sortComboBox" prefWidth="150.0" />
+                                          <ComboBox fx:id="sortOrderComboBox" layoutX="10.0" layoutY="39.0" prefWidth="150.0" />
+                                          <VBox fx:id="genreHolder" alignment="TOP_CENTER" prefWidth="100.0" spacing="2.0">
+                                             <children>
+                                                <Label fx:id="expandCategories" maxWidth="1.7976931348623157E308" text="%genreCombo.name" wrapText="true">
+                                                   <font>
+                                                      <Font name="System Bold" size="17.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
                                        </children>
                                     </VBox>
-                                 </children>
-                              </VBox>
-                           </content>
-                        </TitledPane>
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </VBox>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
             </AnchorPane>
             <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="300.0" pickOnBounds="false" prefHeight="160.0" styleClass="background">
                <children>
