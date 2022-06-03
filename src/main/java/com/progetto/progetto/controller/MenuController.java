@@ -1,24 +1,17 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.client.Client;
 import com.progetto.progetto.client.ConnectionException;
 import com.progetto.progetto.model.enums.MovieViewMode;
 import com.progetto.progetto.model.handlers.ProfileHandler;
 import com.progetto.progetto.model.handlers.ResearchHandler;
 import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MenuController {
 
@@ -64,13 +57,13 @@ public class MenuController {
                  homeButton.getStyleClass().add("highlight");
             libraryButton.getStyleClass().remove("highlight");
         }
-        ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,true,false);
+        ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false);
         SceneHandler.getInstance().loadPage(PageEnum.MAIN);
     }
     @FXML
     void onLibraryPressed(ActionEvent event)
     {
-        ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false);
+        ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,false,true,SceneHandler.getInstance().currentPageProperty().getValue() != PageEnum.MAIN);
         SceneHandler.getInstance().loadPage(PageEnum.MAIN);
         homeButton.getStyleClass().remove("highlight");
         if(!libraryButton.getStyleClass().contains("highlight"))

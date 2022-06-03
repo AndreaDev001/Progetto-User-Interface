@@ -8,6 +8,6 @@ import java.util.List;
 public interface IResearchListener
 {
     void OnResearchCompleted(List<MovieDb> result,boolean isText);
-    void OnViewChanged(MovieViewMode viewMode);
+    void OnViewChanged(MovieViewMode viewMode,boolean clear,boolean search);
     void OnResearchFailed();
 }

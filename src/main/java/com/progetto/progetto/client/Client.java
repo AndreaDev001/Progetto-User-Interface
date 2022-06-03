@@ -189,27 +189,24 @@ public class Client {
      *
      * @param table is the name of the collection.
      * @param elementId is the name of the element to remove.
-     * @param successListener is an object that will contain the result of the query in case of success.
-     * @param errorListener is an object containing an exception if it was raised during the execution.
      *
      * @throws IllegalArgumentException in case the table or the elementId are null.
      * */
-    public void remove(String table, String elementId, SuccessListener successListener, ErrorListener errorListener) {
+    public void remove(String table, String elementId, EventHandler<WorkerStateEvent> success,EventHandler<WorkerStateEvent> error) {
         Objects.requireNonNull(table, "Table cannot be null");
         Objects.requireNonNull(elementId, "Element id cannot be null");
-        queryExecutorService.submit(createDaemonThread(() -> {
-            try {
-                QueryResult result = databaseQuery.remove(table, elementId);
-                if(!result.success())
-                    throw new ConnectionException("Cannot remove from " + table + ": " + result.message());
-                if(successListener != null) {
-                    successListener.onSuccess(new DatabaseReference(new JSONObject(result.toString())));
-                }
-            } catch (Exception e) {
-                if(errorListener != null)
-                    errorListener.onError(e);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                QueryResult queryResult = databaseQuery.remove(table,elementId);
+                if(!queryResult.success())
+                    throw new ConnectionException("Cannot remove from" + " " + table + ":" + " " + queryResult.message());
+                return null;
             }
-        }));
+        };
+        task.setOnSucceeded(success);
+        task.setOnFailed(error);
+        queryExecutorService.submit(task);
     }
 
     /**

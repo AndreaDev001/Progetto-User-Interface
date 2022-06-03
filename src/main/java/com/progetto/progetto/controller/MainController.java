@@ -210,11 +210,14 @@ public class MainController implements IResearchListener {
         scrollPane.setContent(errorPage);
     }
     @Override
-    public void OnViewChanged(MovieViewMode movieViewMode)
+    public void OnViewChanged(MovieViewMode movieViewMode,boolean clear,boolean search)
     {
-        genreList.clearList();
-        ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.GENRE, false);
-        ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(), false);
+        if(clear)
+        {
+            genreList.clearList();
+            ResearchHandler.getInstance().clearSearch();
+            System.out.println("View Cleared");
+        }
         bottomHolder.setVisible(movieViewMode == MovieViewMode.HOME);
         VBox vBox = (VBox)first.getContent();
         Node node = vBox.getChildren().get(1);
@@ -230,13 +233,14 @@ public class MainController implements IResearchListener {
                     Client.getInstance().get("films",(workerStateEvent) -> {
                         JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
                         FilmHandler.getInstance().loadMovies(jsonArray);
-                        createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY,MovieSortOrder.DESC));
+                        if(search)
+                            ResearchHandler.getInstance().search(false);
+                        else
+                            createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
                     },(workerStateEvent) -> System.out.println("error"));
                 }
                 else
                 {
-                    ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.GENRE,false);
-                    ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(),false);
                     showCurrent();
                     createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
                 }

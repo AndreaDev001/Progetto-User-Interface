@@ -111,14 +111,21 @@ public class ResearchHandler
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
-    public void setCurrentViewMode(MovieViewMode value,boolean update,boolean force)
+    public void setCurrentViewMode(MovieViewMode value,boolean force,boolean clear,boolean search)
     {
         if(this.movieViewMode != value || force)
         {
             this.movieViewMode = value;
-            if(update)
-                researchListener.OnViewChanged(movieViewMode);
+            researchListener.OnViewChanged(movieViewMode,clear,search);
         }
+    }
+    public void clearSearch()
+    {
+        this.currentFilterType = MovieFilterType.GENRE;
+        this.currentGenre = "";
+        this.currentText = "";
+        this.currentSortType = MovieSortType.POPULARITY;
+        this.currentSortOrder = MovieSortOrder.DESC;
     }
     public final String getCurrentText() {return currentText;}
     public final MovieViewMode getCurrentViewMode() {return movieViewMode;}
