@@ -1,36 +1,42 @@
 package com.progetto.progetto.controller;
 
 import com.progetto.progetto.client.Client;
-import com.progetto.progetto.model.enums.*;
-import com.progetto.progetto.model.handlers.*;
+import com.progetto.progetto.model.enums.MovieListType;
+import com.progetto.progetto.model.enums.MovieSortOrder;
+import com.progetto.progetto.model.enums.MovieSortType;
+import com.progetto.progetto.model.enums.MovieViewMode;
+import com.progetto.progetto.model.handlers.CacheHandler;
+import com.progetto.progetto.model.handlers.FilmHandler;
+import com.progetto.progetto.model.handlers.IResearchListener;
+import com.progetto.progetto.model.handlers.ResearchHandler;
 import com.progetto.progetto.view.StyleHandler;
-import com.progetto.progetto.view.nodes.*;
+import com.progetto.progetto.view.nodes.CurrentSearch;
+import com.progetto.progetto.view.nodes.ErrorPage;
+import com.progetto.progetto.view.nodes.FilmContainer;
+import com.progetto.progetto.view.nodes.GenreList;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-
-import java.util.*;
+import java.util.List;
 
 public class MainController implements IResearchListener {
     @FXML
     private VBox listHolder;
     @FXML
-    private ScrollPane scrollPane;
+    public ScrollPane scrollPane;
     @FXML
     private TextField searchField;
     @FXML
@@ -56,7 +62,9 @@ public class MainController implements IResearchListener {
     @FXML
     private HBox boxHolder;
     @FXML
-    private HBox bottomHolder;
+    public HBox bottomHolder;
+    @FXML
+    public VBox filmsProgress;
 
     private static final BooleanProperty sortingDisabled = new SimpleBooleanProperty();
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
@@ -229,14 +237,30 @@ public class MainController implements IResearchListener {
                 sortingDisabled.set(false);
                 if(FilmHandler.getInstance().RequiresUpdate())
                 {
+                    //disable e visualizzazione caricamento
+                    scrollPane.setDisable(true);
+                    bottomHolder.setDisable(true);
+                    filmsProgress.setVisible(true);
+
                     Client.getInstance().get("films",(workerStateEvent) -> {
+
+                        //rimuovi caricamento
+                        scrollPane.setDisable(false);
+                        bottomHolder.setDisable(false);
+                        filmsProgress.setVisible(false);
+
                         JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
                         FilmHandler.getInstance().loadMovies(jsonArray);
                         if(search)
                             ResearchHandler.getInstance().search(false);
                         else
                             createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
-                    },(workerStateEvent) -> System.out.println("error"));
+                    },(workerStateEvent) ->
+                    {
+                        scrollPane.setDisable(false);
+                        bottomHolder.setDisable(false);
+                        filmsProgress.setVisible(false);
+                    });
                 }
                 else
                 {

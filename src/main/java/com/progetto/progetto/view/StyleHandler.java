@@ -2,7 +2,6 @@ package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -37,6 +36,12 @@ public class StyleHandler {
     public final List<Locale> supportedLanguages = List.of(Locale.ENGLISH, Locale.ITALIAN,Locale.GERMAN,Locale.FRENCH,Locale.forLanguageTag("es"));
 
     private StyleHandler() {
+        //loading necessary fonts
+        Font.loadFont(MainApplication.class.getResourceAsStream("fonts/Roboto-Regular.ttf"),10);
+        Font.loadFont(MainApplication.class.getResourceAsStream("fonts/Roboto-Bold.ttf"),10);
+        Font.loadFont(MainApplication.class.getResourceAsStream("fonts/OpenDyslexic-Regular.otf"),10);
+        Font.loadFont(MainApplication.class.getResourceAsStream("fonts/OpenDyslexic-Bold.otf"),10);
+        Font.loadFont(MainApplication.class.getResourceAsStream("fonts/OpenDyslexic-Italic.otf"),10);
     }
 
     //read the config file and update the scene along with it
@@ -115,14 +120,14 @@ public class StyleHandler {
         //ADD NEW CSS PATH
         scene.getStylesheets().add(getCssPath(this.styleMode));
 
+        scene.getStylesheets().add(String.valueOf(Objects.requireNonNull(MainApplication.class.getResource("css/base_style.css")).toExternalForm()));
+
         //--------dyslexic font----------
         String dyslexic_style = Objects.requireNonNull(MainApplication.class.getResource("css/dyslexic.css")).toExternalForm();
         if(this.dyslexic)
             scene.getStylesheets().add(dyslexic_style);
         else
             scene.getStylesheets().remove(dyslexic_style);
-
-        scene.getStylesheets().add(String.valueOf(Objects.requireNonNull(MainApplication.class.getResource("css/base_style.css")).toExternalForm()));
 
     }
 

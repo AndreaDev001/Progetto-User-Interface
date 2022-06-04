@@ -1,8 +1,5 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.model.handlers.ProfileHandler;
-import com.progetto.progetto.view.PageEnum;
-import com.progetto.progetto.view.SceneHandler;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +38,7 @@ public class RegisterController {
     void onRegisterPressed(ActionEvent event) {
 
         String encryptedPassword = BCrypt.hashpw(this.passwordField.getText(),BCrypt.gensalt(10));
-        boolean successfulResult = ProfileHandler.getInstance().createUser(usernameField.getText(),encryptedPassword);
+        boolean successfulResult = false;
         if(successfulResult)
         {
             //close current stage

@@ -9,14 +9,18 @@ import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import com.progetto.progetto.view.StyleHandler;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
-import info.movito.themoviedbapi.model.*;
+import info.movito.themoviedbapi.model.Genre;
+import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class FilmHandler
 {
@@ -25,10 +29,12 @@ public class FilmHandler
     private final TmdbApi tmdbApi;
     private final TmdbMovies movies;
     private final String defaultPath;
-    private MovieDb currentSelectedFilm;
+    private int currentSelectedFilm = 0;
     private List<MovieDb> currentLoaded = new Vector<>();
     private Map<MovieDb,String> movieElementId = new HashMap<>();
     private boolean requiresUpdate = true;
+
+    private MovieQueryService movieDbService = new MovieQueryService();
 
     private FilmHandler()
     {
@@ -134,13 +140,21 @@ public class FilmHandler
     {
         return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
     }
-    public MovieDb getMovie(int filmId) {
-        return movies.getMovie(filmId,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
-    }
     public void selectFilm(int id)
     {
-        this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
+        //this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
+        this.currentSelectedFilm = id;
     }
+
+    public void filmQuery(int filmID, Consumer<Throwable> error, Consumer<MovieDb> success)
+    {
+        movieDbService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
+        movieDbService.setOnSucceeded(workerStateEvent -> success.accept((MovieDb) workerStateEvent.getSource().getValue()));
+        movieDbService.setMovieId(filmID);
+        movieDbService.restart();
+    }
+
+
     public void loadMovies(JSONArray jsonArray)
     {
         this.currentLoaded.clear();
@@ -149,7 +163,7 @@ public class FilmHandler
         {
             JSONObject current = jsonArray.getJSONObject(i);
             int id = current.getInt("filmId");
-            MovieDb movieDb = this.getMovie(id);
+            MovieDb movieDb = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
             movieElementId.put(movieDb,current.getString("element_id"));
             currentLoaded.add(movieDb);
         }
@@ -159,7 +173,7 @@ public class FilmHandler
     {
         this.requiresUpdate = value;
     }
-    public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
+    public final int getCurrentSelectedFilm() {return currentSelectedFilm;}
     public List<Genre> getValues(){
         return genres;
     }
@@ -173,5 +187,30 @@ public class FilmHandler
     public final boolean RequiresUpdate() {return requiresUpdate;}
     public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
     public static FilmHandler getInstance() {return instance;}
+
+
+
+    private class MovieQueryService extends Service<MovieDb>
+    {
+        private int filmId;
+
+        public void setMovieId(int filmId)
+        {
+            this.filmId = filmId;
+        }
+
+        @Override
+        protected Task<MovieDb> createTask()
+        {
+            return new Task<>()
+            {
+                @Override
+                protected MovieDb call()
+                {
+                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
+                }
+            };
+        }
+    }
 
 }
