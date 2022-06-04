@@ -1,14 +1,21 @@
 package com.progetto.progetto.client;
 
-import client.util.QueryResult;
+import com.progetto.progetto.client.util.QueryResult;
 import com.progetto.progetto.client.listeners.ErrorListener;
 import com.progetto.progetto.client.listeners.SuccessListener;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -96,26 +103,27 @@ public class Client {
      * Otherwise, it will retrieve only the objects added by the user.
      *
      * @param table is the name of the collection.
-     * @param successListener is an object that will contain the result of the query in case of success.
-     * @param errorListener is an object containing an exception if it was raised during the execution.
      *
      * @throws IllegalArgumentException in case the table is null.
      * */
-    public void get(String table, SuccessListener successListener, ErrorListener errorListener) {
+    public void get(String table,EventHandler<WorkerStateEvent> success,EventHandler<WorkerStateEvent> error){
         Objects.requireNonNull(table, "Table cannot be null");
-        queryExecutorService.submit(createDaemonThread(() -> {
-            try {
+        Task<JSONObject> task = new Task<JSONObject>()
+        {
+            @Override
+            protected JSONObject call() throws Exception
+            {
                 QueryResult result = databaseQuery.get(table);
-                if(!result.success())
+                if (!result.success())
                     throw new ConnectionException("Cannot get object of " + table + ": " + result.message());
-                if(successListener != null) {
-                    successListener.onSuccess(new DatabaseReference(new JSONObject(result.message())));
-                }
-            } catch (Exception e) {
-                if(errorListener != null)
-                    errorListener.onError(e);
+                DatabaseReference databaseReference = new DatabaseReference(new JSONObject(result.message()));
+                List<JSONObject> values = new Vector<>();
+                return databaseReference.result();
             }
-        }));
+        };
+        task.setOnSucceeded(success);
+        task.setOnFailed(error);
+        queryExecutorService.submit(task);
     }
 
     /**
@@ -181,27 +189,24 @@ public class Client {
      *
      * @param table is the name of the collection.
      * @param elementId is the name of the element to remove.
-     * @param successListener is an object that will contain the result of the query in case of success.
-     * @param errorListener is an object containing an exception if it was raised during the execution.
      *
      * @throws IllegalArgumentException in case the table or the elementId are null.
      * */
-    public void remove(String table, String elementId, SuccessListener successListener, ErrorListener errorListener) {
+    public void remove(String table, String elementId, EventHandler<WorkerStateEvent> success,EventHandler<WorkerStateEvent> error) {
         Objects.requireNonNull(table, "Table cannot be null");
         Objects.requireNonNull(elementId, "Element id cannot be null");
-        queryExecutorService.submit(createDaemonThread(() -> {
-            try {
-                QueryResult result = databaseQuery.remove(table, elementId);
-                if(!result.success())
-                    throw new ConnectionException("Cannot remove from " + table + ": " + result.message());
-                if(successListener != null) {
-                    successListener.onSuccess(new DatabaseReference(new JSONObject(result.toString())));
-                }
-            } catch (Exception e) {
-                if(errorListener != null)
-                    errorListener.onError(e);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                QueryResult queryResult = databaseQuery.remove(table,elementId);
+                if(!queryResult.success())
+                    throw new ConnectionException("Cannot remove from" + " " + table + ":" + " " + queryResult.message());
+                return null;
             }
-        }));
+        };
+        task.setOnSucceeded(success);
+        task.setOnFailed(error);
+        queryExecutorService.submit(task);
     }
 
     /**
@@ -407,5 +412,5 @@ public class Client {
         t.setDaemon(true);
         return t;
     }
-
+    public final ExecutorService getQueryExecutorService() {return queryExecutorService;}
 }

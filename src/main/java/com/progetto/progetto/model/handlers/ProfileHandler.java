@@ -49,10 +49,12 @@ public class ProfileHandler {
                 SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid Username", Alert.AlertType.ERROR);
              **/
             Client.getInstance().login(username,password);
+            this.loggedUserProperty.set(new User(username));
             return true;
         }
         catch (Exception exception)
         {
+            this.loggedUserProperty.set(null);
             exception.printStackTrace();
             SceneHandler.getInstance().createAlertMessage("ERROR!","Invalid User",Alert.AlertType.ERROR);
         }

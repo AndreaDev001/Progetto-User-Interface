@@ -1,4 +1,4 @@
-package client.util;
+package com.progetto.progetto.client.util;
 
 import org.json.JSONObject;
 

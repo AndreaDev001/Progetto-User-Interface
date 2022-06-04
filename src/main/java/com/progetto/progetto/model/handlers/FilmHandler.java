@@ -11,6 +11,8 @@ import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,9 @@ public class FilmHandler
     private final TmdbMovies movies;
     private final String defaultPath;
     private MovieDb currentSelectedFilm;
+    private List<MovieDb> currentLoaded = new Vector<>();
+    private Map<MovieDb,String> movieElementId = new HashMap<>();
+    private boolean requiresUpdate = true;
 
     private FilmHandler()
     {
@@ -51,12 +56,12 @@ public class FilmHandler
         List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         this.genres = genres;
     }
-    public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType)
+    public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType,MovieSortOrder movieSortOrder)
     {
         List<MovieDb> result = new ArrayList<>();
         switch (movieSortType)
         {
-            case ORIGINAL_TITLE -> result = values.stream().sorted(Comparator.comparing(MovieDb::getTitle)).toList();
+            case ORIGINAL_TITLE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getTitle).reversed() : Comparator.comparing(MovieDb::getTitle)).toList();
             case RELEASE_DATE -> result = values.stream().sorted((o1,o2) ->
             {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -75,10 +80,42 @@ public class FilmHandler
                 }
                 return 1;
             }).toList();
-            case VOTE_AVERAGE -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteAverage).reversed()).toList();
-            case POPULARITY -> result = values.stream().sorted(Comparator.comparing(MovieDb::getPopularity).reversed()).toList();
-            case VOTE_COUNT -> result = values.stream().sorted(Comparator.comparing(MovieDb::getVoteCount).reversed()).toList();
+            case VOTE_AVERAGE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getVoteAverage).reversed(): Comparator.comparing(MovieDb::getVoteAverage)).toList();
+            case POPULARITY -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getPopularity).reversed() : Comparator.comparing(MovieDb::getPopularity)).toList();
+            case VOTE_COUNT -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getVoteCount).reversed() : Comparator.comparing(MovieDb::getVoteCount)).toList();
+            case REVENUE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getRevenue).reversed() : Comparator.comparing(MovieDb::getRevenue)).toList();
         }
+        return result;
+    }
+    public List<MovieDb> filterMovies(List<MovieDb> movies,MovieFilterType movieFilterType,String value) throws FilmNotFoundException
+    {
+        if(value == null || value.isEmpty())
+            return movies;
+        List<MovieDb> result = new ArrayList<>();
+        switch (movieFilterType)
+        {
+            case GENRE -> {
+                String[] values = value.split(",");
+                List<Genre> selectedGenres = new ArrayList<>();
+                for(String current : values)
+                {
+                    int id = Integer.parseInt(current);
+                    selectedGenres.add(this.genres.get(id));
+                }
+                for(MovieDb current : movies)
+                {
+                    if(current.getGenres().containsAll(selectedGenres))
+                        result.add(current);
+                }
+            }
+            case NAME -> {
+                for(MovieDb current : movies)
+                    if(current.getTitle().contains(value))
+                        result.add(current);
+            }
+        }
+        if(result.size() == 0)
+            throw new FilmNotFoundException("Result Set is Empty");
         return result;
     }
     public MovieResultsPage makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
@@ -104,6 +141,24 @@ public class FilmHandler
     {
         this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
     }
+    public void loadMovies(JSONArray jsonArray)
+    {
+        this.currentLoaded.clear();
+        movieElementId.clear();
+        for(int i = 0;i < jsonArray.length();i++)
+        {
+            JSONObject current = jsonArray.getJSONObject(i);
+            int id = current.getInt("filmId");
+            MovieDb movieDb = this.getMovie(id);
+            movieElementId.put(movieDb,current.getString("element_id"));
+            currentLoaded.add(movieDb);
+        }
+        this.requiresUpdate = false;
+    }
+    public void setRequiresUpdate(boolean value)
+    {
+        this.requiresUpdate = value;
+    }
     public final MovieDb getCurrentSelectedFilm() {return currentSelectedFilm;}
     public List<Genre> getValues(){
         return genres;
@@ -114,6 +169,9 @@ public class FilmHandler
             values.add(current.getName());
         return values;
     }
+    public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
+    public final boolean RequiresUpdate() {return requiresUpdate;}
+    public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
     public static FilmHandler getInstance() {return instance;}
 
 }

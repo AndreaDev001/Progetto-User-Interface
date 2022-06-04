@@ -1,3 +1,8 @@
+@font-face
+{
+   font-family: 'Roboto Medium';
+   src: url("../fonts/Roboto-Medium.ttf");
+}
 *
 {
     -fx-text-fill: -text-color;
@@ -17,29 +22,32 @@
 {
     -fx-background-color: -ten-color;
 }
-.button:focused,
-.text-field:focused,
-.radio-button:focused,
 .combo-box:focused,
-.check-box:focused,
 .card:focused,
 .highlight
 {
+    -fx-border-color: -text-color;
+    -fx-border-width: 1px;
     -fx-font-weight: bold;
-    -fx-border-color: derive(-text-color, -10%);
-    -fx-border-radius: 1px;
 }
 .titled-pane
 {
-   -fx-font-size: 12px;
-   -fx-font-weight: bold;
+   -fx-font-size: 14px;
+   -fx-font-weight: 200;
    -fx-text-fill: -text-color;
 }
 .titled-pane > .title
 {
    -fx-background-color: -scene-color;
-   -fx-font-size: 17px;
+   -fx-font-size: 18px;
+   -fx-font-family: 'Roboto Medium',Arial,sans-serif;
    -fx-padding: 0px;
+}
+.showCurrent
+{
+   -fx-font-size: 16px;
+   -fx-font-weight: 200;
+   -fx-font-family: 'Roboto Medium',Arial,sans-serif;
 }
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;
@@ -49,18 +57,19 @@
     -fx-padding: 0px 10px;
 }
 .titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: -thirty-color;
     -fx-effect: null;
 }
 .titled-pane > *.content
 {
-    -fx-background-color: -scene-color;
+    -fx-background-color: -thirty-color;
     -fx-cursor: hand;
  }
 .tooltip
 {
-    -fx-show-duration: 10s;
-    -fx-show-delay: 0.1s;
-    -fx-font-size: 16px;
+    -fx-show-delay: 0.0s;
+    -fx-hide-delay: 0.0s;
+    -fx-font-size: 17px;
     -fx-background-color: -thirty-color;
 }
 .card
@@ -70,6 +79,8 @@
   -fx-padding: 8px 8px;
   -fx-border-width: 1px;
   -fx-background-radius: 10px;
+  -fx-font-family: 'Roboto Medium',Arial,sans-serif;
+  -fx-font-size: 14px;
 }
 .header-panel,
 .background
@@ -84,14 +95,10 @@
 .flowPane
 {
    -fx-background-color: -scene-color;
-   -fx-padding: 5px;
+   -fx-padding: 5px 5px;
 }
 .dialog-pane,
 .foreground
-{
-    -fx-background-color: derive(-thirty-color,-30%);
-}
-.card
 {
     -fx-background-color: derive(-thirty-color,-30%);
 }
@@ -106,18 +113,23 @@
 .button
 {
    -fx-background-color: -ten-color;
+   -fx-font-size: 16px;
+   -fx-font-weight: 200;
    -fx-cursor: hand;
+   -fx-font-family: 'Roboto Medium',Arial,sans-serif;
+}
+.button:hover{
+   -fx-underline: true;
+   -fx-background-color: -thirty-color;
 }
 .text-field
 {
   -fx-border-width: 1px;
 }
-.button:hover{
-   -fx-underline: true;
-}
 .text-area, .text-area .content {
     -fx-background-color: -thirty-color;
     -fx-background-radius: 0px;
+    -fx-font-size: 12px;
 }
 .split-pane:horizontal > .split-pane-divider {
    -fx-background-color: transparent;
@@ -179,9 +191,15 @@
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
 }
-.scroll-pane
-{
-  -fx-background-color: -scene-color;
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+.scroll-pane .corner {
+    -fx-background-insets: 0;
 }
 .combo-box-base {
     -fx-background-color: -thirty-color;
@@ -213,7 +231,7 @@
 }
 .check-box .box
 {
-  -fx-background-color: -thirty-color;
+  -fx-background-color: -scene-color;
   -fx-border-radius: 3px;
 }
 .check-box:selected .mark

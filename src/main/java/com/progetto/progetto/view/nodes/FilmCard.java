@@ -5,12 +5,15 @@ import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class FilmCard extends VBox
 {
@@ -41,6 +44,12 @@ public class FilmCard extends VBox
         imageView.setSmooth(true);
         imageView.setFitHeight(150);
         this.addEventHandler(MouseEvent.MOUSE_CLICKED,event ->{
+            if(SceneHandler.getInstance().getFilmStage().isIconified() && FilmHandler.getInstance().getCurrentSelectedFilm() != null && FilmHandler.getInstance().getCurrentSelectedFilm().getId() == this.movieDb.getId())
+            {
+                SceneHandler.getInstance().centerStage(SceneHandler.getInstance().getFilmStage(), SceneHandler.getInstance().getFilmStage().getWidth(),SceneHandler.getInstance().getFilmStage().getHeight());
+                SceneHandler.getInstance().getFilmStage().setIconified(false);
+                return;
+            }
             FilmHandler.getInstance().selectFilm(movieDb.getId());
             SceneHandler.getInstance().loadFilmScene();
         });
@@ -48,7 +57,17 @@ public class FilmCard extends VBox
         this.getChildren().add(imageView);
         this.getChildren().add(titleLabel);
         this.getChildren().add(releaseDateLabel);
+        this.getChildren().add(new MovieRating(movieDb.getVoteAverage()));
         this.setFocusTraversable(true);
+        this.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> {
+            DropShadow dropShadow = new DropShadow();
+            dropShadow.setRadius(5.0);
+            dropShadow.setOffsetX(3.0);
+            dropShadow.setOffsetY(3.0);
+            dropShadow.setColor(Color.valueOf("#ffa200"));
+            this.setEffect(dropShadow);
+        });
+        this.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> this.setEffect(null));
     }
     public final ImageView getImageView() {return imageView;}
     public final Label getTitleLabel() {return titleLabel;}
