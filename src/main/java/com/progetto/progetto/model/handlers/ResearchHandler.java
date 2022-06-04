@@ -57,7 +57,6 @@ public class ResearchHandler
                 mainController.bottomHolder.setDisable(true);
                 mainController.filmsProgress.setVisible(true);
 
-                filmsSearchService.setup(isList,builder.toString());
                 filmsSearchService.setOnSucceeded(workerStateEvent ->
                 {
                     MovieResultsPage result = (MovieResultsPage) workerStateEvent.getSource().getValue();
@@ -73,7 +72,9 @@ public class ResearchHandler
                     mainController.scrollPane.setDisable(false);
                     mainController.bottomHolder.setDisable(false);
                     mainController.filmsProgress.setVisible(false);
+                    researchListener.OnResearchFailed();
                 });
+                filmsSearchService.setup(isList,builder.toString());
                 filmsSearchService.restart();
 
             }
