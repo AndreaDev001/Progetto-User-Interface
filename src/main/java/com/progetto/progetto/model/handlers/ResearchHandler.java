@@ -73,6 +73,7 @@ public class ResearchHandler
                     mainController.scrollPane.setDisable(false);
                     mainController.bottomHolder.setDisable(false);
                     mainController.filmsProgress.setVisible(false);
+                    researchListener.OnResearchFailed();
                 });
                 filmsSearchService.restart();
 
