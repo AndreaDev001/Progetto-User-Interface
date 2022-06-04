@@ -35,8 +35,6 @@ public class ResearchHandler
     }
     public void search(boolean isList)
     {
-        MainController mainController = (MainController) researchListener;
-
         try
         {
             StringBuilder builder = new StringBuilder();
@@ -51,12 +49,9 @@ public class ResearchHandler
                     }
                 }
             }
+            researchListener.OnResearchStarted();
             if(movieViewMode == MovieViewMode.HOME)
             {
-                mainController.scrollPane.setDisable(true);
-                mainController.bottomHolder.setDisable(true);
-                mainController.filmsProgress.setVisible(true);
-
                 filmsSearchService.setup(isList,builder.toString());
                 filmsSearchService.setOnSucceeded(workerStateEvent ->
                 {
@@ -64,16 +59,8 @@ public class ResearchHandler
                     currentMaxPage = Math.max(1,result.getTotalPages());
                     boolean value = (currentText == null || currentText.isEmpty()) && !isList;
                     researchListener.OnResearchCompleted(result.getResults(),value);
-                    mainController.scrollPane.setDisable(false);
-                    mainController.bottomHolder.setDisable(false);
-                    mainController.filmsProgress.setVisible(false);
                 });
-                filmsSearchService.setOnFailed((worker) ->
-                {
-                    mainController.scrollPane.setDisable(false);
-                    mainController.bottomHolder.setDisable(false);
-                    mainController.filmsProgress.setVisible(false);
-                });
+                filmsSearchService.setOnFailed((worker) -> researchListener.OnResearchFailed());
                 filmsSearchService.restart();
 
             }

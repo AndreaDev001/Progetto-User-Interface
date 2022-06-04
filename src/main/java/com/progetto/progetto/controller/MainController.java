@@ -152,7 +152,6 @@ public class MainController implements IResearchListener {
                 ResearchHandler.getInstance().setCurrentListType(current);
             });
             label.setWrapText(true);
-            label.setStyle("-fx-font-size: 15px;-fx-font-family: 'Roboto',Arial,sans-serif");
             label.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadList.name") + " " + current.getLocalizedName().toLowerCase() + " " + (!current.getLocalizedName().toLowerCase().contains(StyleHandler.getInstance().getResourceBundle().getString("movies.name")) ? StyleHandler.getInstance().getResourceBundle().getString("movies.name") : "")));
             label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setUnderline(true));
             label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setUnderline(false));
@@ -167,6 +166,12 @@ public class MainController implements IResearchListener {
     }
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
+    }
+    @Override
+    public void OnResearchStarted()
+    {
+        this.handleLoading(true);
+        System.out.println("Research Started");
     }
     @Override
     public void OnResearchCompleted(List<MovieDb> result,boolean isGenre)
@@ -193,7 +198,14 @@ public class MainController implements IResearchListener {
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
+        this.handleLoading(false);
         showCurrent();
+    }
+    private void handleLoading(boolean value)
+    {
+        this.scrollPane.setDisable(value);
+        this.bottomHolder.setDisable(value);
+        this.filmsProgress.setDisable(value);
     }
     private void showCurrent()
     {
@@ -206,6 +218,9 @@ public class MainController implements IResearchListener {
     public void OnResearchFailed()
     {
         showCurrent();
+        this.scrollPane.setDisable(false);
+        this.bottomHolder.setDisable(false);
+        this.filmsProgress.setVisible(false);
         bottomHolder.setVisible(false);
         ErrorPage errorPage = new ErrorPage("errorText.name","errorButton.name",true);
         errorPage.getErrorButton().setOnAction((event) -> {
@@ -237,30 +252,16 @@ public class MainController implements IResearchListener {
                 sortingDisabled.set(false);
                 if(FilmHandler.getInstance().RequiresUpdate())
                 {
-                    //disable e visualizzazione caricamento
-                    scrollPane.setDisable(true);
-                    bottomHolder.setDisable(true);
-                    filmsProgress.setVisible(true);
-
+                    this.handleLoading(true);
                     Client.getInstance().get("films",(workerStateEvent) -> {
-
-                        //rimuovi caricamento
-                        scrollPane.setDisable(false);
-                        bottomHolder.setDisable(false);
-                        filmsProgress.setVisible(false);
-
+                        this.handleLoading(false);
                         JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
                         FilmHandler.getInstance().loadMovies(jsonArray);
                         if(search)
                             ResearchHandler.getInstance().search(false);
                         else
                             createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
-                    },(workerStateEvent) ->
-                    {
-                        scrollPane.setDisable(false);
-                        bottomHolder.setDisable(false);
-                        filmsProgress.setVisible(false);
-                    });
+                    },(workerStateEvent) -> this.handleLoading(false));
                 }
                 else
                 {

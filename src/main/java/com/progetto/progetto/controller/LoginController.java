@@ -1,6 +1,8 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.model.handlers.ProfileHandler;
 import com.progetto.progetto.view.ErrorTextField;
+import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.TogglePassword;
 import javafx.event.ActionEvent;
@@ -24,9 +26,9 @@ public class LoginController
 
     @FXML
     void onLoginPressed(ActionEvent event) {
-        //boolean result = ProfileHandler.getInstance().login(usernameField.getText(),passwordField.getText(),false);
-        //if(result)
-        //    SceneHandler.getInstance().loadPage(PageEnum.MAIN);
+        boolean result = ProfileHandler.getInstance().login(usernameField.getText(),togglePassword.getPasswordField(),false);
+        if(result)
+           SceneHandler.getInstance().loadPage(PageEnum.MAIN);
     }
 
     @FXML

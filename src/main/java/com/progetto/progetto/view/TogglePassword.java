@@ -11,13 +11,14 @@ public class TogglePassword extends HBox {
 
     private static final String TOGGLED_EYE = "far-eye";
     private static final String UNTOGGLED_EYE = "far-eye-slash";
+    private final ErrorTextField passwordField;
 
     public TogglePassword()
     {
         ToggleButton toggleEye = new ToggleButton();
         toggleEye.getStyleClass().add("toggle-eye");
 
-        ErrorTextField passwordField = new ErrorTextField()
+        passwordField = new ErrorTextField()
         {
             @Override
             public void copy() {
@@ -40,7 +41,7 @@ public class TogglePassword extends HBox {
         this.getChildren().add(toggleEye);
 
     }
-
+    public final String getPasswordField() {return passwordField.getText();}
     private static class TogglePasswordSkin extends TextFieldSkin
     {
         private final BooleanProperty property;
@@ -51,7 +52,6 @@ public class TogglePassword extends HBox {
             this.property.addListener((observable, oldValue, newValue) -> control.setText(control.getText()));
 
         }
-
         @Override
         protected String maskText(String txt) {
             if(this.property != null && this.property.get())
