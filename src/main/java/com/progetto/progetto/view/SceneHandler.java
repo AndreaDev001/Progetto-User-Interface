@@ -2,7 +2,7 @@ package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.client.Client;
-import com.progetto.progetto.client.ConnectionException;
+import com.progetto.progetto.model.handlers.FilmHandler;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -23,7 +23,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -61,6 +60,7 @@ public class SceneHandler {
             try
             {
                 Client.getInstance().close();
+                this.filmStage.close();
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -153,7 +153,6 @@ public class SceneHandler {
         stage.setResizable(true);
         stage.setTitle("Main Scene");
         centerStage(stage,1280,720);
-        stage.show();
         stage.setWidth(1280);
         stage.setHeight(720);
 
@@ -210,6 +209,7 @@ public class SceneHandler {
         filmStage.setScene(filmScene);
         filmStage.setWidth(640);
         filmStage.setHeight(480);
+        filmStage.setIconified(false);
         centerStage(filmStage,filmStage.getWidth(),filmStage.getHeight());
         this.filmStage.show();
     }
@@ -219,4 +219,5 @@ public class SceneHandler {
         stage.setX((screenBounds.getWidth() - width) / 2);
         stage.setY((screenBounds.getHeight() - height) / 2);
     }
+    public final Stage getFilmStage() {return filmStage;}
 }

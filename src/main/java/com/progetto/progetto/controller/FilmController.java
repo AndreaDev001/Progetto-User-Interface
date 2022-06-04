@@ -139,7 +139,6 @@ public class FilmController
     private void RemoveFilm()
     {
         Client.getInstance().remove("films",elementId,workerStateEvent -> {
-            System.out.println("Movie removed correctly");
             FilmHandler.getInstance().setRequiresUpdate(true);
             ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
         },workerStateEvent -> {

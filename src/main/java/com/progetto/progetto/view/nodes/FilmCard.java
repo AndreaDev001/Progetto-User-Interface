@@ -5,6 +5,7 @@ import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -43,6 +44,12 @@ public class FilmCard extends VBox
         imageView.setSmooth(true);
         imageView.setFitHeight(150);
         this.addEventHandler(MouseEvent.MOUSE_CLICKED,event ->{
+            if(SceneHandler.getInstance().getFilmStage().isIconified() && FilmHandler.getInstance().getCurrentSelectedFilm() != null && FilmHandler.getInstance().getCurrentSelectedFilm().getId() == this.movieDb.getId())
+            {
+                SceneHandler.getInstance().centerStage(SceneHandler.getInstance().getFilmStage(), SceneHandler.getInstance().getFilmStage().getWidth(),SceneHandler.getInstance().getFilmStage().getHeight());
+                SceneHandler.getInstance().getFilmStage().setIconified(false);
+                return;
+            }
             FilmHandler.getInstance().selectFilm(movieDb.getId());
             SceneHandler.getInstance().loadFilmScene();
         });

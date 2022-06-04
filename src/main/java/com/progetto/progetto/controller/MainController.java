@@ -216,7 +216,6 @@ public class MainController implements IResearchListener {
         {
             genreList.clearList();
             ResearchHandler.getInstance().clearSearch();
-            System.out.println("View Cleared");
         }
         bottomHolder.setVisible(movieViewMode == MovieViewMode.HOME);
         VBox vBox = (VBox)first.getContent();
