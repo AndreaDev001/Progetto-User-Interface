@@ -1,21 +1,20 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.client.util.JSONUtil;
-import com.progetto.progetto.model.enums.MovieListType;
-import com.progetto.progetto.model.enums.MovieSortOrder;
-import com.progetto.progetto.model.enums.MovieSortType;
+import com.progetto.progetto.client.Client;
+import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.handlers.*;
-import com.progetto.progetto.model.records.Library;
-import com.progetto.progetto.model.records.User;
-import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.StyleHandler;
 import com.progetto.progetto.view.nodes.*;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -23,14 +22,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class MainController implements IResearchListener {
     @FXML
@@ -61,6 +55,8 @@ public class MainController implements IResearchListener {
     private Label maxPageLabel;
     @FXML
     private HBox boxHolder;
+    @FXML
+    private HBox bottomHolder;
 
     private static final BooleanProperty sortingDisabled = new SimpleBooleanProperty();
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
@@ -72,19 +68,27 @@ public class MainController implements IResearchListener {
     @FXML
     private void initialize()
     {
+        FontIcon firstIcon = new FontIcon("mdi2m-magnify");
+        FontIcon secondIcon = new FontIcon("mdi2m-movie-filter");
+        firstIcon.setIconSize(25);
+        secondIcon.setIconSize(25);
+        first.setGraphic(firstIcon);
+        second.setGraphic(secondIcon);
+        bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
         first.setExpanded(firstExpanded.getValue());
         second.setExpanded(secondExpanded.getValue());
         firstExpanded.bind(first.expandedProperty());
         secondExpanded.bind(second.expandedProperty());
-        loadNextPageButton.setTooltip(new HelpTooltip("loadNext.name",Duration.millis(0),Duration.millis(0),Duration.millis(0),true));
+        loadNextPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadNext.name")));
         loadNextPageButton.setGraphic(new FontIcon("fas-arrow-right"));
         loadNextPageButton.setOnAction(event -> loadNext(true));
-        loadPreviousPageButton.setTooltip(new HelpTooltip("loadPrevious.name",Duration.millis(0),Duration.millis(0),Duration.millis(0),true));
+        loadPreviousPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadPrevious.name")));
         loadPreviousPageButton.setGraphic(new FontIcon("fas-arrow-left"));
         loadPreviousPageButton.setOnAction(event -> loadNext(false));
-        ResearchHandler.getInstance().addListener(this);
+        this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
+        ResearchHandler.getInstance().setListener(this);
         if (ResearchHandler.getInstance().getCurrentText().isEmpty())
             this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
         else
@@ -132,43 +136,26 @@ public class MainController implements IResearchListener {
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
         sortComboBox.getSelectionModel().select(2);
         sortOrderComboBox.getSelectionModel().select(1);
-        ValueList<MovieListType> valueList = new ValueList<>(Arrays.stream(MovieListType.values()).toList());
-        for(int i = 0;i < valueList.getChildren().size();i++)
+        for(MovieListType current : MovieListType.values())
         {
-            int finalI = i;
-            valueList.getChildren().get(i).addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> {
+            Label label = new Label(current.getLocalizedName());
+            label.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> {
                 genreList.clearList();
-                ResearchHandler.getInstance().setCurrentListType(valueList.getValues().get(finalI));
+                ResearchHandler.getInstance().setCurrentListType(current);
             });
+            label.setWrapText(true);
+            label.setStyle("-fx-font-size: 15px;-fx-font-family: 'Roboto',Arial,sans-serif");
+            label.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadList.name") + " " + current.getLocalizedName().toLowerCase() + " " + (!current.getLocalizedName().toLowerCase().contains(StyleHandler.getInstance().getResourceBundle().getString("movies.name")) ? StyleHandler.getInstance().getResourceBundle().getString("movies.name") : "")));
+            label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setUnderline(true));
+            label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setUnderline(false));
+            listHolder.getChildren().add(label);
         }
-        listHolder.getChildren().add(valueList);
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
     }
-
     private void createFilms(List<MovieDb> movieDbs) {
         FilmContainer filmContainer = new FilmContainer(movieDbs,true);
         scrollPane.setContent(filmContainer);
-    }
-    private void loadLibrary() {
-        User user = ProfileHandler.getInstance().getLoggedUser().get();
-        Library library = null;
-        List<MovieDb> movieDbs = new ArrayList<>();
-        try {
-            ResultSet resultSet = SQLGetter.getInstance().makeQuery("SELECT * FROM LIBRARY WHERE id=?", user.username());
-            if (resultSet.next())
-                library = new Library(resultSet.getInt(1));
-            ResultSet query = SQLGetter.getInstance().makeQuery("SELECT filmId FROM LIBRARY-FILM WHERE libraryId=?", library.id());
-            while (query.next()) {
-                int filmId = query.getInt(1);
-                MovieDb current = FilmHandler.getInstance().getMovie(filmId);
-                movieDbs.add(current);
-            }
-        } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        scrollPane.setContent(null);
-        createFilms(movieDbs);
     }
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
@@ -176,6 +163,14 @@ public class MainController implements IResearchListener {
     @Override
     public void OnResearchCompleted(List<MovieDb> result,boolean isGenre)
     {
+        if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
+        {
+            createFilms(result);
+            showCurrent();
+            return;
+        }
+        else
+            bottomHolder.setVisible(true);
         if(!isGenre)
         {
             sortingDisabled.set(true);
@@ -187,7 +182,6 @@ public class MainController implements IResearchListener {
             searchField.clear();
             searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
         }
-        scrollPane.setContent(null);
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
@@ -204,11 +198,56 @@ public class MainController implements IResearchListener {
     public void OnResearchFailed()
     {
         showCurrent();
+        bottomHolder.setVisible(false);
         ErrorPage errorPage = new ErrorPage("errorText.name","errorButton.name",true);
         errorPage.getErrorButton().setOnAction((event) -> {
-            ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
             genreList.clearList();
+            if (ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME)
+                ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
+            else
+                ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(), true);
         });
         scrollPane.setContent(errorPage);
+    }
+    @Override
+    public void OnViewChanged(MovieViewMode movieViewMode,boolean clear,boolean search)
+    {
+        if(clear)
+        {
+            genreList.clearList();
+            ResearchHandler.getInstance().clearSearch();
+        }
+        bottomHolder.setVisible(movieViewMode == MovieViewMode.HOME);
+        VBox vBox = (VBox)first.getContent();
+        Node node = vBox.getChildren().get(1);
+        node.setVisible(movieViewMode == MovieViewMode.HOME);
+        node.setManaged(movieViewMode == MovieViewMode.HOME);
+        switch (movieViewMode)
+        {
+            case LIBRARY -> {
+                searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+                sortingDisabled.set(false);
+                if(FilmHandler.getInstance().RequiresUpdate())
+                {
+                    Client.getInstance().get("films",(workerStateEvent) -> {
+                        JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
+                        FilmHandler.getInstance().loadMovies(jsonArray);
+                        if(search)
+                            ResearchHandler.getInstance().search(false);
+                        else
+                            createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
+                    },(workerStateEvent) -> System.out.println("error"));
+                }
+                else
+                {
+                    showCurrent();
+                    createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
+                }
+            }
+            case HOME -> {
+                ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
+                sortingDisabled.set(true);
+            }
+        }
     }
 }

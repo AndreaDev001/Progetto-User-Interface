@@ -2,26 +2,30 @@ package com.progetto.progetto.view.nodes;
 
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.handlers.ResearchHandler;
+import com.progetto.progetto.view.StyleHandler;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class GenreList extends ValueList<String>
+public class GenreList extends VBox
 {
+    private final List<String> values;
     private List<CheckBox> checkBoxes;
 
     public GenreList(List<String> values)
     {
-        super(values);
+        this.values = values;
         this.setSpacing(5);
+        this.init();
     }
-    @Override
     protected void init()
     {
         this.checkBoxes = new ArrayList<>();
@@ -31,11 +35,10 @@ public class GenreList extends ValueList<String>
             checkBox.setLineSpacing(10);
             checkBox.setAlignment(Pos.CENTER_LEFT);
             checkBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-            checkBox.setWrapText(true);
-            checkBox.setTooltip(new HelpTooltip("Add genre" + " " + current + " " + "to search", Duration.millis(0),Duration.millis(0),Duration.millis(0),false));
+            checkBox.setWrapText(false);
+            checkBox.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("firstTool.name") + " " + current + " " + StyleHandler.getInstance().getResourceBundle().getString("secondTool.name")));
             checkBox.setOnAction((event) -> {
                 ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.GENRE,false);
-                System.out.println("Updating");
                 ResearchHandler.getInstance().setCurrentGenre(getSelectedIndexes(),true);
             });
             checkBoxes.add(checkBox);

@@ -3,6 +3,8 @@ package com.progetto.progetto.view;
 import com.progetto.progetto.MainApplication;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.FileReader;
@@ -38,7 +40,8 @@ public class StyleHandler {
     }
 
     //read the config file and update the scene along with it
-    public void init(Scene scene) {
+    public void init(Scene scene)
+    {
         try {
 
             Path folderPath = Path.of(getFolderPath());
@@ -145,6 +148,12 @@ public class StyleHandler {
             e.printStackTrace();
         }
         return getCssPath(StyleMode.DARK);
+    }
+    public FontIcon createIcon(String value, int size)
+    {
+        FontIcon result = new FontIcon(value);
+        result.setIconSize(size);
+        return result;
     }
     private String getFolderPath()
     {

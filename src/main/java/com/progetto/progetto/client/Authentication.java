@@ -1,6 +1,6 @@
 package com.progetto.progetto.client;
 
-import client.util.QueryResult;
+import com.progetto.progetto.client.util.QueryResult;
 import org.json.JSONObject;
 
 import java.io.IOException;
