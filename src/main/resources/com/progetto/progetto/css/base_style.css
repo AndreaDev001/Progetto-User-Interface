@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto');
+@font-face
+{
+   font-family: 'Roboto Medium';
+   src: url("../fonts/Roboto-Medium.ttf");
+}
 *
 {
     -fx-text-fill: -text-color;
@@ -36,14 +40,14 @@
 {
    -fx-background-color: -scene-color;
    -fx-font-size: 18px;
-   -fx-font-family: 'Roboto',Arial,sans-serif;
+   -fx-font-family: 'Roboto Medium',Arial,sans-serif;
    -fx-padding: 0px;
 }
 .showCurrent
 {
    -fx-font-size: 16px;
    -fx-font-weight: 200;
-   -fx-font-family: 'Roboto',Arial,sans-serif;
+   -fx-font-family: 'Roboto Medium',Arial,sans-serif;
 }
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;
@@ -53,6 +57,7 @@
     -fx-padding: 0px 10px;
 }
 .titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: -thirty-color;
     -fx-effect: null;
 }
 .titled-pane > *.content
@@ -74,7 +79,7 @@
   -fx-padding: 8px 8px;
   -fx-border-width: 1px;
   -fx-background-radius: 10px;
-  -fx-font-family: 'Roboto',Arial,sans-serif;
+  -fx-font-family: 'Roboto Medium',Arial,sans-serif;
   -fx-font-size: 14px;
 }
 .header-panel,
@@ -108,10 +113,10 @@
 .button
 {
    -fx-background-color: -ten-color;
-   -fx-font-size: 17px;
-   -fx-font-weight: 300;
+   -fx-font-size: 16px;
+   -fx-font-weight: 200;
    -fx-cursor: hand;
-   -fx-font-family: 'Roboto',Arial,sans-serif;
+   -fx-font-family: 'Roboto Medium',Arial,sans-serif;
 }
 .button:hover{
    -fx-underline: true;
@@ -186,9 +191,15 @@
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
 }
-.scroll-pane
-{
-  -fx-background-color: -scene-color;
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+.scroll-pane .corner {
+    -fx-background-insets: 0;
 }
 .combo-box-base {
     -fx-background-color: -thirty-color;
