@@ -3,6 +3,7 @@ package com.progetto.progetto.model.handlers;
 import com.progetto.progetto.view.nodes.FilmCard;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.scene.image.Image;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +24,6 @@ public class CacheHandler {
 
     public Image getImage(String url)
     {
-        if(IMAGE_CACHE.size() >= MAX_SIZE)
-            IMAGE_CACHE.clear();
         Image image = IMAGE_CACHE.get(url);
         if(image == null)
         {
@@ -35,14 +34,17 @@ public class CacheHandler {
     }
     public FilmCard getFilmBox(MovieDb id)
     {
+        /*
         if(CARD_CACHE.size() >= MAX_SIZE)
             CARD_CACHE.clear();
         FilmCard card = CARD_CACHE.get(id);
         if(card == null)
         {
-            card = new FilmCard(id);
-            CARD_CACHE.put(id,card);
-        }
+
+         */
+        FilmCard card = new FilmCard(id);
+        CARD_CACHE.put(id,card);
+
         return card;
     }
     public void reset()

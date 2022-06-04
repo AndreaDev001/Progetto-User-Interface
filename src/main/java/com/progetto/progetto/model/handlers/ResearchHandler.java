@@ -1,9 +1,12 @@
 package com.progetto.progetto.model.handlers;
 
+import com.progetto.progetto.controller.MainController;
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ public class ResearchHandler
     private int currentPage = 1;
     private int currentMaxPage = 1;
     private IResearchListener researchListener;
+    private final FilmsSearchService filmsSearchService = new FilmsSearchService();
     private ResearchHandler()
     {
         System.out.println("Instance of Research Handler created correctly");
@@ -31,9 +35,10 @@ public class ResearchHandler
     }
     public void search(boolean isList)
     {
+        MainController mainController = (MainController) researchListener;
+
         try
         {
-            List<MovieDb> movies = new ArrayList<>();
             StringBuilder builder = new StringBuilder();
             if(currentGenre == null)
                 currentGenre = "";
@@ -48,14 +53,33 @@ public class ResearchHandler
             }
             if(movieViewMode == MovieViewMode.HOME)
             {
-                MovieResultsPage result = isList ? FilmHandler.getInstance().getMovies(currentPage,currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? builder.toString() : currentText,currentPage,currentSortType,currentFilterType,currentSortOrder);
-                currentMaxPage = Math.max(1,result.getTotalPages());
-                boolean value = (currentText == null || currentText.isEmpty()) && !isList;
-                movies = result.getResults();
-                researchListener.OnResearchCompleted(movies,value);
+                mainController.scrollPane.setDisable(true);
+                mainController.bottomHolder.setDisable(true);
+                mainController.filmsProgress.setVisible(true);
+
+                filmsSearchService.setup(isList,builder.toString());
+                filmsSearchService.setOnSucceeded(workerStateEvent ->
+                {
+                    MovieResultsPage result = (MovieResultsPage) workerStateEvent.getSource().getValue();
+                    currentMaxPage = Math.max(1,result.getTotalPages());
+                    boolean value = (currentText == null || currentText.isEmpty()) && !isList;
+                    researchListener.OnResearchCompleted(result.getResults(),value);
+                    mainController.scrollPane.setDisable(false);
+                    mainController.bottomHolder.setDisable(false);
+                    mainController.filmsProgress.setVisible(false);
+                });
+                filmsSearchService.setOnFailed((worker) ->
+                {
+                    mainController.scrollPane.setDisable(false);
+                    mainController.bottomHolder.setDisable(false);
+                    mainController.filmsProgress.setVisible(false);
+                });
+                filmsSearchService.restart();
+
             }
             else
             {
+                List<MovieDb> movies = new ArrayList<>();
                 movies = FilmHandler.getInstance().filterMovies(FilmHandler.getInstance().getCurrentLoaded(), currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
                 movies = FilmHandler.getInstance().sortMovies((currentGenre != null && !currentGenre.isEmpty() && currentFilterType == MovieFilterType.GENRE) || (currentText != null && !currentText.isEmpty() && currentFilterType == MovieFilterType.NAME) ? movies : FilmHandler.getInstance().getCurrentLoaded(),currentSortType,currentSortOrder);
                 researchListener.OnResearchCompleted(movies,false);
@@ -137,4 +161,31 @@ public class ResearchHandler
     public final int getCurrentPage() {return currentPage;}
     public final int getCurrentMaxPage() {return Math.max(1,currentMaxPage - 1);}
     public static ResearchHandler getInstance() {return instance;}
+
+
+    private class FilmsSearchService extends Service<MovieResultsPage>
+    {
+        private boolean isList;
+        private String searchValues;
+
+        public void setup(boolean list,String searchValues)
+        {
+            this.isList = list;
+            this.searchValues = searchValues;
+        }
+
+
+        @Override
+        protected Task<MovieResultsPage> createTask()
+        {
+            return new Task<>()
+            {
+                @Override
+                protected MovieResultsPage call() throws FilmNotFoundException
+                {
+                    return isList ? FilmHandler.getInstance().getMovies(currentPage, currentListType) : FilmHandler.getInstance().makeSearch(currentText == null || currentText.isEmpty() ? searchValues : currentText, currentPage, currentSortType, currentFilterType, currentSortOrder);
+                }
+            };
+        }
+    }
 }

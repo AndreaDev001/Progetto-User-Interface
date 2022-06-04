@@ -3,17 +3,12 @@ package com.progetto.progetto.model.handlers;
 import com.progetto.progetto.client.Client;
 import com.progetto.progetto.client.ConnectionException;
 import com.progetto.progetto.model.records.User;
-import com.progetto.progetto.model.sql.SQLGetter;
 import com.progetto.progetto.view.SceneHandler;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.Alert;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ProfileHandler {
     private static final ProfileHandler instance = new ProfileHandler();
@@ -71,23 +66,6 @@ public class ProfileHandler {
         return false;
     }
 
-    public boolean createUser(String username, String password)
-    {
-
-        try {
-            SQLGetter.getInstance().makeUpdate("INSERT INTO USER(username,password) VALUES (?,?)",username,password);
-            SceneHandler.getInstance().createAlertMessage("SUCCESS!","Created a new account!", Alert.AlertType.INFORMATION);
-            return true;
-        }
-        catch (SQLIntegrityConstraintViolationException e)//this is called when trying to add an already used username.
-        {
-            SceneHandler.getInstance().createAlertMessage("ERROR","Username already used!", Alert.AlertType.ERROR);
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     public ReadOnlyObjectProperty<User> getLoggedUser() {
         return this.loggedUserProperty.getReadOnlyProperty();

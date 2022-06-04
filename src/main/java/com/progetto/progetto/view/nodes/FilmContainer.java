@@ -33,11 +33,6 @@ public class FilmContainer extends FlowPane
                 this.getChildren().add(filmCard);
             }
         }
-        else
-        {
-            FilmTable filmTable = new FilmTable(this,movies);
-            this.getChildren().add(filmTable);
-        }
     }
     public void setMovies(List<MovieDb> movies)
     {

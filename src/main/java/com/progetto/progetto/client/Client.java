@@ -31,6 +31,11 @@ public class Client {
         return email;
     }
 
+    public boolean isLogged()
+    {
+        return email != null;
+    }
+
     private final Authentication authentication;
     private final DatabaseQuery databaseQuery;
     private final ExecutorService queryExecutorService = Executors.newCachedThreadPool();
