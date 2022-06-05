@@ -2,10 +2,7 @@ package com.progetto.progetto.view.nodes;
 
 import com.progetto.progetto.model.handlers.CacheHandler;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.scene.Node;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 import java.util.List;
 

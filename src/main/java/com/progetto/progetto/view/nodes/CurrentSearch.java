@@ -7,9 +7,7 @@ import com.progetto.progetto.view.StyleHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 public class CurrentSearch extends VBox
 {

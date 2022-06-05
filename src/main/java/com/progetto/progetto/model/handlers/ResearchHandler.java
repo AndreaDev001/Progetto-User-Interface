@@ -1,10 +1,11 @@
 package com.progetto.progetto.model.handlers;
 
-import com.progetto.progetto.controller.MainController;
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
@@ -25,6 +26,8 @@ public class ResearchHandler
     private int currentMaxPage = 1;
     private IResearchListener researchListener;
     private final FilmsSearchService filmsSearchService = new FilmsSearchService();
+    private final BooleanProperty sortingAvailable = new SimpleBooleanProperty();
+
     private ResearchHandler()
     {
         System.out.println("Instance of Research Handler created correctly");
@@ -37,28 +40,18 @@ public class ResearchHandler
     {
         try
         {
-            StringBuilder builder = new StringBuilder();
-            if(currentGenre == null)
-                currentGenre = "";
-            else {
-                if (!currentGenre.isEmpty()) {
-                    String[] values = currentGenre.split(",");
-                    for (int i = 0; i < values.length; i++) {
-                        int value = FilmHandler.getInstance().getValues().get(Integer.parseInt(values[i])).getId();
-                        builder.append(value).append(i != values.length - 1 ? "," : "");
-                    }
-                }
-            }
+            sortingAvailable.set(isList || (currentText != null && !currentText.isEmpty()));
+            String genre = getCalculatedGenre();
             researchListener.OnResearchStarted();
             if(movieViewMode == MovieViewMode.HOME)
             {
-                filmsSearchService.setup(isList,builder.toString());
+                filmsSearchService.setup(isList,genre);
                 filmsSearchService.setOnSucceeded(workerStateEvent ->
                 {
                     MovieResultsPage result = (MovieResultsPage) workerStateEvent.getSource().getValue();
                     currentMaxPage = Math.max(1,result.getTotalPages());
                     boolean value = (currentText == null || currentText.isEmpty()) && !isList;
-                    researchListener.OnResearchCompleted(result.getResults(),value);
+                    researchListener.OnResearchSuccessed(result.getResults(),value);
                 });
                 filmsSearchService.setOnFailed((worker) -> researchListener.OnResearchFailed());
                 filmsSearchService.restart();
@@ -66,10 +59,11 @@ public class ResearchHandler
             }
             else
             {
+                sortingAvailable.set(false);
                 List<MovieDb> movies = new ArrayList<>();
                 movies = FilmHandler.getInstance().filterMovies(FilmHandler.getInstance().getCurrentLoaded(), currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
                 movies = FilmHandler.getInstance().sortMovies((currentGenre != null && !currentGenre.isEmpty() && currentFilterType == MovieFilterType.GENRE) || (currentText != null && !currentText.isEmpty() && currentFilterType == MovieFilterType.NAME) ? movies : FilmHandler.getInstance().getCurrentLoaded(),currentSortType,currentSortOrder);
-                researchListener.OnResearchCompleted(movies,false);
+                researchListener.OnResearchSuccessed(movies,false);
             }
         }
         catch (FilmNotFoundException exception)
@@ -138,6 +132,22 @@ public class ResearchHandler
         this.currentSortType = MovieSortType.POPULARITY;
         this.currentSortOrder = MovieSortOrder.DESC;
     }
+    private String getCalculatedGenre()
+    {
+        StringBuilder builder = new StringBuilder();
+        if(currentGenre == null)
+            currentGenre = "";
+        else {
+            if (!currentGenre.isEmpty()) {
+                String[] values = currentGenre.split(",");
+                for (int i = 0; i < values.length; i++) {
+                    int value = FilmHandler.getInstance().getValues().get(Integer.parseInt(values[i])).getId();
+                    builder.append(value).append(i != values.length - 1 ? "," : "");
+                }
+            }
+        }
+        return builder.toString();
+    }
     public final String getCurrentText() {return currentText;}
     public final MovieViewMode getCurrentViewMode() {return movieViewMode;}
     public final MovieSortType getCurrentSortType() {return currentSortType;}
@@ -147,6 +157,7 @@ public class ResearchHandler
     public final String getCurrentGenre() {return currentGenre;}
     public final int getCurrentPage() {return currentPage;}
     public final int getCurrentMaxPage() {return Math.max(1,currentMaxPage - 1);}
+    public final BooleanProperty getSortingAvailable() {return sortingAvailable;}
     public static ResearchHandler getInstance() {return instance;}
 
 

@@ -18,17 +18,13 @@ import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 
@@ -36,7 +32,7 @@ public class MainController implements IResearchListener {
     @FXML
     private VBox listHolder;
     @FXML
-    public ScrollPane scrollPane;
+    private ScrollPane scrollPane;
     @FXML
     private TextField searchField;
     @FXML
@@ -52,8 +48,6 @@ public class MainController implements IResearchListener {
     @FXML
     private Button loadNextPageButton;
     @FXML
-    private VBox leftHolder;
-    @FXML
     private VBox genreHolder;
     @FXML
     private Label currentPageLabel;
@@ -62,11 +56,10 @@ public class MainController implements IResearchListener {
     @FXML
     private HBox boxHolder;
     @FXML
-    public HBox bottomHolder;
+    private HBox bottomHolder;
     @FXML
-    public VBox filmsProgress;
+    private VBox filmsProgress;
 
-    private static final BooleanProperty sortingDisabled = new SimpleBooleanProperty();
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();
 
@@ -76,12 +69,6 @@ public class MainController implements IResearchListener {
     @FXML
     private void initialize()
     {
-        FontIcon firstIcon = new FontIcon("mdi2m-magnify");
-        FontIcon secondIcon = new FontIcon("mdi2m-movie-filter");
-        firstIcon.setIconSize(25);
-        secondIcon.setIconSize(25);
-        first.setGraphic(firstIcon);
-        second.setGraphic(secondIcon);
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
@@ -89,11 +76,7 @@ public class MainController implements IResearchListener {
         second.setExpanded(secondExpanded.getValue());
         firstExpanded.bind(first.expandedProperty());
         secondExpanded.bind(second.expandedProperty());
-        loadNextPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadNext.name")));
-        loadNextPageButton.setGraphic(new FontIcon("fas-arrow-right"));
         loadNextPageButton.setOnAction(event -> loadNext(true));
-        loadPreviousPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadPrevious.name")));
-        loadPreviousPageButton.setGraphic(new FontIcon("fas-arrow-left"));
         loadPreviousPageButton.setOnAction(event -> loadNext(false));
         this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
         ResearchHandler.getInstance().setListener(this);
@@ -113,21 +96,13 @@ public class MainController implements IResearchListener {
             if (observableValue.getValue().booleanValue()) first.setExpanded(false);
         });
         genreList = new GenreList(FilmHandler.getInstance().getGenres());
-        if(ResearchHandler.getInstance().getCurrentGenre() != null && !ResearchHandler.getInstance().getCurrentGenre().isEmpty())
-        {
-            String[] values = ResearchHandler.getInstance().getCurrentGenre().split(",");
-            for(String current : values)
-                genreList.getCheckBoxes().get(Integer.parseInt(current)).setSelected(true);
-        }
         ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
         genreHolder.getChildren().add(genreList);
         currentSearch = new CurrentSearch();
         boxHolder.getChildren().add(currentSearch);
-        initBoxes();
-        sortComboBox.disableProperty().bind(sortingDisabled);
-        sortOrderComboBox.disableProperty().bind(sortingDisabled);
-        for(Node current : leftHolder.getChildren())
-            VBox.setVgrow(current,Priority.ALWAYS);
+        initComponents();
+        sortComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
+        sortOrderComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
     }
 
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values, ComboBox<String> comboBox) {
@@ -137,13 +112,11 @@ public class MainController implements IResearchListener {
         }
         this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
     }
-    private void initBoxes() {
+    private void initComponents() {
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
         sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.values()[sortComboBox.getSelectionModel().getSelectedIndex()]));
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
-        sortComboBox.getSelectionModel().select(2);
-        sortOrderComboBox.getSelectionModel().select(1);
         for(MovieListType current : MovieListType.values())
         {
             Label label = new Label(current.getLocalizedName());
@@ -153,8 +126,6 @@ public class MainController implements IResearchListener {
             });
             label.setWrapText(true);
             label.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadList.name") + " " + current.getLocalizedName().toLowerCase() + " " + (!current.getLocalizedName().toLowerCase().contains(StyleHandler.getInstance().getResourceBundle().getString("movies.name")) ? StyleHandler.getInstance().getResourceBundle().getString("movies.name") : "")));
-            label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setUnderline(true));
-            label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setUnderline(false));
             listHolder.getChildren().add(label);
         }
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
@@ -163,6 +134,8 @@ public class MainController implements IResearchListener {
     private void createFilms(List<MovieDb> movieDbs) {
         FilmContainer filmContainer = new FilmContainer(movieDbs,true);
         scrollPane.setContent(filmContainer);
+        showCurrent();
+        this.handleLoading(false);
     }
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
@@ -171,35 +144,27 @@ public class MainController implements IResearchListener {
     public void OnResearchStarted()
     {
         this.handleLoading(true);
-        System.out.println("Research Started");
     }
     @Override
-    public void OnResearchCompleted(List<MovieDb> result,boolean isGenre)
+    public void OnResearchSuccessed(List<MovieDb> result,boolean isGenre)
     {
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
         {
             createFilms(result);
-            showCurrent();
             return;
         }
         else
             bottomHolder.setVisible(true);
         if(!isGenre)
-        {
-            sortingDisabled.set(true);
             genreList.clearList();
-        }
         else
         {
-            sortingDisabled.set(false);
             searchField.clear();
             searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
         }
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
-        this.handleLoading(false);
-        showCurrent();
     }
     private void handleLoading(boolean value)
     {
@@ -212,15 +177,12 @@ public class MainController implements IResearchListener {
         if(currentSearch == null)
             return;
         currentSearch.update();
-        VBox.setVgrow(currentSearch, Priority.ALWAYS);
     }
     @Override
     public void OnResearchFailed()
     {
         showCurrent();
-        this.scrollPane.setDisable(false);
-        this.bottomHolder.setDisable(false);
-        this.filmsProgress.setVisible(false);
+        this.handleLoading(false);
         bottomHolder.setVisible(false);
         ErrorPage errorPage = new ErrorPage("errorText.name","errorButton.name",true);
         errorPage.getErrorButton().setOnAction((event) -> {
@@ -241,38 +203,24 @@ public class MainController implements IResearchListener {
             ResearchHandler.getInstance().clearSearch();
         }
         bottomHolder.setVisible(movieViewMode == MovieViewMode.HOME);
-        VBox vBox = (VBox)first.getContent();
-        Node node = vBox.getChildren().get(1);
-        node.setVisible(movieViewMode == MovieViewMode.HOME);
-        node.setManaged(movieViewMode == MovieViewMode.HOME);
-        switch (movieViewMode)
+        if(movieViewMode == MovieViewMode.LIBRARY)
         {
-            case LIBRARY -> {
-                searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
-                sortingDisabled.set(false);
-                if(FilmHandler.getInstance().RequiresUpdate())
-                {
-                    this.handleLoading(true);
-                    Client.getInstance().get("films",(workerStateEvent) -> {
-                        this.handleLoading(false);
-                        JSONArray jsonArray = ((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films");
-                        FilmHandler.getInstance().loadMovies(jsonArray);
-                        if(search)
-                            ResearchHandler.getInstance().search(false);
-                        else
-                            createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
-                    },(workerStateEvent) -> this.handleLoading(false));
-                }
-                else
-                {
-                    showCurrent();
-                    createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
-                }
+            searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+            this.handleLoading(true);
+            if(FilmHandler.getInstance().RequiresUpdate())
+            {
+                Client.getInstance().get("films",(workerStateEvent) -> {
+                    FilmHandler.getInstance().loadMovies(((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films"));
+                    if(search)
+                        ResearchHandler.getInstance().search(false);
+                    else
+                        createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
+                },(workerStateEvent) -> this.handleLoading(false));
             }
-            case HOME -> {
-                ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
-                sortingDisabled.set(true);
-            }
+            else
+                createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
         }
+        else
+            ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
     }
 }

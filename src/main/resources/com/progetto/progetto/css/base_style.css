@@ -9,6 +9,7 @@
 .progress-indicator
 {
     -fx-progress-color: -text-color;
+    -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
 
 .ikonli-font-icon.eye-icon

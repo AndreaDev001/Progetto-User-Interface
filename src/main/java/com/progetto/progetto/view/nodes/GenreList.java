@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +43,12 @@ public class GenreList extends VBox
             checkBoxes.add(checkBox);
         }
         this.getChildren().addAll(checkBoxes);
+        if(ResearchHandler.getInstance().getCurrentGenre() != null && !ResearchHandler.getInstance().getCurrentGenre().isEmpty())
+        {
+            String[] strings = ResearchHandler.getInstance().getCurrentGenre().split(",");
+            for(String current : strings)
+                this.getCheckBoxes().get(Integer.parseInt(current)).setSelected(true);
+        }
     }
     public String getSelectedIndexes()
     {
