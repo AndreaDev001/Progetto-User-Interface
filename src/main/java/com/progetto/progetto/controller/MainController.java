@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import org.json.JSONObject;
 
@@ -43,6 +44,8 @@ public class MainController implements IResearchListener {
     private TitledPane first;
     @FXML
     private TitledPane second;
+    @FXML
+    private TitledPane third;
     @FXML
     private Button loadPreviousPageButton;
     @FXML
@@ -95,6 +98,7 @@ public class MainController implements IResearchListener {
         second.expandedProperty().addListener((observableValue, aBoolean, t1) -> {
             if (observableValue.getValue().booleanValue()) first.setExpanded(false);
         });
+        third.managedProperty().bind(third.visibleProperty());
         genreList = new GenreList(FilmHandler.getInstance().getGenres());
         ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
         genreHolder.getChildren().add(genreList);
@@ -177,19 +181,17 @@ public class MainController implements IResearchListener {
     @Override
     public void OnResearchSuccessed(List<MovieDb> result,boolean isGenre)
     {
-        if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
-        {
-            createFilms(result);
-            return;
-        }
-        else
-            bottomHolder.setVisible(true);
         if(!isGenre)
             genreList.clearList();
         else
         {
             searchField.clear();
             searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+        }
+        if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
+        {
+            createFilms(result);
+            return;
         }
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
@@ -254,6 +256,7 @@ public class MainController implements IResearchListener {
         bottomHolder.setVisible(movieViewMode == MovieViewMode.HOME);
         if(movieViewMode == MovieViewMode.LIBRARY)
         {
+            third.setVisible(false);
             searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
             this.handleLoading(true);
             if(FilmHandler.getInstance().RequiresUpdate())
@@ -270,6 +273,9 @@ public class MainController implements IResearchListener {
                 createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
         }
         else
+        {
+            third.setVisible(true);
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
+        }
     }
 }

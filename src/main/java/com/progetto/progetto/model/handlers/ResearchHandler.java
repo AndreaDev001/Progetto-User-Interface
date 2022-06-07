@@ -43,6 +43,7 @@ public class ResearchHandler
             sortingAvailable.set(isList || (currentText != null && !currentText.isEmpty()));
             String genre = getCalculatedGenre();
             researchListener.OnResearchStarted();
+            boolean value = (currentText == null || currentText.isEmpty()) && !isList;
             if(movieViewMode == MovieViewMode.HOME)
             {
                 filmsSearchService.setup(isList,genre);
@@ -50,7 +51,6 @@ public class ResearchHandler
                 {
                     MovieResultsPage result = (MovieResultsPage) workerStateEvent.getSource().getValue();
                     currentMaxPage = Math.max(1,result.getTotalPages());
-                    boolean value = (currentText == null || currentText.isEmpty()) && !isList;
                     researchListener.OnResearchSuccessed(result.getResults(),value);
                 });
                 filmsSearchService.setOnFailed((worker) -> researchListener.OnResearchFailed());
@@ -59,11 +59,10 @@ public class ResearchHandler
             }
             else
             {
-                sortingAvailable.set(false);
                 List<MovieDb> movies = new ArrayList<>();
                 movies = FilmHandler.getInstance().filterMovies(FilmHandler.getInstance().getCurrentLoaded(), currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
                 movies = FilmHandler.getInstance().sortMovies((currentGenre != null && !currentGenre.isEmpty() && currentFilterType == MovieFilterType.GENRE) || (currentText != null && !currentText.isEmpty() && currentFilterType == MovieFilterType.NAME) ? movies : FilmHandler.getInstance().getCurrentLoaded(),currentSortType,currentSortOrder);
-                researchListener.OnResearchSuccessed(movies,false);
+                researchListener.OnResearchSuccessed(movies,value);
             }
         }
         catch (FilmNotFoundException exception)
@@ -172,6 +171,7 @@ public class ResearchHandler
         if(this.movieViewMode != value || force)
         {
             this.movieViewMode = value;
+            sortingAvailable.set(value == MovieViewMode.HOME);
             researchListener.OnViewChanged(movieViewMode,clear,search);
         }
     }

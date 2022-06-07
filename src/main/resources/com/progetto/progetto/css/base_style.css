@@ -6,6 +6,17 @@
     -fx-font-family: 'Roboto',Arial,sans-serif;
 }
 
+.context-menu {
+  -fx-background-color: -ten-color;
+  -fx-text-fill: -text-color;
+}
+.menu-item .label {
+  -fx-text-fill: -text-color;
+}
+.menu-item:focused .label {
+  -fx-text-fill: -text-color;
+  -fx-underline: true;
+}
 .progress-indicator
 {
     -fx-progress-color: -text-color;

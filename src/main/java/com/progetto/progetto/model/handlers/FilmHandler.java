@@ -97,7 +97,7 @@ public class FilmHandler
                 {
                     firstDate = format.parse(o1.getReleaseDate());
                     secondDate = format.parse(o2.getReleaseDate());
-                    return secondDate.compareTo(firstDate);
+                    return movieSortOrder == MovieSortOrder.DESC ? secondDate.compareTo(firstDate) : firstDate.compareTo(secondDate);
                 }
                 catch (ParseException exception)
                 {
