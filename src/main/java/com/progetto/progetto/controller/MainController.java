@@ -105,6 +105,12 @@ public class MainController implements IResearchListener {
         sortOrderComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
     }
 
+     /**
+     * Method used to init a combo box using an enum
+     * @param values The enum values used to initialize the combo box
+     * @param comboBox The combobox to initialize
+     * @param <T> The Enum Type
+     */
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values, ComboBox<String> comboBox) {
         for (Enum<T> current : values) {
             String value = StyleHandler.getInstance().getResourceBundle().getString(current.toString() + ".name");
@@ -112,6 +118,9 @@ public class MainController implements IResearchListener {
         }
         this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
     }
+     /**
+      Method used to init UI components
+     **/
     private void initComponents() {
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
@@ -131,20 +140,40 @@ public class MainController implements IResearchListener {
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
     }
+
+     /**
+     * Method used to create a new film container to contain new loaded movies
+     * @param movieDbs the movies in the new film container
+     */
     private void createFilms(List<MovieDb> movieDbs) {
         FilmContainer filmContainer = new FilmContainer(movieDbs,true);
         scrollPane.setContent(filmContainer);
         showCurrent();
         this.handleLoading(false);
     }
+
+     /**
+     * Method used to update current page
+     * @param positive If we need to subtract or add by one
+     */
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
+
+     /**
+     *  Handles the Research Started Event
+     */
     @Override
     public void OnResearchStarted()
     {
         this.handleLoading(true);
     }
+
+     /**
+     * Handles the Research Successed Event
+     * @param result Movies Loaded
+     * @param isGenre If the research is a list or a text search or a filter by genre search
+     */
     @Override
     public void OnResearchSuccessed(List<MovieDb> result,boolean isGenre)
     {
@@ -166,18 +195,31 @@ public class MainController implements IResearchListener {
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
     }
+
+     /**
+     * Handles the visibility of components used to show or hide loading screen
+     * @param value If we need to show the progress indicator or not
+     */
     private void handleLoading(boolean value)
     {
         this.scrollPane.setDisable(value);
         this.bottomHolder.setDisable(value);
-        this.filmsProgress.setDisable(value);
+        this.filmsProgress.setDisable(!value);
     }
+
+     /**
+     * Method used to update the Current Search Component,used to show the last search filters used by the user
+     */
     private void showCurrent()
     {
         if(currentSearch == null)
             return;
         currentSearch.update();
     }
+
+    /**
+     * Handles the Research Failed Event,creates a error page component with a button to reset search
+     */
     @Override
     public void OnResearchFailed()
     {
@@ -194,6 +236,13 @@ public class MainController implements IResearchListener {
         });
         scrollPane.setContent(errorPage);
     }
+
+     /**
+     * Handles the View Changed Event,checks the current View Mode and handles the event based on it
+     * @param movieViewMode New Selected View Mode
+     * @param clear If we need to reset all filters currently active
+     * @param search If it's needed to perform a search
+     */
     @Override
     public void OnViewChanged(MovieViewMode movieViewMode,boolean clear,boolean search)
     {

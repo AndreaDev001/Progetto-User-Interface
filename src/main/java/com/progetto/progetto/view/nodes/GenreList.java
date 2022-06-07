@@ -14,17 +14,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+//Class containing the list of all genres
 public class GenreList extends VBox
 {
     private final List<String> values;
     private List<CheckBox> checkBoxes;
 
+    /**
+     * Constructor of class GenreList
+     * @param values Values to use as a text in the checkboxes
+     */
     public GenreList(List<String> values)
     {
         this.values = values;
         this.setSpacing(5);
         this.init();
     }
+
+    /**
+     * Method used to init the component,for each value creates a new checkbox,applies some layout constraints to it and adds a tooltip
+     */
     protected void init()
     {
         this.checkBoxes = new ArrayList<>();
@@ -50,6 +59,11 @@ public class GenreList extends VBox
                 this.getCheckBoxes().get(Integer.parseInt(current)).setSelected(true);
         }
     }
+
+    /**
+     * Method used to get the selected checkboxes
+     * @return Returns a string with the indexes of the selected checkbox,each index is separated using a comma
+     */
     public String getSelectedIndexes()
     {
         StringBuilder stringBuilder = new StringBuilder();
@@ -62,6 +76,10 @@ public class GenreList extends VBox
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * Method use to unselect every selected checkbox
+     */
     public void clearList()
     {
         for(Node node : this.getChildren())

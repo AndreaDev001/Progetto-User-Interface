@@ -72,37 +72,75 @@ public class ResearchHandler
             researchListener.OnResearchFailed();
         }
     }
+
+    /**
+     * Updates the current list Type
+     * @param currentListType New List Type
+     */
     public void setCurrentListType(MovieListType currentListType) {
         this.currentListType = currentListType;
         this.updateValue(false,true);
     }
+
+    /**
+     * Updates the current sort Type
+     * @param currentSortType New Sort Type
+     */
     public void setCurrentSortType(MovieSortType currentSortType) {
         if(!currentText.isEmpty())
             return;
         this.currentSortType = currentSortType;
         this.updateValue(true,true);
     }
+
+    /**
+     * Updates the current sort order
+     * @param currentSortOrder New Sort order
+     */
     public void setCurrentSortOrder(MovieSortOrder currentSortOrder) {
         if(!currentText.isEmpty())
             return;
         this.currentSortOrder = currentSortOrder;
         this.updateValue(true,true);
     }
+
+    /**
+     * Updates current filter type
+     * @param currentFilterType New Filter Type
+     * @param update If we need to reset the current list type and the current text
+     */
     public void setCurrentFilterType(MovieFilterType currentFilterType,boolean update) {
         this.currentFilterType = currentFilterType;
         if(update)
             this.updateValue(true,true);
     }
+
+    /**
+     * Updates current Genre String
+     * @param currentGenre New Current Genre
+     * @param update If we need to reset the current list type and the current text
+     */
     public void setCurrentGenre(String currentGenre,boolean update) {
         this.currentGenre = currentGenre;
         if(update)
             this.updateValue(true,true);
     }
+
+    /**
+     * Updates the current Text,used when performing a name search,always resets the current list type and the current genre
+     * @param currentText The new current text
+     */
     public void setCurrentText(String currentText) {
         this.currentFilterType = MovieFilterType.NAME;
         this.currentText = currentText;
         this.updateValue(true,false);
     }
+
+    /**
+     * Method used to reset or not the current List or the current Text
+     * @param resetListType If we need to reset the current List
+     * @param resetText If we need to reset the current Text
+     */
     public void updateValue(boolean resetListType,boolean resetText)
     {
         currentListType = resetListType ? null : currentListType;
@@ -110,12 +148,25 @@ public class ResearchHandler
         currentPage = 1;
         this.search(!resetListType);
     }
+
+    /**
+     * Method used to update the current page of the search
+     * @param positive If we need to subtract or add by one
+     */
     public void updateCurrentPage(boolean positive)
     {
         currentPage = positive ? (currentPage + 1) % currentMaxPage : currentPage - 1;
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
+
+    /**
+     * Method used to update the current View Mode,fires a ViewChanged Event
+     * @param value New MovieViewMode value
+     * @param force If we need to force the event,even if the view did not change
+     * @param clear If we need to clear all search filters,this will performed by the listener if needed
+     * @param search If we need to perform a search after the event,the search function will be called by the listener if needed
+     */
     public void setCurrentViewMode(MovieViewMode value,boolean force,boolean clear,boolean search)
     {
         if(this.movieViewMode != value || force)
@@ -124,6 +175,10 @@ public class ResearchHandler
             researchListener.OnViewChanged(movieViewMode,clear,search);
         }
     }
+
+    /**
+     * Method used the reset the current search
+     */
     public void clearSearch()
     {
         this.currentFilterType = MovieFilterType.GENRE;
@@ -132,6 +187,10 @@ public class ResearchHandler
         this.currentSortType = MovieSortType.POPULARITY;
         this.currentSortOrder = MovieSortOrder.DESC;
     }
+    /**
+     * Method used to get the corrected Genre to use in a search,the genre received is a list of indexes separated by commas,update the values with the correct genre ids
+     * @return A String containing the genre ids to search
+     */
     private String getCalculatedGenre()
     {
         StringBuilder builder = new StringBuilder();

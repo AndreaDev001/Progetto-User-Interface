@@ -117,6 +117,11 @@ public class FilmController
         });
 
     }
+
+    /**
+     * Method used to create the flags of the countries where the movie was produced
+     * @param film The movie we need to create the flag for
+     */
     private void createFlags(MovieDb film)
     {
         //Si dovrebbe usare getTranslations(),ma anche quando si specifica MovieMethod.translations ritorna un 'mapping error',possibile fix fare la richiesta manualmente,questo è un placeholder"
@@ -131,6 +136,10 @@ public class FilmController
             flagHolder.getChildren().add(imageView);
         }
     }
+
+    /**
+     * If the user is logged in,adds a movie to his library
+     */
     private void AddFilm()
     {
         Film film = new Film(id,title);
@@ -144,6 +153,10 @@ public class FilmController
             e.printStackTrace();
         }
     }
+
+    /**
+     *If the user is logged in,removes a movie from his library,and forces a view change event
+     */
     private void RemoveFilm()
     {
         Client.getInstance().remove("films",elementId,workerStateEvent -> {

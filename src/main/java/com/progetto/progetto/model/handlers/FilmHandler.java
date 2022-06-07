@@ -44,6 +44,14 @@ public class FilmHandler
         movies = tmdbApi.getMovies();
         defaultPath = "https://image.tmdb.org/t/p/w500";
     }
+
+    /**
+     * Returns a MovieResultsPage containing a pre-made list of movies
+     * @param page The number of the page to load,the movies are divided in multiple pages
+     * @param movieListType The list type to use in the search
+     * @return MovieResultsPage contains a List of movies
+     * @throws FilmNotFoundException If the size of the result is equal to zero throws an Exception
+     */
     public MovieResultsPage getMovies(int page, MovieListType movieListType) throws FilmNotFoundException
     {
         MovieResultsPage movieDbs = null;
@@ -57,11 +65,23 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,result is empty");
         return movieDbs;
     }
+
+    /**
+     * Used to reload genres using the API,useful when language is changed
+     */
     public void updateGenres()
     {
         List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         this.genres = genres;
     }
+
+    /**
+     * Method used to sort a list of movies
+     * @param values Movies to sort
+     * @param movieSortType Sort Type used to sort the movies
+     * @param movieSortOrder Sort Order used when sorting,ascended or descended
+     * @return The sorted List
+     */
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType,MovieSortOrder movieSortOrder)
     {
         List<MovieDb> result = new ArrayList<>();
@@ -93,6 +113,15 @@ public class FilmHandler
         }
         return result;
     }
+
+    /**
+     * Method used to filter a movie list by genre or by search
+     * @param movies Movies to filter
+     * @param movieFilterType Filter Type used to filter the movies,it's either by GENRE or by NAME
+     * @param value The current Genre or the current Name
+     * @return The filtered List
+     * @throws FilmNotFoundException If the result size is equal to zero,throws an exception
+     */
     public List<MovieDb> filterMovies(List<MovieDb> movies,MovieFilterType movieFilterType,String value) throws FilmNotFoundException
     {
         if(value == null || value.isEmpty())
@@ -124,6 +153,17 @@ public class FilmHandler
             throw new FilmNotFoundException("Result Set is Empty");
         return result;
     }
+
+    /**
+     * Method used to perform a search using the MovieDB API Wrapper
+     * @param value The current Genre or the current name
+     * @param page The number of the page to look for
+     * @param movieSortType The sort type to use in the search
+     * @param movieFilterType The filter type to use in the search
+     * @param movieSortOrder The sort order to use in the sorting
+     * @return A MovieResultsPage containing the movie list
+     * @throws FilmNotFoundException If the result size is equal to zero,return an exception
+     */
     public MovieResultsPage makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
         MovieResultsPage result = new MovieResultsPage();
@@ -136,16 +176,26 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,film not found");
         return result;
     }
+
+    /**
+     * Method used to get the poster path of a film,defaultPath + moviePath
+     * @param movieDb Which movie we need to find the poster for
+     * @return A String containing the web URL of the poster
+     */
     public String getPosterPath(MovieDb movieDb)
     {
         return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
     }
+
+    /**
+     * Method used to update current selected film,called when the user clicks on a film card
+     * @param id The id of the movie
+     */
     public void selectFilm(int id)
     {
         //this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
         this.currentSelectedFilm = id;
     }
-
     public void filmQuery(int filmID, Consumer<Throwable> error, Consumer<MovieDb> success)
     {
         movieDbService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
@@ -154,7 +204,10 @@ public class FilmHandler
         movieDbService.restart();
     }
 
-
+    /**
+     * Loads movies from a json array,method used when loading the library of a user
+     * @param jsonArray The JSONArray containg the movies
+     */
     public void loadMovies(JSONArray jsonArray)
     {
         this.currentLoaded.clear();
@@ -169,6 +222,11 @@ public class FilmHandler
         }
         this.requiresUpdate = false;
     }
+
+    /**
+     * Method used to update if the FilmHandlers need to reload the current loaded library
+     * @param value If we need to reload the current loaded library
+     */
     public void setRequiresUpdate(boolean value)
     {
         this.requiresUpdate = value;

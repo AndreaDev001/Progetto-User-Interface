@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+//Component used the current search filters selected by the user
 public class CurrentSearch extends VBox
 {
     public CurrentSearch()
@@ -16,6 +17,11 @@ public class CurrentSearch extends VBox
         this.setAlignment(Pos.CENTER);
         this.init();
     }
+
+    /**
+     * Reads the current Search by the ResearchHandler and handles it
+     * Inits the component,creates a List field if needed,a genre field if needed,a sort type field if needed,a sort order field if needed,a name field if needed
+     */
     private void init()
     {
         if(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY && ResearchHandler.getInstance().getCurrentListType() != null)
@@ -56,13 +62,23 @@ public class CurrentSearch extends VBox
             this.getChildren().add(currentText);
         }
     }
-    private Label createLabel(String fieldName,String value)
-    {
+
+    /**
+     * Method used to create a field label
+     * @param fieldName The name of the field
+     * @param value The value of the field
+     * @return A Label to show containing the field name and value as text;
+     */
+    private Label createLabel(String fieldName,String value) {
         Label result = new Label(fieldName + ":" + value);
         result.setWrapText(true);
         result.getStyleClass().add("showCurrent");
         return result;
     }
+
+    /**
+     * Method used to reset and then update the current List
+     */
     public void update()
     {
         this.getChildren().clear();

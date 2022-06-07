@@ -21,11 +21,19 @@ public class FilmCard extends VBox
     private Label titleLabel;
     private Label releaseDateLabel;
 
+    /**
+     * Constructor of the FilmCard class
+     * @param movieDb The movie we need to create the card for
+     */
     public FilmCard(MovieDb movieDb)
     {
         this.movieDb = movieDb;
         this.init();
     }
+
+    /**
+     * Inits the components,finds the image of the movie,adds some layout constraints and adds css classes,creates an effect when going hover a card
+     */
     private void init()
     {
         Image image = CacheHandler.getInstance().getImage(FilmHandler.getInstance().getPosterPath(movieDb));

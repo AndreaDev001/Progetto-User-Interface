@@ -7,17 +7,27 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.ArrayList;
 import java.util.List;
 
+//Class used to show the rating of a movie on a scale of five using star icons
 public class MovieRating extends HBox
 {
     private final float rating;
     private final List<FontIcon> stars = new ArrayList<>();
 
+    /**
+     * Constructor of the MovieRating class
+     * @param rating The rating of movie,on a scale of 10,will be divided by two
+     */
     public MovieRating(float rating)
     {
         this.rating = rating;
         this.setAlignment(Pos.CENTER);
         this.init();
     }
+    /**
+     * Initialize the component by adding the needed stars,first creates five empty stars
+     * then gets the integer part of the rating and adds the same amount of full stars
+     * if needed adds a half star as well
+     */
     private void init()
     {
         this.setSpacing(2);
