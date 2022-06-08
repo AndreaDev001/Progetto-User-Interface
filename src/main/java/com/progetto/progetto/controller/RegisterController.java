@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.util.regex.Pattern;
@@ -25,13 +26,13 @@ public class RegisterController {
     private TextField emailField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
     private Label passConfirmationError;
 
     @FXML
-    private TextField passwordConfirmation;
+    private PasswordField passwordConfirmation;
 
     @FXML
     private CheckLabel upperCaseTick;
