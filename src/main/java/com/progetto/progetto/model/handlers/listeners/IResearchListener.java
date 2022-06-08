@@ -1,4 +1,4 @@
-package com.progetto.progetto.model.handlers;
+package com.progetto.progetto.model.handlers.listeners;
 
 import com.progetto.progetto.model.enums.MovieViewMode;
 import info.movito.themoviedbapi.model.MovieDb;

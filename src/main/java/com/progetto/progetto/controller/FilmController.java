@@ -7,6 +7,7 @@ import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.ProfileHandler;
 import com.progetto.progetto.model.handlers.ResearchHandler;
+import com.progetto.progetto.model.handlers.listeners.ILanguageListener;
 import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.StyleHandler;
@@ -25,8 +26,9 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 
-public class FilmController
+public class FilmController implements ILanguageListener
 {
     @FXML
     private ImageView filmImage;
@@ -59,20 +61,29 @@ public class FilmController
 
     private String title;
     private int id;
+    private MovieDb film;
     private String elementId;
 
     @FXML
     private void initialize()
     {
+        initComponents();
+        StyleHandler.getInstance().setListener(this);
+    }
+
+    /**
+     * Method used to init the components
+     */
+    private void initComponents()
+    {
         String pattern = "###,###.###";
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
-
         borderPane.setVisible(false);
         FilmHandler.getInstance().filmQuery(id, Throwable::printStackTrace, film ->
         {
+            this.film = film;
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
-
             title = film.getTitle();
             addToLibrary.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
             addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name"));
@@ -113,11 +124,10 @@ public class FilmController
             filmRevenue.setText(StyleHandler.getInstance().getResourceBundle().getString("filmRevenue.name") + ":" + " " + (revenue > 0 ? decimalFormat.format(revenue) : "-"));
             filmPopularity.setText(StyleHandler.getInstance().getResourceBundle().getString("popularity.name") + ":" + " " + String.valueOf(popularity));
             filmRuntime.setText(StyleHandler.getInstance().getResourceBundle().getString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
-            createFlags(film);
+            if(flagHolder.getChildren().size() == 0)
+                createFlags(film);
         });
-
     }
-
     /**
      * Method used to create the flags of the countries where the movie was produced
      * @param film The movie we need to create the flag for
@@ -165,5 +175,10 @@ public class FilmController
         },workerStateEvent -> {
             System.out.println("Failed to remove movie");
         });
+    }
+    @Override
+    public void OnLanguageChanged(Locale newLanguage)
+    {
+        initComponents();
     }
 }

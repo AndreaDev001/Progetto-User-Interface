@@ -1,6 +1,7 @@
 package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
+import com.progetto.progetto.model.handlers.listeners.ILanguageListener;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -18,7 +19,8 @@ import java.util.*;
 
 //STYLE HANDLER CLASS written by Pierlugi, aka PierKnight
 //FOR the moment the config file is saved in the home folder inside a directory named "film_app"
-public class StyleHandler {
+public class StyleHandler
+{
 
     private static final StyleHandler STYLE_HANDLER = new StyleHandler();
 
@@ -29,7 +31,7 @@ public class StyleHandler {
     public StyleMode styleMode = StyleMode.DARK;
     public double customHue = 0;
     public boolean dyslexic = false;
-
+    private ILanguageListener listener;
     private Locale currentLanguage = Locale.ENGLISH;
 
     //immutable list of supported languages
@@ -100,11 +102,14 @@ public class StyleHandler {
     }
 
     public boolean setLanguage(Locale locale) {
-        if (this.supportedLanguages.contains(locale)) {
+        if (this.supportedLanguages.contains(locale))
+        {
             this.currentLanguage = locale;
             //this sets the interpreter language
             //with this even java libraries display elements in the correct language
             Locale.setDefault(locale);
+            if(listener != null)
+                listener.OnLanguageChanged(locale);
             return true;
         }
         return false;
@@ -159,6 +164,10 @@ public class StyleHandler {
         FontIcon result = new FontIcon(value);
         result.setIconSize(size);
         return result;
+    }
+    public void setListener(ILanguageListener listener)
+    {
+        this.listener = listener;
     }
     private String getFolderPath()
     {

@@ -2,6 +2,7 @@ package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
+import com.progetto.progetto.model.handlers.listeners.IResearchListener;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import javafx.beans.property.BooleanProperty;
