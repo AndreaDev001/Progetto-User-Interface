@@ -19,7 +19,6 @@ import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
 
 public class Client {
     final String url;
@@ -38,8 +37,6 @@ public class Client {
         return loggedProperty.getReadOnlyProperty();
     }
 
-    public final Pattern emailPattern = Pattern.compile("[\\w.]+@\\w+\\.\\w+");
-    public final Pattern passwordPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$");
     private final Authentication authentication;
     private final DatabaseQuery databaseQuery;
     private final ExecutorService queryExecutorService = Executors.newCachedThreadPool();

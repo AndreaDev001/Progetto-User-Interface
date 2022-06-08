@@ -16,6 +16,6 @@ public enum MovieListType
     }
     public String getLocalizedName()
     {
-        return StyleHandler.getInstance().getResourceBundle().getString(this.toString() + ".name");
+        return StyleHandler.getInstance().getLocalizedString(this.toString() + ".name");
     }
 }

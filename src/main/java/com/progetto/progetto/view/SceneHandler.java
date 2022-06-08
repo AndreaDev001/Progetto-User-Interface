@@ -3,6 +3,7 @@ package com.progetto.progetto.view;
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.animation.Interpolator;
@@ -102,6 +103,10 @@ public class SceneHandler {
             return false;
 
         Parent newPage = loadRootFromFXML(page.getFxml());
+
+        if(newPage == null)
+            return false;
+
         newPage.requestFocus();
         menuPane.getChildren().add(newPage);
 
@@ -133,15 +138,16 @@ public class SceneHandler {
     /**
      * generic alert message it uses the same stylesheet
      */
-    public Alert createErrorMessage(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR,message);
+    public Alert createErrorMessage(String unlocalizedMessage) {
+        String message = StyleHandler.getInstance().getLocalizedString(unlocalizedMessage);
+        Alert alert = new Alert(Alert.AlertType.ERROR,StyleHandler.getInstance().getLocalizedString(unlocalizedMessage));
         alert.setTitle("Error");
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
-        alert.show();
+        alert.showAndWait();
         return alert;
     }
     public Alert createErrorMessage(ErrorType errorType) {
-        return createErrorMessage(errorType.getMessage());
+        return createErrorMessage(errorType.getUnlocalizedMessage());
     }
 
     //---------------------------SCENES------------------------------//
@@ -159,7 +165,7 @@ public class SceneHandler {
         stage.setMinWidth(640);
         stage.setMinHeight(480);
         stage.setResizable(true);
-        stage.setTitle("Main Scene");
+        stage.setTitle(StyleHandler.getInstance().getLocalizedString("mainView.name"));
         centerStage(stage,1280,720);
         stage.setWidth(1280);
         stage.setHeight(720);
@@ -190,9 +196,9 @@ public class SceneHandler {
         Scene scene = new Scene(root);
         StyleHandler.getInstance().updateScene(scene);
         scene.setRoot(root);
-        stage.setMinWidth(500);
-        stage.setMinHeight(300);
-        stage.setTitle("Registry View");
+        stage.setMinWidth(700);
+        stage.setMinHeight(700);
+        stage.setTitle(StyleHandler.getInstance().getLocalizedString("registryView.name"));
         stage.setWidth(stage.getMinWidth());
         stage.setHeight(stage.getMinHeight());
         stage.setResizable(false);
@@ -213,7 +219,7 @@ public class SceneHandler {
         scene.setRoot(root);
         stage.setMinWidth(500);
         stage.setMinHeight(300);
-        stage.setTitle("Email Confirmation");
+        stage.setTitle(StyleHandler.getInstance().getLocalizedString("emailConfirmationView.name"));
         stage.setWidth(stage.getMinWidth());
         stage.setHeight(stage.getMinHeight());
         stage.setResizable(false);

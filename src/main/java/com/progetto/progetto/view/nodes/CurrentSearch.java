@@ -20,7 +20,7 @@ public class CurrentSearch extends VBox
     {
         if(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY && ResearchHandler.getInstance().getCurrentListType() != null)
         {
-            Label currentList = createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentList.name"),ResearchHandler.getInstance().getCurrentListType().getLocalizedName());
+            Label currentList = createLabel(StyleHandler.getInstance().getLocalizedString("currentList.name"),ResearchHandler.getInstance().getCurrentListType().getLocalizedName());
             this.getChildren().add(currentList);
         }
         else if(ResearchHandler.getInstance().getCurrentText() != null && ResearchHandler.getInstance().getCurrentText().isEmpty())
@@ -36,7 +36,7 @@ public class CurrentSearch extends VBox
                     if(i != values.length - 1)
                         stringBuilder.append(",");
                 }
-                Label currentGenre = createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentGenre.name"), stringBuilder.toString());
+                Label currentGenre = createLabel(StyleHandler.getInstance().getLocalizedString("currentGenre.name"), stringBuilder.toString());
                 this.getChildren().add(currentGenre);
             }
             HBox hBox = new HBox();
@@ -44,15 +44,15 @@ public class CurrentSearch extends VBox
             hBox.setAlignment(Pos.CENTER);
             if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY || value)
             {
-                Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentSort.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortType().toString() + ".name"));
-                Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentOrder.name"),StyleHandler.getInstance().getResourceBundle().getString(ResearchHandler.getInstance().getCurrentSortOrder().toString() + ".name"));
+                Label currentSortType = ResearchHandler.getInstance().getCurrentSortType() == null ? new Label("") : createLabel(StyleHandler.getInstance().getLocalizedString("currentSort.name"),StyleHandler.getInstance().getLocalizedString(ResearchHandler.getInstance().getCurrentSortType().toString() + ".name"));
+                Label currentSortOrder = ResearchHandler.getInstance().getCurrentSortOrder() == null ? new Label("") : createLabel(StyleHandler.getInstance().getLocalizedString("currentOrder.name"),StyleHandler.getInstance().getLocalizedString(ResearchHandler.getInstance().getCurrentSortOrder().toString() + ".name"));
                 hBox.getChildren().addAll(currentSortType,currentSortOrder);
             }
             this.getChildren().add(hBox);
         }
         else
         {
-            Label currentText = createLabel(StyleHandler.getInstance().getResourceBundle().getString("currentSearch.name"),ResearchHandler.getInstance().getCurrentText());
+            Label currentText = createLabel(StyleHandler.getInstance().getLocalizedString("currentSearch.name"),ResearchHandler.getInstance().getCurrentText());
             this.getChildren().add(currentText);
         }
     }

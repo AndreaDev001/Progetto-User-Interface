@@ -13,7 +13,6 @@ public class LoggerHandler
         try
         {
             logger.setUseParentHandlers(false);
-
             FileHandler fileHandler = new FileHandler("%h/.film_app/filmLog%u.log",true);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
@@ -28,7 +27,7 @@ public class LoggerHandler
             return;
         }
         for(Object o : objects)
-            message = message.replace("{}",o.toString());
+            message = message.replaceFirst("\\{}",o.toString());
 
         LogRecord lr = new LogRecord(Level.SEVERE, message);
         lr.setParameters(objects);

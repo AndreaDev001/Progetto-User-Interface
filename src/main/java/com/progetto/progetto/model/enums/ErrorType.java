@@ -2,9 +2,9 @@ package com.progetto.progetto.model.enums;
 
 public enum ErrorType
 {
-    CONNECTION("Failed connection, retry later.",1),
-    LOADING_PAGE("Page loading failed, something went wrong with the application!", 2),
-    FILE("Something went wrong with the application!", 3);
+    CONNECTION("connectionError.name",1),
+    LOADING_PAGE("pageLoadError.name", 2),
+    FILE("fileLoadError.name", 3);
 
     private final String message;
     private final int errorID;
@@ -14,7 +14,7 @@ public enum ErrorType
         this.errorID = errorID;
     }
 
-    public String getMessage()
+    public String getUnlocalizedMessage()
     {
         return message;
     }

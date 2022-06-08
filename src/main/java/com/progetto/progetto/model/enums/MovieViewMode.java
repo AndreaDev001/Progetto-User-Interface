@@ -15,6 +15,6 @@ public enum MovieViewMode
     public final String getName() {return name;}
     public final String getLocalizedName()
     {
-        return StyleHandler.getInstance().getResourceBundle().getString(this.toString() + ".name");
+        return StyleHandler.getInstance().getLocalizedString(this.toString() + ".name");
     }
 }

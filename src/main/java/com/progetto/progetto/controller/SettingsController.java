@@ -1,11 +1,11 @@
 package com.progetto.progetto.controller;
 
 import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.enums.StyleMode;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import com.progetto.progetto.view.ColorBarPicker;
 import com.progetto.progetto.view.SceneHandler;
-import com.progetto.progetto.view.StyleMode;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;

@@ -2,8 +2,8 @@ package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.enums.StyleMode;
 import com.progetto.progetto.view.SceneHandler;
-import com.progetto.progetto.view.StyleMode;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -86,8 +86,23 @@ public class StyleHandler {
         }
 
     }
-    public ResourceBundle getResourceBundle() {
+    private ResourceBundle getResourceBundle() {
         return ResourceBundle.getBundle("com.progetto.progetto.lang.film",currentLanguage,MainApplication.class.getClassLoader());
+    }
+
+    public String getLocalizedString(String unlocalizedString)
+    {
+        try
+        {
+            return getResourceBundle().getString(unlocalizedString);
+        }
+        catch (Exception exception)
+        {
+            LoggerHandler.error("Error during localisation of the string {} to language {}",exception,unlocalizedString,currentLanguage);
+            if(!unlocalizedString.equals(ErrorType.LOADING_PAGE.getUnlocalizedMessage())) //this is to avoid a potential loop
+                SceneHandler.getInstance().createErrorMessage(ErrorType.LOADING_PAGE);
+        }
+        return null;
     }
 
     public void saveConfigurationOnFile(Properties properties) throws IOException {

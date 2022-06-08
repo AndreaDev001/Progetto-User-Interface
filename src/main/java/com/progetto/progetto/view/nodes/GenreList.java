@@ -35,7 +35,7 @@ public class GenreList extends VBox
             checkBox.setAlignment(Pos.CENTER_LEFT);
             checkBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
             checkBox.setWrapText(false);
-            checkBox.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("firstTool.name") + " " + current + " " + StyleHandler.getInstance().getResourceBundle().getString("secondTool.name")));
+            checkBox.setTooltip(new Tooltip(StyleHandler.getInstance().getLocalizedString("firstTool.name") + " " + current + " " + StyleHandler.getInstance().getLocalizedString("secondTool.name")));
             checkBox.setOnAction((event) -> {
                 ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.GENRE,false);
                 ResearchHandler.getInstance().setCurrentGenre(getSelectedIndexes(),true);

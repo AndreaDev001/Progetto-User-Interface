@@ -13,4 +13,5 @@ module com.progetto.progetto {
     opens com.progetto.progetto.controller to javafx.fxml;
     opens com.progetto.progetto.view to javafx.fxml;
     opens com.progetto.progetto.model.handlers to javafx.fxml;
+    opens com.progetto.progetto.model.enums to javafx.fxml;
 }

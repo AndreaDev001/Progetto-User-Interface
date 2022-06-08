@@ -13,8 +13,8 @@ public class ErrorPage extends VBox
 
     public ErrorPage(String errorMessage,String buttonText,boolean useResources)
     {
-        this.errorText = new Label(useResources ? StyleHandler.getInstance().getResourceBundle().getString(errorMessage) : errorMessage);
-        this.errorButton = new Button(useResources ? StyleHandler.getInstance().getResourceBundle().getString(buttonText) : buttonText);
+        this.errorText = new Label(useResources ? StyleHandler.getInstance().getLocalizedString(errorMessage) : errorMessage);
+        this.errorButton = new Button(useResources ? StyleHandler.getInstance().getLocalizedString(buttonText) : buttonText);
         this.init();
     }
     private void init()
