@@ -34,17 +34,8 @@ public class CacheHandler {
     }
     public FilmCard getFilmBox(MovieDb id)
     {
-        /*
-        if(CARD_CACHE.size() >= MAX_SIZE)
-            CARD_CACHE.clear();
-        FilmCard card = CARD_CACHE.get(id);
-        if(card == null)
-        {
-
-         */
         FilmCard card = new FilmCard(id);
         CARD_CACHE.put(id,card);
-
         return card;
     }
     public void reset()

@@ -1,12 +1,9 @@
 package com.progetto.progetto.view.nodes;
 
-import com.progetto.progetto.model.enums.MovieListType;
-import com.progetto.progetto.model.handlers.ResearchHandler;
-import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 public class ErrorPage extends VBox

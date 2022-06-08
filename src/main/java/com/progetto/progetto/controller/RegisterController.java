@@ -1,50 +1,60 @@
 package com.progetto.progetto.controller;
 
-import javafx.beans.binding.BooleanBinding;
+import com.progetto.progetto.client.Client;
+import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.handlers.LoggerHandler;
+import com.progetto.progetto.view.SceneHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class RegisterController {
 
     @FXML
-    private PasswordField passwordField;
+    private TextField emailField;
 
     @FXML
-    private Button registerButton;
+    private TextField passwordField;
 
     @FXML
-    private PasswordField repeatPasswordField;
-    @FXML
-    private TextField usernameField;
+    private Button confirmButton;
 
+    @FXML
+    private Label emailError;
+
+    @FXML
+    private Label passwordError;
 
     @FXML
     private void initialize()
     {
-        //this disables the button if the passwords are not equal
-
-        BooleanBinding disableProperty = passwordField.textProperty().isEqualTo(repeatPasswordField.textProperty()).and(this.passwordField.textProperty().isNotEmpty()).not();
-        this.registerButton.disableProperty().bind(disableProperty);
-
-        disableProperty.addListener((observable, oldValue, newValue) -> registerButton.setTooltip(newValue ? new Tooltip("eeee") : null));
+        emailField.textProperty().addListener((observableValue, s, t1) -> emailError.setVisible(!Client.getInstance().emailPattern.matcher(t1).matches()));
+        passwordField.textProperty().addListener((observableValue, s, t1) -> passwordError.setVisible(!Client.getInstance().passwordPattern.matcher(t1).matches()));
+        confirmButton.disableProperty().bind(emailError.visibleProperty().or(passwordError.visibleProperty()));
     }
 
     @FXML
-    void onRegisterPressed(ActionEvent event) {
+    void onConfirmButton(ActionEvent event) {
 
-        String encryptedPassword = BCrypt.hashpw(this.passwordField.getText(),BCrypt.gensalt(10));
-        boolean successfulResult = false;
-        if(successfulResult)
+        try
         {
-            //close current stage
-            this.registerButton.getScene().getWindow().hide();
+            String user = Client.getInstance().register(emailField.getText(),passwordField.getText());
+            if(user != null)
+            {
+                SceneHandler.getInstance().loadEmailConfirmation();
+                emailField.getScene().getWindow().hide();
+            }
+            else
+                SceneHandler.getInstance().createErrorMessage("Invalid or Already Used Email!");
+        } catch (Exception e)
+        {
+            LoggerHandler.error("Profile Registration failed",e.fillInStackTrace());
+            SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
         }
+
     }
 
-
 }
+

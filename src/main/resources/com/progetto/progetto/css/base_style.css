@@ -109,6 +109,7 @@
    -fx-background-color: -scene-color;
    -fx-padding: 5px 5px;
 }
+.box-error-viewer,
 .dialog-pane,
 .foreground
 {

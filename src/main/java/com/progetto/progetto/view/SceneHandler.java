@@ -2,7 +2,9 @@ package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.client.Client;
-import com.progetto.progetto.model.handlers.FilmHandler;
+import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.handlers.LoggerHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -15,6 +17,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -22,7 +26,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -52,6 +55,8 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.filmStage = new Stage(StageStyle.DECORATED);
+        //add esc close stage
+        this.filmStage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {if(keyEvent.getCode() == KeyCode.ESCAPE) filmStage.close();});
         this.stage = stage;
         this.loadApplicationScene();
         this.stage.setScene(this.scene);
@@ -60,10 +65,11 @@ public class SceneHandler {
             try
             {
                 Client.getInstance().close();
-                this.filmStage.close();
             } catch (Exception exception) {
-                exception.printStackTrace();
+                LoggerHandler.error("Error during application close request",exception);
+                createErrorMessage(ErrorType.CONNECTION);
             }
+            this.filmStage.close();
         });
     }
 
@@ -73,9 +79,9 @@ public class SceneHandler {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(resourceName),resourceBundle);
         try {
             return fxmlLoader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-            createAlertMessage("Error","Something went wrong while loading a scene!", Alert.AlertType.ERROR);
+        } catch (Exception e) {
+            LoggerHandler.error("Couldn't load fxml page: {}",e,resourceName);
+            createErrorMessage(ErrorType.LOADING_PAGE);
         }
         return null;
     }
@@ -127,13 +133,15 @@ public class SceneHandler {
     /**
      * generic alert message it uses the same stylesheet
      */
-    public Alert createAlertMessage(String title, String message, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType,message);
-        alert.setTitle(title);
-        alert.setAlertType(alertType);
+    public Alert createErrorMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR,message);
+        alert.setTitle("Error");
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
-        alert.showAndWait();
+        alert.show();
         return alert;
+    }
+    public Alert createErrorMessage(ErrorType errorType) {
+        return createErrorMessage(errorType.getMessage());
     }
 
     //---------------------------SCENES------------------------------//
@@ -177,12 +185,11 @@ public class SceneHandler {
         if(root == null)
             return;
         Stage stage = new Stage(StageStyle.DECORATED);
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {if(keyEvent.getCode() == KeyCode.ESCAPE) stage.close();});
         stage.initModality(Modality.APPLICATION_MODAL);
-
         Scene scene = new Scene(root);
         StyleHandler.getInstance().updateScene(scene);
         scene.setRoot(root);
-
         stage.setMinWidth(500);
         stage.setMinHeight(300);
         stage.setTitle("Registry View");
@@ -191,6 +198,29 @@ public class SceneHandler {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void loadEmailConfirmation()
+    {
+        Parent root = loadRootFromFXML("EmailConfirmation.fxml");
+        if(root == null)
+            return;
+        Stage stage = new Stage(StageStyle.DECORATED);
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {if(keyEvent.getCode() == KeyCode.ESCAPE) stage.close();});
+        stage.initModality(Modality.APPLICATION_MODAL);
+        Scene scene = new Scene(root);
+        StyleHandler.getInstance().updateScene(scene);
+        scene.setRoot(root);
+        stage.setMinWidth(500);
+        stage.setMinHeight(300);
+        stage.setTitle("Email Confirmation");
+        stage.setWidth(stage.getMinWidth());
+        stage.setHeight(stage.getMinHeight());
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.show();
+
+
     }
 
     public void loadFilmScene()

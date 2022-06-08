@@ -2,14 +2,11 @@ package com.progetto.progetto.controller;
 
 import com.progetto.progetto.client.Client;
 import com.progetto.progetto.client.util.JSONUtil;
+import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.MovieViewMode;
-import com.progetto.progetto.model.handlers.CacheHandler;
-import com.progetto.progetto.model.handlers.FilmHandler;
-import com.progetto.progetto.model.handlers.ProfileHandler;
-import com.progetto.progetto.model.handlers.ResearchHandler;
+import com.progetto.progetto.model.handlers.*;
 import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
-import com.progetto.progetto.view.StyleHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
 import javafx.fxml.FXML;
@@ -68,14 +65,18 @@ public class FilmController
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
 
         borderPane.setVisible(false);
-        FilmHandler.getInstance().filmQuery(id, Throwable::printStackTrace, film ->
+        FilmHandler.getInstance().filmQuery(id, error ->
+        {
+            LoggerHandler.error("Failed to retrive movie information using TMDB API, movie API: {}",error.getCause().fillInStackTrace(),id);
+            SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
+        }, film ->
         {
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
 
             title = film.getTitle();
             addToLibrary.setGraphic(StyleHandler.getInstance().createIcon("mdi2l-library-shelves",22));
-            addToLibrary.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
+            addToLibrary.disableProperty().bind(Client.getInstance().isLogged().not());
             addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name"));
             addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getResourceBundle().getString("libraryError.name") : StyleHandler.getInstance().getResourceBundle().getString("addToLibrary.name")));
             if(!addToLibrary.isDisable())
@@ -145,7 +146,11 @@ public class FilmController
         {
             FilmHandler.getInstance().setRequiresUpdate(true);
             JSONObject object = JSONUtil.toJSON(film);
-            Client.getInstance().insert("films",object,success -> System.out.println("success"),error -> System.out.println("error"));
+            Client.getInstance().insert("films",object,success -> System.out.println("success"),error ->
+            {
+                LoggerHandler.error("Error library film {} couldn't be added to the library",error.fillInStackTrace(),film.title());
+                SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,7 +162,8 @@ public class FilmController
             FilmHandler.getInstance().setRequiresUpdate(true);
             ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
         },workerStateEvent -> {
-            System.out.println("Failed to remove movie");
+            LoggerHandler.error("Failed to remove movie from {} library",workerStateEvent.getSource().getException().fillInStackTrace(),Client.getInstance().getEmail());
+            SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
         });
     }
 }

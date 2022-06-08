@@ -2,14 +2,13 @@ package com.progetto.progetto.view.nodes;
 
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.handlers.ResearchHandler;
-import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;

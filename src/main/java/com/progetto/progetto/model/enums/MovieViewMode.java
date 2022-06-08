@@ -1,6 +1,6 @@
 package com.progetto.progetto.model.enums;
 
-import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 
 public enum MovieViewMode
 {
