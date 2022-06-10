@@ -19,7 +19,7 @@
                                     <VBox alignment="CENTER" spacing="10.0">
                                        <children>
                                           <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
-                                          <TitledPane alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
+                                          <TitledPane fx:id="thirdTitledPane" alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
                                              <content>
                                                 <VBox fx:id="listHolder" spacing="5.0" />
                                              </content>
@@ -81,7 +81,7 @@
                                     <Label text="Loading Movies" />
                                  </children>
                               </VBox>
-                              <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" />
+                              <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" />
                            </children>
                         </StackPane>
                         <HBox fx:id="bottomHolder" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" styleClass="background" VBox.vgrow="ALWAYS">

@@ -56,8 +56,6 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.filmStage = new Stage(StageStyle.DECORATED);
-        //add esc close stage
-        this.filmStage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {if(keyEvent.getCode() == KeyCode.ESCAPE) filmStage.close();});
         this.stage = stage;
         this.loadApplicationScene();
         this.stage.setScene(this.scene);
@@ -191,7 +189,6 @@ public class SceneHandler {
         if(root == null)
             return;
         Stage stage = new Stage(StageStyle.DECORATED);
-        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {if(keyEvent.getCode() == KeyCode.ESCAPE) stage.close();});
         stage.initModality(Modality.APPLICATION_MODAL);
         Scene scene = new Scene(root);
         StyleHandler.getInstance().updateScene(scene);
@@ -217,7 +214,7 @@ public class SceneHandler {
         Scene scene = new Scene(root);
         StyleHandler.getInstance().updateScene(scene);
         scene.setRoot(root);
-        stage.setMinWidth(500);
+        stage.setMinWidth(650);
         stage.setMinHeight(300);
         stage.setTitle(StyleHandler.getInstance().getLocalizedString("emailConfirmationView.name"));
         stage.setWidth(stage.getMinWidth());

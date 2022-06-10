@@ -22,7 +22,7 @@
                            <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="%lightMode.name" />
                            <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="%darkMode.name" />
                            <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="%costumMode.name" />
-                           <ColorBarPicker fx:id="colorPicker" maxHeight="13.0">
+                           <ColorBarPicker fx:id="colorPicker" maxHeight="13.0" focusTraversable="true">
                               <VBox.margin>
                                  <Insets left="20.0" right="20.0" />
                               </VBox.margin>

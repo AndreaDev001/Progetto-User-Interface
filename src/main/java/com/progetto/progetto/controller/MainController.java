@@ -6,6 +6,7 @@ import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.enums.MovieViewMode;
 import com.progetto.progetto.model.handlers.*;
+import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.nodes.CurrentSearch;
 import com.progetto.progetto.view.nodes.ErrorPage;
 import com.progetto.progetto.view.nodes.FilmContainer;
@@ -43,6 +44,8 @@ public class MainController implements IResearchListener {
     private TitledPane first;
     @FXML
     private TitledPane second;
+    @FXML
+    private TitledPane thirdTitledPane;
     @FXML
     private Button loadPreviousPageButton;
     @FXML
@@ -124,6 +127,11 @@ public class MainController implements IResearchListener {
         sortOrderComboBox.disableProperty().bind(sortingDisabled);
         for(Node current : leftHolder.getChildren())
             VBox.setVgrow(current,Priority.ALWAYS);
+
+
+        first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) first.setExpanded(thirdTitledPane.isFocused() || !first.isExpanded());});
+        second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
+        thirdTitledPane.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) thirdTitledPane.setExpanded(!thirdTitledPane.isExpanded());});
     }
 
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values, ComboBox<String> comboBox) {
@@ -159,8 +167,27 @@ public class MainController implements IResearchListener {
     }
     private void createFilms(List<MovieDb> movieDbs) {
         FilmContainer filmContainer = new FilmContainer(movieDbs,true);
+        filmContainer.getFilmCards().forEach(filmCard ->
+        {
+            filmCard.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> openFilm(filmCard.getMovieDb()));
+            filmCard.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) openFilm(filmCard.getMovieDb());});
+        });
+
         scrollPane.setContent(filmContainer);
     }
+
+    private void openFilm(MovieDb movieDb)
+    {
+        if(SceneHandler.getInstance().getFilmStage().isIconified() && FilmHandler.getInstance().getCurrentSelectedFilm() == movieDb.getId())
+        {
+            SceneHandler.getInstance().centerStage(SceneHandler.getInstance().getFilmStage(), SceneHandler.getInstance().getFilmStage().getWidth(), SceneHandler.getInstance().getFilmStage().getHeight());
+            SceneHandler.getInstance().getFilmStage().setIconified(false);
+            return;
+        }
+        FilmHandler.getInstance().selectFilm(movieDb.getId());
+        SceneHandler.getInstance().loadFilmScene();
+    }
+
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }

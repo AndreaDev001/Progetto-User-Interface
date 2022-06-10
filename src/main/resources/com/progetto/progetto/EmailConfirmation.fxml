@@ -3,13 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MailConfirmationController">
+<VBox spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MailConfirmationController">
    <children>
       <StackPane>
          <children>
             <VBox fx:id="emailResult" alignment="TOP_CENTER" spacing="5.0" styleClass="foreground">
                <children>
-                  <Label text="Send Email Confirmation at: " />
+                  <Label text="%sendEmailConfirmation.name" />
                   <Label fx:id="emailText" />
                </children>
                <padding>
@@ -18,7 +18,7 @@
             </VBox>
             <VBox fx:id="checkResult" alignment="TOP_CENTER" spacing="5.0" styleClass="foreground" visible="false">
                <children>
-                  <Label text="Email Not Confirmed" />
+                  <Label alignment="CENTER" text="%accountNotConfirmed.name" />
                </children>
                <padding>
                   <Insets bottom="13.0" top="13.0" />
@@ -29,8 +29,8 @@
       </StackPane>
       <HBox alignment="CENTER" spacing="30.0">
          <children>
-            <Button minWidth="100.0" mnemonicParsing="false" onAction="#sendEmail" text="Invia Di nuovo" />
-            <Button minWidth="100.0" mnemonicParsing="false" onAction="#checkEmail" text="Check" />
+            <Button minWidth="100.0" mnemonicParsing="false" onAction="#sendEmail" text="%sendConfirmationEmailAgain.name" />
+            <Button minWidth="100.0" mnemonicParsing="false" onAction="#checkEmail" text="%checkConfirmation.name" />
          </children>
       </HBox>
    </children>

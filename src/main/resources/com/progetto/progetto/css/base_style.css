@@ -6,6 +6,11 @@
     -fx-font-family: 'Roboto',Arial,sans-serif;
 }
 
+*:focused
+{
+    -fx-effect: dropShadow(gaussian,-text-color,10,0.0,0.0,0.0);
+}
+
 .progress-indicator
 {
     -fx-progress-color: -text-color;
@@ -109,11 +114,11 @@
    -fx-background-color: -scene-color;
    -fx-padding: 5px 5px;
 }
-.box-error-viewer,
+
 .dialog-pane,
 .foreground
 {
-    -fx-background-color: derive(-thirty-color,-30%);
+    -fx-background-color: linear-gradient(to top,derive(-scene-color,-20%),-thirty-color);
 }
 .text-area .content {
  -fx-background-color : -scene-color;
