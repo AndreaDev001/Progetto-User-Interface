@@ -9,19 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 
 //STYLE HANDLER CLASS written by Pierlugi, aka PierKnight
 //FOR the moment the config file is saved in the home folder inside a directory named "film_app"
@@ -166,16 +158,18 @@ public class StyleHandler {
     }
 
     private void saveCustomCSS() throws IOException {
-        URL cssCopy = Objects.requireNonNull(MainApplication.class.getResource("css/dark.css"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(MainApplication.class.getResourceAsStream("css/dark.css"))));
 
-        try {
-            String cssString = Files.readString(Path.of(cssCopy.toURI()));
-            cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
-            Files.writeString(Path.of(Options.APP_FOLDER_LOCATION + File.separator + "custom.css"),cssString);
-        } catch (URISyntaxException e) {
-            LoggerHandler.error("Malformed URI: {}",e,cssCopy);
-            SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
+        StringJoiner joiner = new StringJoiner("\n");
+        while(reader.ready()) {
+            String line = reader.readLine();
+            joiner.add(line);
         }
+
+        String cssString = joiner.toString();
+        cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
+        Files.writeString(Path.of(Options.APP_FOLDER_LOCATION + File.separator + "custom.css"),cssString);
+
 
     }
 
