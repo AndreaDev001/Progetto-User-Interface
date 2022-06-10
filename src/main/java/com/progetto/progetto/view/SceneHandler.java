@@ -2,6 +2,7 @@ package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.client.Client;
+import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.handlers.LoggerHandler;
@@ -46,7 +47,6 @@ public class SceneHandler {
         this pane contains the selected page
         which is picked from {@link PageEnum}
      */
-
     private StackPane menuPane;
     private final ReadOnlyObjectWrapper<PageEnum> currentPageProperty = new ReadOnlyObjectWrapper<>(null);
 
@@ -61,6 +61,7 @@ public class SceneHandler {
         this.stage.setScene(this.scene);
         this.stage.show();
         this.stage.setOnCloseRequest((event) -> {
+            this.filmStage.close();
             try
             {
                 Client.getInstance().close();
@@ -68,7 +69,6 @@ public class SceneHandler {
                 LoggerHandler.error("Error during application close request",exception);
                 createErrorMessage(ErrorType.CONNECTION);
             }
-            this.filmStage.close();
         });
     }
 
@@ -160,8 +160,8 @@ public class SceneHandler {
         }
         StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
-        stage.setMinWidth(640);
-        stage.setMinHeight(480);
+        stage.setMinWidth(Options.MAIN_WINDOW_WIDTH);
+        stage.setMinHeight(Options.MAIN_WINDOW_HEIGHT);
         stage.setResizable(true);
         stage.setTitle(StyleHandler.getInstance().getLocalizedString("mainView.name"));
         centerStage(stage,1280,720);

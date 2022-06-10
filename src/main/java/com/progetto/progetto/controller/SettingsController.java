@@ -1,5 +1,6 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.StyleMode;
 import com.progetto.progetto.model.handlers.LoggerHandler;
@@ -57,7 +58,7 @@ public class SettingsController {
         this.colorPicker.disableProperty().bind(this.customModeToggle.selectedProperty().not());
 
         //setup possible languages in the combo box
-        for(Locale locale : StyleHandler.SUPPORTED_LANGUAGES)
+        for(Locale locale : Options.SUPPORTED_LANGUAGES)
             this.languageBox.getItems().add(locale);
 
         //this is to represent the language name inside the language box
