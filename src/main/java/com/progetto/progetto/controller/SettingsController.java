@@ -57,7 +57,7 @@ public class SettingsController {
         this.colorPicker.disableProperty().bind(this.customModeToggle.selectedProperty().not());
 
         //setup possible languages in the combo box
-        for(Locale locale : styleHandler.supportedLanguages)
+        for(Locale locale : StyleHandler.SUPPORTED_LANGUAGES)
             this.languageBox.getItems().add(locale);
 
         //this is to represent the language name inside the language box

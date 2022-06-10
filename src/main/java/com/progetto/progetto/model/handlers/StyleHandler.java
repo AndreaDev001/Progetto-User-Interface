@@ -36,7 +36,7 @@ public class StyleHandler {
     private Locale currentLanguage = Locale.ENGLISH;
 
     //immutable list of supported languages
-    public final List<Locale> supportedLanguages = List.of(Locale.ENGLISH, Locale.ITALIAN,Locale.GERMAN,Locale.FRENCH,Locale.forLanguageTag("es"));
+    public static final List<Locale> SUPPORTED_LANGUAGES = List.of(Locale.ENGLISH, Locale.ITALIAN,Locale.GERMAN,Locale.FRENCH,Locale.forLanguageTag("es"));
 
     private StyleHandler() {
         //loading necessary fonts
@@ -47,7 +47,11 @@ public class StyleHandler {
         Font.loadFont(MainApplication.class.getResourceAsStream("fonts/OpenDyslexic-Italic.otf"),10);
     }
 
-    //read the config file and update the scene along with it
+    /**
+     * read the config file and update the scene along with it
+     * if the .film_app folder doesn't exist a new one will be created
+     * @param scene the scene to update
+     */
     public void init(Scene scene)
     {
         Path folderPath = Path.of(getFolderPath());
@@ -60,13 +64,10 @@ public class StyleHandler {
 
             if (!Files.exists(filePath)) {
                 //Use system language if it is supported by the app
-                if (this.supportedLanguages.contains(Locale.getDefault()))
+                if (SUPPORTED_LANGUAGES.contains(Locale.getDefault()))
                     this.currentLanguage = Locale.getDefault();
                 saveConfigurationOnFile(properties);
             }
-
-            if (scene == null)
-                return;
 
             FileReader fileReader = new FileReader(filePath.toFile());
             properties.load(fileReader);
@@ -78,6 +79,8 @@ public class StyleHandler {
             if(localeTag != null)
                 this.setLanguage(Locale.forLanguageTag(localeTag));
 
+            if (scene == null)
+                return;
             StyleHandler.getInstance().updateScene(scene);
 
         } catch (IOException e) {
@@ -90,6 +93,12 @@ public class StyleHandler {
         return ResourceBundle.getBundle("com.progetto.progetto.lang.film",currentLanguage,MainApplication.class.getClassLoader());
     }
 
+    /**
+     * localize a string by using the {@link ResourceBundle} class
+     * the current language in StyleHandler will be used
+     * @param unlocalizedString the string to be localized
+     * @return the localized string
+     */
     public String getLocalizedString(String unlocalizedString)
     {
         try
@@ -105,6 +114,10 @@ public class StyleHandler {
         return null;
     }
 
+    /**
+     * the configuration will be saved inside the .film_app folder
+     * @throws IOException if file cannot be written
+     */
     public void saveConfigurationOnFile(Properties properties) throws IOException {
         Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
         properties.setProperty("use_dyslexic_font", String.valueOf(this.dyslexic));
@@ -120,7 +133,7 @@ public class StyleHandler {
     }
 
     public boolean setLanguage(Locale locale) {
-        if (this.supportedLanguages.contains(locale)) {
+        if (this.SUPPORTED_LANGUAGES.contains(locale)) {
             this.currentLanguage = locale;
             //this sets the interpreter language
             //with this even java libraries display elements in the correct language
