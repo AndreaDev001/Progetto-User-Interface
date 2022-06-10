@@ -133,7 +133,7 @@ public class StyleHandler {
     }
 
     public boolean setLanguage(Locale locale) {
-        if (this.SUPPORTED_LANGUAGES.contains(locale)) {
+        if (SUPPORTED_LANGUAGES.contains(locale)) {
             this.currentLanguage = locale;
             //this sets the interpreter language
             //with this even java libraries display elements in the correct language
