@@ -5,11 +5,8 @@ import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
 import com.progetto.progetto.model.enums.MovieSortType;
 import com.progetto.progetto.model.enums.MovieViewMode;
-import com.progetto.progetto.model.handlers.CacheHandler;
-import com.progetto.progetto.model.handlers.FilmHandler;
-import com.progetto.progetto.model.handlers.IResearchListener;
-import com.progetto.progetto.model.handlers.ResearchHandler;
-import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.model.handlers.*;
+import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.nodes.CurrentSearch;
 import com.progetto.progetto.view.nodes.ErrorPage;
 import com.progetto.progetto.view.nodes.FilmContainer;
@@ -47,6 +44,8 @@ public class MainController implements IResearchListener {
     private TitledPane first;
     @FXML
     private TitledPane second;
+    @FXML
+    private TitledPane thirdTitledPane;
     @FXML
     private Button loadPreviousPageButton;
     @FXML
@@ -89,16 +88,16 @@ public class MainController implements IResearchListener {
         second.setExpanded(secondExpanded.getValue());
         firstExpanded.bind(first.expandedProperty());
         secondExpanded.bind(second.expandedProperty());
-        loadNextPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadNext.name")));
+        loadNextPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getLocalizedString("loadNext.name")));
         loadNextPageButton.setGraphic(new FontIcon("fas-arrow-right"));
         loadNextPageButton.setOnAction(event -> loadNext(true));
-        loadPreviousPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadPrevious.name")));
+        loadPreviousPageButton.setTooltip(new Tooltip(StyleHandler.getInstance().getLocalizedString("loadPrevious.name")));
         loadPreviousPageButton.setGraphic(new FontIcon("fas-arrow-left"));
         loadPreviousPageButton.setOnAction(event -> loadNext(false));
         this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
         ResearchHandler.getInstance().setListener(this);
         if (ResearchHandler.getInstance().getCurrentText().isEmpty())
-            this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+            this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
         else
             this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
         this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
@@ -128,14 +127,19 @@ public class MainController implements IResearchListener {
         sortOrderComboBox.disableProperty().bind(sortingDisabled);
         for(Node current : leftHolder.getChildren())
             VBox.setVgrow(current,Priority.ALWAYS);
+
+
+        first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) first.setExpanded(thirdTitledPane.isFocused() || !first.isExpanded());});
+        second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
+        thirdTitledPane.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) thirdTitledPane.setExpanded(!thirdTitledPane.isExpanded());});
     }
 
     private <T extends Enum<T>> void initDropdown(Enum<T>[] values, ComboBox<String> comboBox) {
         for (Enum<T> current : values) {
-            String value = StyleHandler.getInstance().getResourceBundle().getString(current.toString() + ".name");
+            String value = StyleHandler.getInstance().getLocalizedString(current.toString() + ".name");
             comboBox.getItems().add(value);
         }
-        this.searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+        this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
     }
     private void initBoxes() {
         initDropdown(MovieSortType.values(), sortComboBox);
@@ -153,7 +157,7 @@ public class MainController implements IResearchListener {
             });
             label.setWrapText(true);
             label.setStyle("-fx-font-size: 15px;-fx-font-family: 'Roboto',Arial,sans-serif");
-            label.setTooltip(new Tooltip(StyleHandler.getInstance().getResourceBundle().getString("loadList.name") + " " + current.getLocalizedName().toLowerCase() + " " + (!current.getLocalizedName().toLowerCase().contains(StyleHandler.getInstance().getResourceBundle().getString("movies.name")) ? StyleHandler.getInstance().getResourceBundle().getString("movies.name") : "")));
+            label.setTooltip(new Tooltip(StyleHandler.getInstance().getLocalizedString("loadList.name") + " " + current.getLocalizedName().toLowerCase() + " " + (!current.getLocalizedName().toLowerCase().contains(StyleHandler.getInstance().getLocalizedString("movies.name")) ? StyleHandler.getInstance().getLocalizedString("movies.name") : "")));
             label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setUnderline(true));
             label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setUnderline(false));
             listHolder.getChildren().add(label);
@@ -163,8 +167,27 @@ public class MainController implements IResearchListener {
     }
     private void createFilms(List<MovieDb> movieDbs) {
         FilmContainer filmContainer = new FilmContainer(movieDbs,true);
+        filmContainer.getFilmCards().forEach(filmCard ->
+        {
+            filmCard.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> openFilm(filmCard.getMovieDb()));
+            filmCard.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) openFilm(filmCard.getMovieDb());});
+        });
+
         scrollPane.setContent(filmContainer);
     }
+
+    private void openFilm(MovieDb movieDb)
+    {
+        if(SceneHandler.getInstance().getFilmStage().isIconified() && FilmHandler.getInstance().getCurrentSelectedFilm() == movieDb.getId())
+        {
+            SceneHandler.getInstance().centerStage(SceneHandler.getInstance().getFilmStage(), SceneHandler.getInstance().getFilmStage().getWidth(), SceneHandler.getInstance().getFilmStage().getHeight());
+            SceneHandler.getInstance().getFilmStage().setIconified(false);
+            return;
+        }
+        FilmHandler.getInstance().selectFilm(movieDb.getId());
+        SceneHandler.getInstance().loadFilmScene();
+    }
+
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
@@ -188,7 +211,7 @@ public class MainController implements IResearchListener {
         {
             sortingDisabled.set(false);
             searchField.clear();
-            searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+            searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
         }
         createFilms(result);
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
@@ -233,7 +256,7 @@ public class MainController implements IResearchListener {
         switch (movieViewMode)
         {
             case LIBRARY -> {
-                searchField.setPromptText(StyleHandler.getInstance().getResourceBundle().getString("textPrompt.name"));
+                searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
                 sortingDisabled.set(false);
                 if(FilmHandler.getInstance().RequiresUpdate())
                 {

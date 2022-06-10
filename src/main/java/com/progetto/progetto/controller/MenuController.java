@@ -1,10 +1,10 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.client.ConnectionException;
 import com.progetto.progetto.model.enums.MovieViewMode;
-import com.progetto.progetto.model.handlers.ProfileHandler;
+import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.handlers.ResearchHandler;
-import com.progetto.progetto.view.PageEnum;
 import com.progetto.progetto.view.SceneHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,18 +30,17 @@ public class MenuController {
     @FXML
     private Button loginButton;
 
-
     @FXML
     private Button logoutButton;
 
     @FXML
     private void initialize()
     {
-        this.loginButton.visibleProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
-        this.logoutButton.visibleProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNotNull());
-        this.libraryButton.disableProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
-        this.loginButton.managedProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNull());
-        this.logoutButton.managedProperty().bind(ProfileHandler.getInstance().getLoggedUser().isNotNull());
+        this.loginButton.visibleProperty().bind(Client.getInstance().isLogged().not());
+        this.logoutButton.visibleProperty().bind(Client.getInstance().isLogged());
+        this.libraryButton.disableProperty().bind(Client.getInstance().isLogged().not());
+        this.loginButton.managedProperty().bind(Client.getInstance().isLogged().not());
+        this.logoutButton.managedProperty().bind(Client.getInstance().isLogged());
         SceneHandler.getInstance().currentPageProperty().addListener((observable, oldValue, newValue) -> {
             updateButtonSelection(homeButton, newValue, PageEnum.MAIN);
             updateButtonSelection(settingsButton, newValue, PageEnum.SETTINGS);
@@ -86,11 +85,11 @@ public class MenuController {
     void onLogoutPressed(ActionEvent event)
     {
         try {
-            ProfileHandler.getInstance().logout();
+            Client.getInstance().logout();
+            SceneHandler.getInstance().loadPage(PageEnum.MAIN);
         } catch (IOException | ConnectionException e) {
             e.printStackTrace();
         }
-        SceneHandler.getInstance().loadPage(PageEnum.MAIN);
     }
     private void updateButtonSelection(Button button,PageEnum newPage,PageEnum pageEnum)
     {

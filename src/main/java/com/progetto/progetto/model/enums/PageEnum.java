@@ -1,8 +1,7 @@
-package com.progetto.progetto.view;
+package com.progetto.progetto.model.enums;
 
 public enum PageEnum {
     MAIN("MainView.fxml"),
-    LIBRARY("LibraryFxml.fxml"),
     SETTINGS("SettingsView.fxml"),
     LOGIN("LoginView.fxml");
 

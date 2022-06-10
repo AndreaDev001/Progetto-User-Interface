@@ -37,15 +37,15 @@ class Authentication {
         return false;
     }
 
-    String login(String username, String password) throws IOException,Exception,ConnectionException {
+    String login(String username, String password) throws IOException,ConnectionException {
         return loginRegister(username, password, true);
     }
 
-    String register(String username, String password) throws IOException,Exception, ConnectionException {
+    String register(String username, String password) throws IOException, ConnectionException {
         return loginRegister(username, password, false);
     }
 
-    private String loginRegister(String username, String password, boolean login) throws Exception {
+    private String loginRegister(String username, String password, boolean login) throws ConnectionException,IOException {
         Objects.requireNonNull(username, "Username cannot be null");
         Objects.requireNonNull(password, "Password cannot be null");
         String action = login ? "login" : "register";
@@ -61,10 +61,6 @@ class Authentication {
                 scheduleRefresh(Integer.parseInt(output.getString("expiresIn")));
                 return client.user;
             }
-        }
-        else
-        {
-            throw new Exception();
         }
         return null;
     }

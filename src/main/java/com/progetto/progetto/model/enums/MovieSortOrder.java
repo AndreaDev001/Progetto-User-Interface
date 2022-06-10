@@ -1,6 +1,6 @@
 package com.progetto.progetto.model.enums;
 
-import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 
 public enum MovieSortOrder
 {
@@ -18,6 +18,6 @@ public enum MovieSortOrder
     }
 
     public String getLocalizedName() {
-        return StyleHandler.getInstance().getResourceBundle().getString(this.toString() + ".name");
+        return StyleHandler.getInstance().getLocalizedString(this.toString() + ".name");
     }
 }

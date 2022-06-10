@@ -7,17 +7,18 @@ import javafx.scene.control.skin.TextFieldSkin;
 import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class TogglePassword extends HBox {
+public class TogglePasswordField extends HBox {
 
     private static final String TOGGLED_EYE = "far-eye";
     private static final String UNTOGGLED_EYE = "far-eye-slash";
+    private final TextField passwordField;
 
-    public TogglePassword()
+    public TogglePasswordField()
     {
         ToggleButton toggleEye = new ToggleButton();
         toggleEye.getStyleClass().add("toggle-eye");
 
-        ErrorTextField passwordField = new ErrorTextField()
+        passwordField = new TextField()
         {
             @Override
             public void copy() {
@@ -28,17 +29,18 @@ public class TogglePassword extends HBox {
 
         FontIcon eyeIcon = new FontIcon(UNTOGGLED_EYE);
         eyeIcon.getStyleClass().add("eye-icon");
-
-
         toggleEye.selectedProperty().addListener((observable, oldValue, newValue) -> eyeIcon.setIconLiteral(newValue ? TOGGLED_EYE : UNTOGGLED_EYE));
         toggleEye.setGraphic(eyeIcon);
-
-
         passwordField.setSkin(new TogglePasswordSkin(passwordField,toggleEye.selectedProperty()));
 
         this.getChildren().add(passwordField);
         this.getChildren().add(toggleEye);
 
+    }
+
+    public TextField getPasswordField()
+    {
+        return passwordField;
     }
 
     private static class TogglePasswordSkin extends TextFieldSkin

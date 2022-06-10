@@ -1,4 +1,4 @@
-package com.progetto.progetto.view;
+package com.progetto.progetto.model.enums;
 
 public enum StyleMode
 {

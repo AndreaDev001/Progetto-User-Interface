@@ -1,11 +1,8 @@
 package com.progetto.progetto.view.nodes;
 
-import com.progetto.progetto.view.StyleHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 public class MovieRating extends HBox
 {

@@ -1,8 +1,16 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.view.*;
+import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.enums.StyleMode;
+import com.progetto.progetto.model.handlers.LoggerHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
+import com.progetto.progetto.view.ColorBarPicker;
+import com.progetto.progetto.view.SceneHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
@@ -100,7 +108,8 @@ public class SettingsController {
 
         } catch (IOException e)
         {
-            e.printStackTrace();
+            LoggerHandler.error("Error during configuration settings update!",e.fillInStackTrace());
+            SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
         }
     }
 

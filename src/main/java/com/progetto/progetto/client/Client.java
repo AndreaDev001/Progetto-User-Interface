@@ -1,21 +1,22 @@
 package com.progetto.progetto.client;
 
-import com.progetto.progetto.client.util.QueryResult;
 import com.progetto.progetto.client.listeners.ErrorListener;
 import com.progetto.progetto.client.listeners.SuccessListener;
+import com.progetto.progetto.client.util.QueryResult;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,16 +25,16 @@ public class Client {
     String user;
     String token;
     String refreshToken;
-
     String email;
+    ReadOnlyBooleanWrapper loggedProperty = new ReadOnlyBooleanWrapper(false);
+
 
     public String getEmail() {
         return email;
     }
-
-    public boolean isLogged()
+    public ReadOnlyBooleanProperty isLogged()
     {
-        return email != null;
+        return loggedProperty.getReadOnlyProperty();
     }
 
     private final Authentication authentication;
@@ -302,7 +303,9 @@ public class Client {
      * @throws ConnectionException in case the server cannot be reached.
      * */
     public boolean logout() throws IOException, ConnectionException {
-        return authentication.logout();
+        boolean result = authentication.logout();
+        loggedProperty.set(!result);
+        return result;
     }
 
     /**
@@ -317,7 +320,7 @@ public class Client {
      * @throws ConnectionException in case the server cannot be reached.
      * @throws IllegalArgumentException in case the email or the password are null.
      * */
-    public String login(String email, String password) throws IOException,Exception,ConnectionException {
+    public String login(String email, String password) throws IOException,IllegalArgumentException,ConnectionException {
         return authentication.login(email, password);
     }
 
@@ -333,7 +336,7 @@ public class Client {
      * @throws ConnectionException in case the server cannot be reached.
      * @throws IllegalArgumentException in case the email or the password are null.
      * */
-    public String register(String email, String password) throws IOException,Exception,ConnectionException {
+    public String register(String email, String password) throws Exception,ConnectionException {
         return authentication.register(email, password);
     }
 
@@ -386,7 +389,9 @@ public class Client {
      * @throws ConnectionException in case the server cannot be reached.
      * */
     public boolean isEmailVerified() throws IOException, ConnectionException {
-        return authentication.isEmailVerified();
+        boolean result = authentication.isEmailVerified();
+        loggedProperty.set(result);
+        return result;
     }
 
     /**
@@ -417,5 +422,23 @@ public class Client {
         t.setDaemon(true);
         return t;
     }
+
+    /**
+     * Used to call any method in background using {@link #queryExecutorService }
+     * */
+    public <T> void callAsyncMethod(Callable<T> method, EventHandler<WorkerStateEvent> success, EventHandler<WorkerStateEvent> error) {
+        Task<T> task = new Task<>()
+        {
+            @Override
+            protected T call() throws Exception
+            {
+                return method.call();
+            }
+        };
+        task.setOnSucceeded(success);
+        task.setOnFailed(error);
+        queryExecutorService.submit(task);
+    }
+
     public final ExecutorService getQueryExecutorService() {return queryExecutorService;}
 }

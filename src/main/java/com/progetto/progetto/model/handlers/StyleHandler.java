@@ -1,6 +1,9 @@
-package com.progetto.progetto.view;
+package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.MainApplication;
+import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.enums.StyleMode;
+import com.progetto.progetto.view.SceneHandler;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -47,9 +50,9 @@ public class StyleHandler {
     //read the config file and update the scene along with it
     public void init(Scene scene)
     {
-        try {
+        Path folderPath = Path.of(getFolderPath());
 
-            Path folderPath = Path.of(getFolderPath());
+        try {
             Files.createDirectories(folderPath);
 
             Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
@@ -78,11 +81,28 @@ public class StyleHandler {
             StyleHandler.getInstance().updateScene(scene);
 
         } catch (IOException e) {
+            LoggerHandler.error("Exception while loading folder {} during initialisation",e,folderPath);
+            SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
         }
 
     }
-    public ResourceBundle getResourceBundle() {
+    private ResourceBundle getResourceBundle() {
         return ResourceBundle.getBundle("com.progetto.progetto.lang.film",currentLanguage,MainApplication.class.getClassLoader());
+    }
+
+    public String getLocalizedString(String unlocalizedString)
+    {
+        try
+        {
+            return getResourceBundle().getString(unlocalizedString);
+        }
+        catch (Exception exception)
+        {
+            LoggerHandler.error("Error during localisation of the string {} to language {}",exception,unlocalizedString,currentLanguage);
+            if(!unlocalizedString.equals(ErrorType.LOADING_PAGE.getUnlocalizedMessage())) //this is to avoid a potential loop
+                SceneHandler.getInstance().createErrorMessage(ErrorType.LOADING_PAGE);
+        }
+        return null;
     }
 
     public void saveConfigurationOnFile(Properties properties) throws IOException {
@@ -139,7 +159,8 @@ public class StyleHandler {
             cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
             Files.writeString(Path.of(getFolderPath() + File.separator + "custom.css"),cssString);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            LoggerHandler.error("Malformed URI: {}",e,cssCopy);
+            SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
         }
 
     }
@@ -150,7 +171,8 @@ public class StyleHandler {
         try {
             return Path.of(getFolderPath() + File.separator + "custom.css").toUri().toURL().toExternalForm();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LoggerHandler.error("Malformed URL in cssPath",e);
+            SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
         }
         return getCssPath(StyleMode.DARK);
     }
