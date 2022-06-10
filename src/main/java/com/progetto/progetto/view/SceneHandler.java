@@ -137,7 +137,6 @@ public class SceneHandler {
      * generic alert message it uses the same stylesheet
      */
     public Alert createErrorMessage(String unlocalizedMessage) {
-        String message = StyleHandler.getInstance().getLocalizedString(unlocalizedMessage);
         Alert alert = new Alert(Alert.AlertType.ERROR,StyleHandler.getInstance().getLocalizedString(unlocalizedMessage));
         alert.setTitle("Error");
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
