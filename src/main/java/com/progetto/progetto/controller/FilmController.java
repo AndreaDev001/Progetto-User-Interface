@@ -16,6 +16,8 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.json.JSONObject;
@@ -54,6 +56,7 @@ public class FilmController
     @FXML
     private BorderPane borderPane;
 
+    private MovieDb movie;
     private String title;
     private int id;
     private String elementId;
@@ -63,14 +66,18 @@ public class FilmController
     {
         String pattern = "###,###.###";
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
-
         borderPane.setVisible(false);
+        borderPane.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
+            if(event.getCode() == KeyCode.ESCAPE)
+                SceneHandler.getInstance().getFilmStage().close();
+        });
         FilmHandler.getInstance().filmQuery(id, error ->
         {
             LoggerHandler.error("Failed to retrive movie information using TMDB API, movie API: {}",error.getCause().fillInStackTrace(),id);
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
         }, film ->
         {
+            this.movie = film;
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
 
@@ -146,7 +153,10 @@ public class FilmController
         {
             FilmHandler.getInstance().setRequiresUpdate(true);
             JSONObject object = JSONUtil.toJSON(film);
-            Client.getInstance().insert("films",object,success -> System.out.println("success"),error ->
+            Client.getInstance().insert("films",object,success -> {
+                System.out.println("success");
+                FilmHandler.getInstance().getCurrentLoaded().add(movie);
+            },error ->
             {
                 LoggerHandler.error("Error library film {} couldn't be added to the library",error.fillInStackTrace(),film.title());
                 SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
@@ -160,7 +170,9 @@ public class FilmController
     {
         Client.getInstance().remove("films",elementId,workerStateEvent -> {
             FilmHandler.getInstance().setRequiresUpdate(true);
-            ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
+            FilmHandler.getInstance().getCurrentLoaded().remove(this.movie);
+            if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
+                 ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
         },workerStateEvent -> {
             LoggerHandler.error("Failed to remove movie from {} library",workerStateEvent.getSource().getException().fillInStackTrace(),Client.getInstance().getEmail());
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
