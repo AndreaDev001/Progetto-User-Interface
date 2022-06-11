@@ -110,8 +110,9 @@
                         </StackPane>
                         <HBox fx:id="bottomHolder" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" spacing="5.0" styleClass="background" VBox.vgrow="ALWAYS">
                            <children>
-                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>
+                                    <FontIcon iconLiteral="mdi2b-book-open-page-variant" iconSize="22" />
                                     <Label fx:id="currentPageLabel" text="CurrentPage" HBox.hgrow="ALWAYS" />
                                     <Label layoutX="10.0" layoutY="10.0" text="/" />
                                     <Label fx:id="maxPageLabel" text="MaxPage" HBox.hgrow="ALWAYS" />
@@ -121,6 +122,7 @@
                                  <children>
                                     <Button fx:id="loadPreviousPageButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
                                        <graphic>
+                                          <FontIcon iconLiteral="mdi2c-chevron-left-circle" iconSize="22" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%loadPrevious.name" />
@@ -128,6 +130,7 @@
                                     </Button>
                                     <Button fx:id="loadNextPageButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
                                        <graphic>
+                                          <FontIcon iconLiteral="mdi2c-chevron-right-circle" iconSize="22" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%loadNext.name" />

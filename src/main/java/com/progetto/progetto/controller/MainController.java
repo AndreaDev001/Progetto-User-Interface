@@ -23,7 +23,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import org.json.JSONObject;
-
 import java.util.List;
 
 public class MainController implements IResearchListener
@@ -112,7 +111,6 @@ public class MainController implements IResearchListener
         second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
         third.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) third.setExpanded(!third.isExpanded());});
     }
-
     /**
      * Method used to init a combo box using an enum
      * @param values The enum values used to initialize the combo box
@@ -151,7 +149,7 @@ public class MainController implements IResearchListener
                 }
             }
         });
-        listView.maxHeightProperty().bind(Bindings.size(listView.itemsProperty().get()).multiply(55));
+        listView.maxHeightProperty().bind(Bindings.size(listView.itemsProperty().get()).multiply(24 + 2));
         listView.getSelectionModel().selectedIndexProperty().addListener((changeListener) -> {
             if(listView.getSelectionModel().isEmpty())
                 return;
@@ -272,6 +270,13 @@ public class MainController implements IResearchListener
             }
             else
                 createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
+            if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
+            {
+                ErrorPage errorPage = new ErrorPage("emptyLibrary.name","backHome.name",true);
+                currentSearch.setVisible(false);
+                errorPage.getErrorButton().setOnAction((event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
+                scrollPane.setContent(errorPage);
+            }
         }
         else
         {

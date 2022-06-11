@@ -80,9 +80,7 @@ public class FilmController
             this.movie = film;
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
-
             title = film.getTitle();
-            addToLibrary.setGraphic(StyleHandler.getInstance().createIcon("mdi2l-library-shelves",22));
             addToLibrary.disableProperty().bind(Client.getInstance().isLogged().not());
             addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
             addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
@@ -113,12 +111,6 @@ public class FilmController
             int runtime = film.getRuntime();
             String path = FilmHandler.getInstance().getPosterPath(film);
             filmImage.setImage(CacheHandler.getInstance().getImage(path));
-            filmPopularity.setGraphic(StyleHandler.getInstance().createIcon("mdi2a-account-group",22));
-            filmNameTop.setGraphic(StyleHandler.getInstance().createIcon("mdi2m-movie",22));
-            filmRuntime.setGraphic(StyleHandler.getInstance().createIcon("mdi2c-clock-time-three",22));
-            filmReleaseDate.setGraphic(StyleHandler.getInstance().createIcon("mdi2c-calendar",22));
-            filmRating.setGraphic(StyleHandler.getInstance().createIcon("mdi2v-vote",22));
-            filmNameLeft.setGraphic(StyleHandler.getInstance().createIcon("mdi2m-movie",22));
             filmNameTop.setText(title);
             filmNameLeft.setText(title);
             filmReleaseDate.setText(releaseDate);
