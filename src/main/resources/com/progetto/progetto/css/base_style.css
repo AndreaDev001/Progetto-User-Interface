@@ -30,6 +30,41 @@
    -fx-background-color: -thirty-color;
    -fx-border-width: 0px;
 }
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.table-view .column-header-background .filler {
+  -fx-background-color: rgba(1, 11, 12, 1);
+  -fx-padding: 1em;
+}
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+.table-view .column-header {
+    -fx-background-color: -ten-color;
+    -fx-text-fill: -text-color;
+}
+.table-view .table-cell{
+    -fx-background-color: -thirty-color;
+    -fx-border-color: -ten-color;
+    -fx-cursor: hand;
+    -fx-padding: 2 0 2 10px;
+}
+.table-row-cell: hover {
+    -fx-background-color: -ten-color;
+    -fx-text-background-color: -text-fill;
+}
+.table-view .column-header-background{
+    -fx-background-color: -scene-color;
+    -fx-background-radius: 7px 7px 0px 0px;
+    -fx-background-insets: 0 11px 0 0;
+    -fx-padding: 0 0 5px 0;
+}
 .list-cell:filled:selected
 {
    -fx-font-weight: bold;
@@ -39,6 +74,29 @@
 {
    -fx-underline: true;
    -fx-font-weight: bold;
+}
+.table-view *.scroll-bar:horizontal  *.increment-button,
+.table-view *.scroll-bar:horizontal  *.decrement-button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.table-view *.scroll-bar:horizontal *.increment-arrow,
+.table-view *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+.table-view .scroll-bar * {
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
 }
 .list-view .scroll-bar:horizontal .increment-arrow,
 .list-view .scroll-bar:horizontal .decrement-arrow,
@@ -87,7 +145,6 @@
 {
     -fx-background-color: -ten-color;
 }
-.combo-box:focused,
 .highlight
 {
     -fx-border-color: -text-color;

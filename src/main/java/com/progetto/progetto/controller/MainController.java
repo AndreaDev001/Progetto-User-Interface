@@ -59,16 +59,23 @@ public class MainController implements IResearchListener
     private VBox filmsProgress;
     @FXML
     private ListView<String> listView;
+    @FXML
+    private Button enableCards;
+    @FXML
+    private Button enableTable;
 
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();
 
     private GenreList genreList;
     private CurrentSearch currentSearch;
+    private static boolean useCards = true;
 
     @FXML
     private void initialize()
     {
+        enableCards.setOnAction((event) -> update(true));
+        enableTable.setOnAction((event) -> update(false));
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
@@ -165,15 +172,26 @@ public class MainController implements IResearchListener
      * @param movieDbs the movies in the new film container
      */
     private void createFilms(List<MovieDb> movieDbs) {
-        FilmContainer filmContainer = new FilmContainer(movieDbs,true);
-        filmContainer.getFilmCards().forEach(filmCard ->
+        if(useCards)
         {
-            filmCard.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> openFilm(filmCard.getMovieDb()));
-            filmCard.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) openFilm(filmCard.getMovieDb());});
-        });
+            FilmContainer filmContainer = new FilmContainer(movieDbs);
+            filmContainer.getFilmCards().forEach(filmCard ->
+            {
+                filmCard.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> openFilm(filmCard.getMovieDb()));
+                filmCard.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) openFilm(filmCard.getMovieDb());});
+            });
+            scrollPane.setContent(filmContainer);
+        }
+        else
+        {
+            FilmTable filmTable = new FilmTable(movieDbs);
+            filmTable.getSelectionModel().selectedItemProperty().addListener((changeListener) -> {
+                openFilm(filmTable.getSelectionModel().getSelectedItem());
+            });
+            scrollPane.setContent(filmTable);
+        }
         this.handleLoading(false);
         showCurrent();
-        scrollPane.setContent(filmContainer);
     }
     private void openFilm(MovieDb movieDb)
     {
@@ -283,5 +301,10 @@ public class MainController implements IResearchListener
             third.setVisible(true);
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
         }
+    }
+    private void update(boolean value)
+    {
+        useCards = value;
+        ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
     }
 }
