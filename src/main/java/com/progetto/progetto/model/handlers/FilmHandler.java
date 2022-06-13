@@ -29,11 +29,11 @@ public class FilmHandler
     private final TmdbMovies movies;
     private final String defaultPath;
     private int currentSelectedFilm = 0;
-    private List<MovieDb> currentLoaded = new Vector<>();
-    private Map<MovieDb,String> movieElementId = new HashMap<>();
+    private final List<MovieDb> currentLoaded = new Vector<>();
+    private final Map<MovieDb,String> movieElementId = new HashMap<>();
     private boolean requiresUpdate = true;
 
-    private MovieQueryService movieDbService = new MovieQueryService();
+    private final MovieQueryService movieDbService = new MovieQueryService();
 
     private FilmHandler()
     {
@@ -206,7 +206,7 @@ public class FilmHandler
                 @Override
                 protected MovieDb call()
                 {
-                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
+                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.releases);
                 }
             };
         }

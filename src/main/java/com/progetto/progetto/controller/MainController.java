@@ -60,9 +60,9 @@ public class MainController implements IResearchListener
     @FXML
     private ListView<String> listView;
     @FXML
-    private Button enableCards;
+    private ToggleButton enableCards;
     @FXML
-    private Button enableTable;
+    private ToggleButton enableTable;
 
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();

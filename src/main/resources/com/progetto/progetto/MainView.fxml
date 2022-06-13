@@ -10,6 +10,8 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -138,24 +140,27 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" layoutX="162.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0" spacing="2.0">
+                              <HBox alignment="CENTER" layoutX="162.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Button fx:id="enableCards" mnemonicParsing="false">
+                                    <ToggleButton fx:id="enableCards" mnemonicParsing="false" selected="true">
                                        <graphic>
-                                          <FontIcon iconLiteral="mdi2c-cards" iconSize="22" />
+                                          <FontIcon iconLiteral="mdi2c-card-plus" iconSize="22" />
                                        </graphic>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="ViewGroup" />
+                                       </toggleGroup>
                                        <tooltip>
                                           <Tooltip text="%enableCards.name" />
                                        </tooltip>
-                                    </Button>
-                                    <Button fx:id="enableTable" layoutX="37.0" layoutY="10.0" mnemonicParsing="false">
+                                    </ToggleButton>
+                                    <ToggleButton fx:id="enableTable" mnemonicParsing="false" toggleGroup="$ViewGroup">
                                        <graphic>
-                                          <FontIcon iconLiteral="mdi2t-table-plus" iconSize="22" />
+                                          <FontIcon iconLiteral="mdi2t-table-large-plus" iconSize="22" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%enableTable.name" />
                                        </tooltip>
-                                    </Button>
+                                    </ToggleButton>
                                  </children></HBox>
                            </children>
                            <padding>

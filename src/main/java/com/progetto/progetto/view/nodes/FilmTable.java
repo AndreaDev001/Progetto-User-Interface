@@ -31,7 +31,7 @@ public class FilmTable extends TableView<MovieDb>
         this.setItems(observableList);
         TableColumn<MovieDb,String> titleColumn = new TableColumn<>(StyleHandler.getInstance().getLocalizedString("ORIGINAL_TITLE.name"));
         TableColumn<MovieDb,String> releaseColumn = new TableColumn<>(StyleHandler.getInstance().getLocalizedString("RELEASE_DATE.name"));
-        TableColumn<MovieDb,String> languageColumn = new TableColumn<>("Original language");
+        TableColumn<MovieDb,String> languageColumn = new TableColumn<>(StyleHandler.getInstance().getLocalizedString("LANGUAGE.name"));
         TableColumn<MovieDb,Float> popularityColumn = new TableColumn<>(StyleHandler.getInstance().getLocalizedString("POPULARITY.name"));
         TableColumn<MovieDb,Float> ratingColumn = new TableColumn<>(StyleHandler.getInstance().getLocalizedString("VOTE_AVERAGE.name"));
         TableColumn<MovieDb,Integer> voteCountColumn = new TableColumn<>(StyleHandler.getInstance().getLocalizedString("VOTE_COUNT.name"));
@@ -49,6 +49,7 @@ public class FilmTable extends TableView<MovieDb>
         voteCountColumn.setCellValueFactory(new PropertyValueFactory<MovieDb,Integer>("voteCount"));
         for(TableColumn<MovieDb,?> current : this.getColumns())
         {
+            current.setEditable(false);
             current.setSortable(false);
             current.setReorderable(false);
         }
