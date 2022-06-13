@@ -41,7 +41,7 @@ public class ResearchHandler
     {
         try
         {
-            sortingAvailable.set(isList || (currentText != null && !currentText.isEmpty()) || (currentGenre != null && currentGenre.isEmpty()));
+            sortingAvailable.set(isList || (currentText != null && !currentText.isEmpty()) || movieViewMode == MovieViewMode.HOME && currentGenre != null && currentGenre.isEmpty());
             String genre = getCalculatedGenre();
             researchListener.OnResearchStarted();
             boolean value = (currentText == null || currentText.isEmpty()) && !isList;
@@ -60,7 +60,6 @@ public class ResearchHandler
                 });
                 filmsSearchService.setOnFailed((worker) -> researchListener.OnResearchFailed());
                 filmsSearchService.restart();
-
             }
             else
             {

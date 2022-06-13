@@ -42,6 +42,12 @@ public class GenreList extends VBox
             });
             checkBoxes.add(checkBox);
         }
+        if(ResearchHandler.getInstance().getCurrentGenre() != null && !ResearchHandler.getInstance().getCurrentGenre().isEmpty())
+        {
+            String[] strings = ResearchHandler.getInstance().getCurrentGenre().split(",");
+            for(String current : strings)
+                this.getCheckBoxes().get(Integer.parseInt(current)).setSelected(true);
+        }
         this.getChildren().addAll(checkBoxes);
     }
     public String getSelectedIndexes()

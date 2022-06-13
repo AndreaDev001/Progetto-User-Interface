@@ -78,8 +78,8 @@ public class MainController implements IResearchListener
             enableCards.setSelected(true);
         else
             enableTable.setSelected(true);
-        enableCards.setOnAction((event) -> update(true));
-        enableTable.setOnAction((event) -> update(false));
+        enableCards.selectedProperty().addListener((changeListener) -> {if(enableCards.isSelected()) update(true);});
+        enableTable.selectedProperty().addListener((changeListener) -> {if(enableTable.isSelected()) update(false);});
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         CacheHandler.getInstance().reset();
         FilmHandler.getInstance().updateGenres();
@@ -220,7 +220,9 @@ public class MainController implements IResearchListener
     public void OnResearchSuccessed(List<MovieDb> result,boolean isGenre)
     {
         if(!isGenre)
+        {
             genreList.clearList();
+        }
         else
         {
             this.listView.getSelectionModel().clearSelection();
@@ -272,6 +274,8 @@ public class MainController implements IResearchListener
         if(clear)
         {
             genreList.clearList();
+            sortComboBox.getSelectionModel().select(2);
+            sortOrderComboBox.getSelectionModel().select(1);
             ResearchHandler.getInstance().clearSearch();
         }
         bottomHolder.setVisible(movieViewMode == MovieViewMode.HOME);
@@ -287,11 +291,18 @@ public class MainController implements IResearchListener
                     if(search)
                         ResearchHandler.getInstance().search(false);
                     else
-                        createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
+                    {
+                        if(FilmHandler.getInstance().getCurrentLoaded().size() == 0) {
+                            ErrorPage errorPage = new ErrorPage("emptyLibrary.name", "backHome.name", true);
+                            currentSearch.setVisible(false);
+                            errorPage.getErrorButton().setOnAction((event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME, false, true, false));
+                            scrollPane.setContent(errorPage);
+                        }
+                        else
+                            createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
+                    }
                 },(workerStateEvent) -> this.handleLoading(false));
             }
-            else
-                createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
             if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
             {
                 ErrorPage errorPage = new ErrorPage("emptyLibrary.name","backHome.name",true);
@@ -299,12 +310,15 @@ public class MainController implements IResearchListener
                 errorPage.getErrorButton().setOnAction((event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
                 scrollPane.setContent(errorPage);
             }
+            else
+                createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
         }
         else
         {
             third.setVisible(true);
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
         }
+        handleLoading(false);
     }
     private void update(boolean value)
     {
