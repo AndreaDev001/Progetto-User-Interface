@@ -104,7 +104,7 @@
                               <VBox fx:id="filmsProgress" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                  <children>
                                     <ProgressIndicator />
-                                    <Label style="-fx-font-size: 20px;-fx-font-weight: bold" text="Loading Movies" />
+                                    <Label style="-fx-font-size: 20px;-fx-font-weight: bold" text="%loadingMovies.name" />
                                  </children>
                               </VBox>
                               <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="background" />

@@ -74,6 +74,10 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
+        if(useCards)
+            enableCards.setSelected(true);
+        else
+            enableTable.setSelected(true);
         enableCards.setOnAction((event) -> update(true));
         enableTable.setOnAction((event) -> update(false));
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
