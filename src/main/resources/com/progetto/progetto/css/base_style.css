@@ -44,8 +44,6 @@
 {
     -fx-background-color: -ten-color;
 }
-.combo-box:focused,
-.card:focused,
 .highlight
 {
     -fx-border-color: -text-color;

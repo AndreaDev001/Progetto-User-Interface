@@ -150,13 +150,13 @@ public class SceneHandler {
     //---------------------------SCENES------------------------------//
     private void loadApplicationScene()
     {
+
+        StyleHandler.getInstance().init(null);
         Parent root = loadRootFromFXML("MenuView.fxml");
         if(root == null)
             return;
-        if(this.scene == null) {
+        if(this.scene == null)
             this.scene = new Scene(root);
-            StyleHandler.getInstance().init(this.scene);
-        }
         StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
         stage.setMinWidth(Options.MAIN_WINDOW_WIDTH);
