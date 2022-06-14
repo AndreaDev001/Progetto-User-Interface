@@ -13,9 +13,10 @@ import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import com.progetto.progetto.view.nodes.*;
 import info.movito.themoviedbapi.model.MovieDb;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -48,6 +49,8 @@ public class MainController implements IResearchListener
     @FXML
     private VBox genreHolder;
     @FXML
+    private VBox listHolder;
+    @FXML
     private Label currentPageLabel;
     @FXML
     private Label maxPageLabel;
@@ -58,8 +61,6 @@ public class MainController implements IResearchListener
     @FXML
     private VBox filmsProgress;
     @FXML
-    private ListView<String> listView;
-    @FXML
     private ToggleButton enableCards;
     @FXML
     private ToggleButton enableTable;
@@ -67,6 +68,7 @@ public class MainController implements IResearchListener
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();
 
+    private CostumListView listView;
     private GenreList genreList;
     private CurrentSearch currentSearch;
     private static boolean useCards = true;
@@ -143,34 +145,15 @@ public class MainController implements IResearchListener
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
         sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.values()[sortComboBox.getSelectionModel().getSelectedIndex()]));
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
-        for(MovieListType current : MovieListType.values())
-            listView.getItems().add(current.getLocalizedName());
-        listView.setCellFactory(param -> new ListCell<>(){
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if(!empty && item != null)
-                {
-                    setPrefHeight(Region.USE_COMPUTED_SIZE);
-                    setMinWidth(param.getWidth());
-                    setMaxWidth(param.getWidth());
-                    setPrefWidth(param.getWidth());
-                    setWrapText(true);
-                    setText(item);
-                }
-            }
-        });
-        listView.maxHeightProperty().bind(Bindings.size(listView.itemsProperty().get()).multiply(24 + 2));
+        listView = new CostumListView();
+        listHolder.getChildren().add(listView);
         listView.getSelectionModel().selectedIndexProperty().addListener((changeListener) -> {
-            if(listView.getSelectionModel().isEmpty())
-                return;
-            int index = listView.getSelectionModel().getSelectedIndex();
-            ResearchHandler.getInstance().setCurrentListType(MovieListType.values()[index]);
+            if(!listView.getSelectionModel().isEmpty())
+                ResearchHandler.getInstance().setCurrentListType(MovieListType.values()[listView.getSelectionModel().getSelectedIndex()]);
         });
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
     }
-
     /**
      * Method used to create a new film container to contain new loaded movies
      * @param movieDbs the movies in the new film container
@@ -190,6 +173,8 @@ public class MainController implements IResearchListener
         {
             FilmTable filmTable = new FilmTable(movieDbs);
             filmTable.getSelectionModel().selectedItemProperty().addListener((changeListener) -> {
+                if(filmTable.getSelectionModel().isEmpty())
+                    return;
                 openFilm(filmTable.getSelectionModel().getSelectedItem());
             });
             scrollPane.setContent(filmTable);
@@ -245,6 +230,14 @@ public class MainController implements IResearchListener
         this.bottomHolder.setDisable(value);
         this.filmsProgress.setDisable(!value);
     }
+    private void handleError(String errorName, String errorButton, EventHandler<ActionEvent> eventHandler)
+    {
+        ErrorPage errorPage = new ErrorPage(errorName,errorButton,true);
+        errorPage.getErrorButton().setOnAction(eventHandler);
+        bottomHolder.setVisible(false);
+        this.handleLoading(false);
+        scrollPane.setContent(errorPage);
+    }
     private void showCurrent()
     {
         if(currentSearch == null)
@@ -256,17 +249,14 @@ public class MainController implements IResearchListener
     public void OnResearchFailed()
     {
         showCurrent();
-        this.handleLoading(false);
-        bottomHolder.setVisible(false);
-        ErrorPage errorPage = new ErrorPage("errorText.name","errorButton.name",true);
-        errorPage.getErrorButton().setOnAction((event) -> {
+        EventHandler<ActionEvent> eventHandler = (event) -> {
             genreList.clearList();
-            if (ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME)
+            if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME)
                 ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
             else
-                ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(), true);
-        });
-        scrollPane.setContent(errorPage);
+                ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(),true);
+        };
+        handleError("errorText.name","errorButton.name",eventHandler);
     }
     @Override
     public void OnViewChanged(MovieViewMode movieViewMode,boolean clear,boolean search)
@@ -292,24 +282,15 @@ public class MainController implements IResearchListener
                         ResearchHandler.getInstance().search(false);
                     else
                     {
-                        if(FilmHandler.getInstance().getCurrentLoaded().size() == 0) {
-                            ErrorPage errorPage = new ErrorPage("emptyLibrary.name", "backHome.name", true);
-                            currentSearch.setVisible(false);
-                            errorPage.getErrorButton().setOnAction((event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME, false, true, false));
-                            scrollPane.setContent(errorPage);
-                        }
+                        if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
+                            handleError("emptyLibrary.name","backHome.name",(event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME, false, true, false));
                         else
                             createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(), MovieSortType.POPULARITY,MovieSortOrder.DESC));
                     }
                 },(workerStateEvent) -> this.handleLoading(false));
             }
             if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
-            {
-                ErrorPage errorPage = new ErrorPage("emptyLibrary.name","backHome.name",true);
-                currentSearch.setVisible(false);
-                errorPage.getErrorButton().setOnAction((event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
-                scrollPane.setContent(errorPage);
-            }
+                handleError("emptyLibrary.name","backHome.name",(event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,false,true,false));
             else
                 createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
         }

@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -38,10 +37,7 @@
                                           <TextField fx:id="searchField" alignment="BASELINE_LEFT" promptText="Scrivi un nome" />
                                           <TitledPane fx:id="third" alignment="TOP_LEFT" text="%listTilted.name" textAlignment="RIGHT" wrapText="true">
                                              <content>
-                                                <VBox fx:id="listHolder" spacing="5.0">
-                                                   <children>
-                                                      <ListView fx:id="listView" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
-                                                   </children></VBox>
+                                                <VBox fx:id="listHolder" spacing="5.0" />
                                              </content>
                                           </TitledPane>
                                        </children>
