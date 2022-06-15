@@ -294,6 +294,7 @@ public class MainController implements IResearchListener
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
         {
             third.setVisible(false);
+            genreList.clearList();
             searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
             this.handleLoading(true);
             if(FilmHandler.getInstance().RequiresUpdate())
@@ -309,6 +310,7 @@ public class MainController implements IResearchListener
         }
         else
         {
+            genreList.clearList();
             third.setVisible(true);
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
         }

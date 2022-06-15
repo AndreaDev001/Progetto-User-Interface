@@ -75,6 +75,7 @@ public class FilmController
         {
             LoggerHandler.error("Failed to retrive movie information using TMDB API, movie API: {}",error.getCause().fillInStackTrace(),id);
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
+            SceneHandler.getInstance().getFilmStage().close();
         }, film ->
         {
             this.movie = film;
