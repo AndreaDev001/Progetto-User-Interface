@@ -11,11 +11,13 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import info.movito.themoviedbapi.tools.MovieDbException;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,9 +27,9 @@ public class FilmHandler
 {
     private static final FilmHandler instance = new FilmHandler();
     private List<Genre> genres = new ArrayList<>();
-    private final TmdbApi tmdbApi;
-    private final TmdbMovies movies;
-    private final String defaultPath;
+    private TmdbApi tmdbApi;
+    private TmdbMovies movies;
+    private String defaultPath;
     private int currentSelectedFilm = 0;
     private final List<MovieDb> currentLoaded = new Vector<>();
     private final Map<MovieDb,String> movieElementId = new HashMap<>();
@@ -38,10 +40,21 @@ public class FilmHandler
     private FilmHandler()
     {
         System.out.println("Instance of Film Handler created correctly");
+        init();
+    }
+    private void init()
+    {
         String apiKey = "3837271101e801680438310f38a3feff";
-        tmdbApi = new TmdbApi(apiKey);
-        movies = tmdbApi.getMovies();
-        defaultPath = "https://image.tmdb.org/t/p/w500";
+        try
+        {
+            tmdbApi = new TmdbApi(apiKey);
+            movies = tmdbApi.getMovies();
+            defaultPath = "https://image.tmdb.org/t/p/w500";
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
     }
     public MovieResultsPage getMovies(int page, MovieListType movieListType) throws FilmNotFoundException
     {
@@ -56,8 +69,10 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,result is empty");
         return movieDbs;
     }
-    public void updateGenres()
+    public void updateGenres() throws MovieDbException,NullPointerException
     {
+        if(tmdbApi == null)
+            this.init();
         List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
         this.genres = genres;
     }
@@ -94,6 +109,8 @@ public class FilmHandler
     }
     public List<MovieDb> filterMovies(List<MovieDb> movies,MovieFilterType movieFilterType,String value) throws FilmNotFoundException
     {
+        if(movies == null || movies.isEmpty())
+            throw  new FilmNotFoundException("Movies is empty");
         if(value == null || value.isEmpty())
             return movies;
         List<MovieDb> result = new ArrayList<>();
@@ -125,6 +142,8 @@ public class FilmHandler
     }
     public MovieResultsPage makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
+        if(tmdbApi == null)
+            this.init();
         MovieResultsPage result = new MovieResultsPage();
         switch (movieFilterType)
         {

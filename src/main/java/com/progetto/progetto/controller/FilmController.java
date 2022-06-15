@@ -164,7 +164,7 @@ public class FilmController
             FilmHandler.getInstance().setRequiresUpdate(true);
             FilmHandler.getInstance().getCurrentLoaded().remove(this.movie);
             if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
-                 ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,FilmHandler.getInstance().getCurrentLoaded().size() != 0);
+                 ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
         },workerStateEvent -> {
             LoggerHandler.error("Failed to remove movie from {} library",workerStateEvent.getSource().getException().fillInStackTrace(),Client.getInstance().getEmail());
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);

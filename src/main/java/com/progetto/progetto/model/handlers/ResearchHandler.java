@@ -6,12 +6,16 @@ import com.progetto.progetto.model.handlers.listeners.IResearchListener;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ResearchHandler
 {
@@ -28,6 +32,7 @@ public class ResearchHandler
     private IResearchListener researchListener;
     private final FilmsSearchService filmsSearchService = new FilmsSearchService();
     private final BooleanProperty sortingAvailable = new SimpleBooleanProperty();
+    private final ObjectProperty<MovieViewMode> movieViewModeObjectProperty = new SimpleObjectProperty<>(MovieViewMode.HOME);
 
     private ResearchHandler()
     {
@@ -176,7 +181,11 @@ public class ResearchHandler
         {
             this.movieViewMode = value;
             sortingAvailable.set(value == MovieViewMode.HOME);
-            researchListener.OnViewChanged(movieViewMode,clear,search);
+            if(clear)
+                ResearchHandler.getInstance().clearSearch();
+            movieViewModeObjectProperty.set(value);
+            if(search && value == MovieViewMode.LIBRARY)
+                this.search(currentListType != null);
         }
     }
     /**
@@ -219,6 +228,7 @@ public class ResearchHandler
     public final String getCurrentGenre() {return currentGenre;}
     public final int getCurrentPage() {return currentPage;}
     public final int getCurrentMaxPage() {return Math.max(1,currentMaxPage - 1);}
+    public final ObjectProperty<MovieViewMode> getMovieViewModeObjectProperty() {return movieViewModeObjectProperty;}
     public final BooleanProperty getSortingAvailable() {return sortingAvailable;}
     public static ResearchHandler getInstance() {return instance;}
 
@@ -233,8 +243,6 @@ public class ResearchHandler
             this.isList = list;
             this.searchValues = searchValues;
         }
-
-
         @Override
         protected Task<MovieResultsPage> createTask()
         {
