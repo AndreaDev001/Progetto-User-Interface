@@ -74,56 +74,54 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
-        try
-        {
-            FilmHandler.getInstance().updateGenres();
-        }
-        catch (MovieDbException | NullPointerException exception)
-        {
+        this.handleLoading(true);
+        FilmHandler.getInstance().updateGenres(error -> {
+            this.handleLoading(false);
             first.setDisable(true);
             first.setExpanded(false);
             second.setExpanded(false);
             second.setDisable(true);
             handleError("connectionError.name","reloadButton.name",(event) -> {
-                SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
+                    SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
+                });
+            },success -> {
+            this.handleLoading(false);
+            initProperties();
+            if(useCards)
+                enableCards.setSelected(true);
+            else
+                enableTable.setSelected(true);
+            CacheHandler.getInstance().reset();
+            loadNextPageButton.setOnAction(event -> loadNext(true));
+            loadPreviousPageButton.setOnAction(event -> loadNext(false));
+            this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
+            ResearchHandler.getInstance().getMovieViewModeObjectProperty().addListener(((observable, oldValue, newValue) -> handleSwitchedView()));
+            ResearchHandler.getInstance().setListener(this);
+            if (ResearchHandler.getInstance().getCurrentText().isEmpty())
+                this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
+            else
+                this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
+            this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+                if (e.getCode() != KeyCode.ENTER)
+                    return;
+                ResearchHandler.getInstance().setCurrentText(searchField.getText());
             });
-            return;
-        }
-        initProperties();
-        if(useCards)
-            enableCards.setSelected(true);
-        else
-            enableTable.setSelected(true);
-        CacheHandler.getInstance().reset();
-        loadNextPageButton.setOnAction(event -> loadNext(true));
-        loadPreviousPageButton.setOnAction(event -> loadNext(false));
-        this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
-        ResearchHandler.getInstance().getMovieViewModeObjectProperty().addListener(((observable, oldValue, newValue) -> handleSwitchedView()));
-        ResearchHandler.getInstance().setListener(this);
-        if (ResearchHandler.getInstance().getCurrentText().isEmpty())
-            this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-        else
-            this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
-        this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
-            if (e.getCode() != KeyCode.ENTER)
-                return;
-            ResearchHandler.getInstance().setCurrentText(searchField.getText());
-        });
-        third.managedProperty().bind(third.visibleProperty());
-        genreList = new GenreList(FilmHandler.getInstance().getGenres());
-        ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
-        genreHolder.getChildren().add(genreList);
-        currentSearch = new CurrentSearch();
-        boxHolder.getChildren().add(currentSearch);
-        initComponents();
-        sortComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
-        sortOrderComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
-        first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
-            if(event.getCode().equals(KeyCode.ENTER) && !searchField.isFocused())
-                first.setExpanded(third.isFocused() || !first.isExpanded());
-        });
-        second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
-        third.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) third.setExpanded(!third.isExpanded());});
+            third.managedProperty().bind(third.visibleProperty());
+            genreList = new GenreList(FilmHandler.getInstance().getGenres());
+            ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
+            genreHolder.getChildren().add(genreList);
+            currentSearch = new CurrentSearch();
+            boxHolder.getChildren().add(currentSearch);
+            initComponents();
+            sortComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
+            sortOrderComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
+            first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
+                if(event.getCode().equals(KeyCode.ENTER) && !searchField.isFocused())
+                    first.setExpanded(third.isFocused() || !first.isExpanded());
+            });
+            second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
+            third.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) third.setExpanded(!third.isExpanded());});
+            });
     }
     /**
      * Method used to init a combo box using an enum

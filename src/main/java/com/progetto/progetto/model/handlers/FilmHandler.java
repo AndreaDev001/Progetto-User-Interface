@@ -14,6 +14,7 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import info.movito.themoviedbapi.tools.MovieDbException;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,6 +37,7 @@ public class FilmHandler
     private boolean requiresUpdate = true;
 
     private final MovieQueryService movieDbService = new MovieQueryService();
+    private final MovieGenreService movieGenreService = new MovieGenreService();
 
     private FilmHandler()
     {
@@ -69,12 +71,13 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,result is empty");
         return movieDbs;
     }
-    public void updateGenres() throws MovieDbException,NullPointerException
+    public void updateGenres(Consumer<Throwable> error, Consumer<WorkerStateEvent> success)
     {
         if(tmdbApi == null)
             this.init();
-        List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
-        this.genres = genres;
+        movieGenreService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
+        movieGenreService.setOnSucceeded(success::accept);
+        movieGenreService.restart();
     }
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType,MovieSortOrder movieSortOrder)
     {
@@ -163,7 +166,6 @@ public class FilmHandler
         //this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
         this.currentSelectedFilm = id;
     }
-
     public void filmQuery(int filmID, Consumer<Throwable> error, Consumer<MovieDb> success)
     {
         movieDbService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
@@ -171,8 +173,6 @@ public class FilmHandler
         movieDbService.setMovieId(filmID);
         movieDbService.restart();
     }
-
-
     public void loadMovies(JSONArray jsonArray)
     {
         this.currentLoaded.clear();
@@ -201,12 +201,13 @@ public class FilmHandler
             values.add(current.getName());
         return values;
     }
+    public void setGenres(List<Genre> genres){
+        this.genres = genres;
+    }
     public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
     public final boolean RequiresUpdate() {return requiresUpdate;}
     public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
     public static FilmHandler getInstance() {return instance;}
-
-
 
     private class MovieQueryService extends Service<MovieDb>
     {
@@ -216,7 +217,6 @@ public class FilmHandler
         {
             this.filmId = filmId;
         }
-
         @Override
         protected Task<MovieDb> createTask()
         {
@@ -230,5 +230,17 @@ public class FilmHandler
             };
         }
     }
-
+    private class MovieGenreService extends Service<Void>
+    {
+        @Override
+        protected Task<Void> createTask() {
+            return new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    FilmHandler.getInstance().setGenres(tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString()));
+                    return null;
+                }
+            };
+        }
+    }
 }
