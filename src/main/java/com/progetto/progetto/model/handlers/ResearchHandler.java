@@ -9,6 +9,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
@@ -32,7 +33,7 @@ public class ResearchHandler
     private IResearchListener researchListener;
     private final FilmsSearchService filmsSearchService = new FilmsSearchService();
     private final BooleanProperty sortingAvailable = new SimpleBooleanProperty();
-    private final ObjectProperty<MovieViewMode> movieViewModeObjectProperty = new SimpleObjectProperty<>(MovieViewMode.HOME);
+    private ObjectProperty<MovieViewMode> movieViewModeObjectProperty = new SimpleObjectProperty<>(MovieViewMode.HOME);
 
     private ResearchHandler()
     {
@@ -219,6 +220,11 @@ public class ResearchHandler
         }
         return builder.toString();
     }
+    public void setViewListener(ChangeListener<MovieViewMode> movieViewModeChangeListener)
+    {
+        this.movieViewModeObjectProperty = new SimpleObjectProperty<>(ResearchHandler.getInstance().getCurrentViewMode());
+        this.movieViewModeObjectProperty.addListener(movieViewModeChangeListener);
+    }
     public final String getCurrentText() {return currentText;}
     public final MovieViewMode getCurrentViewMode() {return movieViewMode;}
     public final MovieSortType getCurrentSortType() {return currentSortType;}
@@ -228,7 +234,6 @@ public class ResearchHandler
     public final String getCurrentGenre() {return currentGenre;}
     public final int getCurrentPage() {return currentPage;}
     public final int getCurrentMaxPage() {return Math.max(1,currentMaxPage - 1);}
-    public final ObjectProperty<MovieViewMode> getMovieViewModeObjectProperty() {return movieViewModeObjectProperty;}
     public final BooleanProperty getSortingAvailable() {return sortingAvailable;}
     public static ResearchHandler getInstance() {return instance;}
 

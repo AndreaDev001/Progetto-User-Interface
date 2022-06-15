@@ -10,7 +10,6 @@ import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import com.progetto.progetto.view.nodes.*;
 import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.tools.MovieDbException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -74,7 +73,9 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
+        ResearchHandler.getInstance().setViewListener((obs,oldValue,newValue) -> handleSwitchedView());
         this.handleLoading(true);
+        initProperties();
         FilmHandler.getInstance().updateGenres(error -> {
             this.handleLoading(false);
             first.setDisable(true);
@@ -86,7 +87,6 @@ public class MainController implements IResearchListener
                 });
             },success -> {
             this.handleLoading(false);
-            initProperties();
             if(useCards)
                 enableCards.setSelected(true);
             else
@@ -95,7 +95,6 @@ public class MainController implements IResearchListener
             loadNextPageButton.setOnAction(event -> loadNext(true));
             loadPreviousPageButton.setOnAction(event -> loadNext(false));
             this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
-            ResearchHandler.getInstance().getMovieViewModeObjectProperty().addListener(((observable, oldValue, newValue) -> handleSwitchedView()));
             ResearchHandler.getInstance().setListener(this);
             if (ResearchHandler.getInstance().getCurrentText().isEmpty())
                 this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
@@ -160,6 +159,8 @@ public class MainController implements IResearchListener
     {
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
+        sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
+        sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
         sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.values()[sortComboBox.getSelectionModel().getSelectedIndex()]));
         sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
         for(MovieListType current : MovieListType.values())
@@ -177,8 +178,6 @@ public class MainController implements IResearchListener
             });
             this.listHolder.getChildren().add(label);
         }
-        sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
-        sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
     }
     /**
      * Method used to create a new film container to contain new loaded movies
@@ -306,7 +305,9 @@ public class MainController implements IResearchListener
             if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
                 handleError("emptyLibrary.name","backHome.name",(event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
             else
+            {
                 createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
+            }
         }
         else
         {
