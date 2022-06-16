@@ -48,18 +48,29 @@ public class MenuController
             updateButtonSelection(settingsButton, newValue, PageEnum.SETTINGS);
             updateButtonSelection(loginButton, newValue, PageEnum.LOGIN);
         });
+        ResearchHandler.getInstance().addViewListener((obs,oldValue,newValue) -> {
+            if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME)
+            {
+                if(!homeButton.getStyleClass().contains("highlight"))
+                    homeButton.getStyleClass().add("highlight");
+                libraryButton.getStyleClass().remove("highlight");
+            }
+            else
+            {
+                if(!libraryButton.getStyleClass().contains("highlight"))
+                    libraryButton.getStyleClass().add("highlight");
+                homeButton.getStyleClass().remove("highlight");
+            }
+        },this.getClass().getSimpleName());
     }
     @FXML
     void onHomePressed(ActionEvent event)
     {
-        if(SceneHandler.getInstance().currentPageProperty().getValue() == PageEnum.MAIN)
-        {
-            if(!homeButton.getStyleClass().contains("highlight"))
-                homeButton.getStyleClass().add("highlight");
-            libraryButton.getStyleClass().remove("highlight");
-        }
         ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false);
         SceneHandler.getInstance().loadPage(PageEnum.MAIN);
+        libraryButton.getStyleClass().remove("highlight");
+        if(!homeButton.getStyleClass().contains("highlight"))
+            homeButton.getStyleClass().add("highlight");
     }
     @FXML
     void onLibraryPressed(ActionEvent event)
@@ -72,12 +83,14 @@ public class MenuController
     }
     @FXML
     void onLoginPressed(ActionEvent event) {
+        homeButton.getStyleClass().remove("highlight");
         libraryButton.getStyleClass().remove("highlight");
         SceneHandler.getInstance().loadPage(PageEnum.LOGIN);
     }
     @FXML
     void onSettingsPressed(ActionEvent event)
     {
+        homeButton.getStyleClass().remove("highlight");
         libraryButton.getStyleClass().remove("highlight");
         SceneHandler.getInstance().loadPage(PageEnum.SETTINGS);
     }

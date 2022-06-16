@@ -73,9 +73,10 @@ public class MainController implements IResearchListener
     @FXML
     private void initialize()
     {
-        ResearchHandler.getInstance().setViewListener((obs,oldValue,newValue) -> handleSwitchedView());
+        ResearchHandler.getInstance().addViewListener((obs,oldValue,newValue) -> {
+            handleSwitchedView();
+        },this.getClass().getSimpleName());
         this.handleLoading(true);
-        initProperties();
         FilmHandler.getInstance().updateGenres(error -> {
             this.handleLoading(false);
             first.setDisable(true);
@@ -86,6 +87,7 @@ public class MainController implements IResearchListener
                     SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
                 });
             },success -> {
+            initProperties();
             this.handleLoading(false);
             if(useCards)
                 enableCards.setSelected(true);
@@ -95,7 +97,7 @@ public class MainController implements IResearchListener
             loadNextPageButton.setOnAction(event -> loadNext(true));
             loadPreviousPageButton.setOnAction(event -> loadNext(false));
             this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
-            ResearchHandler.getInstance().setListener(this);
+            ResearchHandler.getInstance().addListener(this,this.getClass().getSimpleName());
             if (ResearchHandler.getInstance().getCurrentText().isEmpty())
                 this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
             else

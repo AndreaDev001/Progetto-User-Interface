@@ -13,10 +13,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ResearchHandler
 {
@@ -30,18 +27,20 @@ public class ResearchHandler
     private String currentText = "";
     private int currentPage = 1;
     private int currentMaxPage = 1;
-    private IResearchListener researchListener;
+    private final Map<String,IResearchListener> researchListeners = new HashMap<>();
+    private final Map<String,ChangeListener<MovieViewMode>> viewListeners = new HashMap<>();
     private final FilmsSearchService filmsSearchService = new FilmsSearchService();
     private final BooleanProperty sortingAvailable = new SimpleBooleanProperty();
-    private ObjectProperty<MovieViewMode> movieViewModeObjectProperty = new SimpleObjectProperty<>(MovieViewMode.HOME);
+    private final ObjectProperty<MovieViewMode> movieViewModeObjectProperty = new SimpleObjectProperty<>(MovieViewMode.HOME);
 
     private ResearchHandler()
     {
         System.out.println("Instance of Research Handler created correctly");
     }
-    public void setListener(IResearchListener listener)
+    public void addListener(IResearchListener listener,String value)
     {
-        researchListener = listener;
+        researchListeners.remove(value);
+        researchListeners.put(value,listener);
     }
     public void search(boolean isList)
     {
@@ -49,7 +48,8 @@ public class ResearchHandler
         {
             sortingAvailable.set(isList || (currentText != null && !currentText.isEmpty()) || movieViewMode == MovieViewMode.HOME && currentGenre != null && currentGenre.isEmpty());
             String genre = getCalculatedGenre();
-            researchListener.OnResearchStarted();
+            for(IResearchListener current : researchListeners.values())
+                current.OnResearchStarted();
             boolean value = (currentText == null || currentText.isEmpty()) && !isList;
             if(movieViewMode == MovieViewMode.HOME)
             {
@@ -62,9 +62,13 @@ public class ResearchHandler
                 {
                     MovieResultsPage result = (MovieResultsPage) workerStateEvent.getSource().getValue();
                     currentMaxPage = Math.max(1,result.getTotalPages());
-                    researchListener.OnResearchSuccessed(result.getResults(),value);
+                    for(IResearchListener current : researchListeners.values())
+                        current.OnResearchSuccessed(result.getResults(),value);
                 });
-                filmsSearchService.setOnFailed((worker) -> researchListener.OnResearchFailed());
+                filmsSearchService.setOnFailed((worker) -> {
+                    for(IResearchListener current : researchListeners.values())
+                        current.OnResearchFailed();
+                });
                 filmsSearchService.restart();
             }
             else
@@ -72,13 +76,15 @@ public class ResearchHandler
                 List<MovieDb> movies = new ArrayList<>();
                 movies = FilmHandler.getInstance().filterMovies(FilmHandler.getInstance().getCurrentLoaded(), currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
                 movies = FilmHandler.getInstance().sortMovies((currentGenre != null && !currentGenre.isEmpty() && currentFilterType == MovieFilterType.GENRE) || (currentText != null && !currentText.isEmpty() && currentFilterType == MovieFilterType.NAME) ? movies : FilmHandler.getInstance().getCurrentLoaded(),currentSortType,currentSortOrder);
-                researchListener.OnResearchSuccessed(movies,value);
+                for(IResearchListener current : researchListeners.values())
+                    current.OnResearchSuccessed(movies,value);
             }
         }
         catch (FilmNotFoundException exception)
         {
             this.currentMaxPage = 1;
-            researchListener.OnResearchFailed();
+            for(IResearchListener current : researchListeners.values())
+                current.OnResearchFailed();
         }
     }
 
@@ -220,9 +226,12 @@ public class ResearchHandler
         }
         return builder.toString();
     }
-    public void setViewListener(ChangeListener<MovieViewMode> movieViewModeChangeListener)
+    public void addViewListener(ChangeListener<MovieViewMode> movieViewModeChangeListener,String value)
     {
-        this.movieViewModeObjectProperty = new SimpleObjectProperty<>(ResearchHandler.getInstance().getCurrentViewMode());
+        if(viewListeners.containsKey(value))
+            movieViewModeObjectProperty.removeListener(viewListeners.get(value));
+        viewListeners.remove(value);
+        this.viewListeners.put(value,movieViewModeChangeListener);
         this.movieViewModeObjectProperty.addListener(movieViewModeChangeListener);
     }
     public final String getCurrentText() {return currentText;}
