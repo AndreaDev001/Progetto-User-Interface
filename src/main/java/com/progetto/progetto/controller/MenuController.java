@@ -49,6 +49,8 @@ public class MenuController
             updateButtonSelection(loginButton, newValue, PageEnum.LOGIN);
         });
         ResearchHandler.getInstance().addViewListener((obs,oldValue,newValue) -> {
+            if(SceneHandler.getInstance().currentPageProperty().getValue() != PageEnum.MAIN)
+                return;
             if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME)
             {
                 if(!homeButton.getStyleClass().contains("highlight"))
@@ -102,9 +104,6 @@ public class MenuController
             Client.getInstance().logout();
             FilmHandler.getInstance().getCurrentLoaded().clear();
             ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false);
-            SceneHandler.getInstance().loadPage(PageEnum.MAIN);
-            homeButton.getStyleClass().add("highlight");
-            libraryButton.getStyleClass().remove("highlight");
         } catch (IOException | ConnectionException e) {
             e.printStackTrace();
         }

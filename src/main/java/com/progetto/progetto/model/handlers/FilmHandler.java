@@ -11,14 +11,11 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
-import info.movito.themoviedbapi.tools.MovieDbException;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -58,6 +55,13 @@ public class FilmHandler
             exception.printStackTrace();
         }
     }
+    /**
+     * Legge i film delle liste predefinite fornite dalla API
+     * @param page Il numero della pagina da cercare
+     * @param movieListType Il tipo della lista
+     * @return Una MovieResultsPage che contiene i risultati dei film
+     * @throws FilmNotFoundException Viene generata questo errore se nessun film è stato trovato
+     */
     public MovieResultsPage getMovies(int page, MovieListType movieListType) throws FilmNotFoundException
     {
         MovieResultsPage movieDbs = null;
@@ -71,6 +75,11 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,result is empty");
         return movieDbs;
     }
+    /**
+     * Aggiorna i generi,leggendoli dalla API,necessario quando bisogna cambiare linguaggio
+     * @param error Callback per gestire eventuali errori
+     * @param success Callback per gestire il successo della operazione
+     */
     public void updateGenres(Consumer<Throwable> error, Consumer<WorkerStateEvent> success)
     {
         if(tmdbApi == null)
@@ -79,6 +88,14 @@ public class FilmHandler
         movieGenreService.setOnSucceeded(success::accept);
         movieGenreService.restart();
     }
+
+    /**
+     * Ordina una lista di film,seguendo un ordine specificato
+     * @param values La lista dei film da ordinare
+     * @param movieSortType Il tipo di ordinamento da utilizzare
+     * @param movieSortOrder Come ordinare la lista,crescente o decrescente
+     * @return La lista di film ordinata
+     */
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType,MovieSortOrder movieSortOrder)
     {
         List<MovieDb> result = new ArrayList<>();
@@ -110,6 +127,14 @@ public class FilmHandler
         }
         return result;
     }
+    /**
+     * Filtra una lista di film,usando il tipo di filtro specificato come parametro
+     * @param movies La lista contenente i film da filtrare
+     * @param movieFilterType Il tipo di filtro da utilizzare
+     * @param value Il genere o il nome utilizzato per filtrare
+     * @return Una nuova lista contenente i risultati validi
+     * @throws FilmNotFoundException Viene generato se la lista dei nuovi film è vuota
+     */
     public List<MovieDb> filterMovies(List<MovieDb> movies,MovieFilterType movieFilterType,String value) throws FilmNotFoundException
     {
         if(movies == null || movies.isEmpty())
@@ -143,6 +168,16 @@ public class FilmHandler
             throw new FilmNotFoundException("Result Set is Empty");
         return result;
     }
+    /**
+     * Effettua una ricerca utilizzando la API
+     * @param value Il genere o il nome da utilizzare nella ricerca
+     * @param page La pagina da cercare
+     * @param movieSortType Il tipo di sort da utilizzare nella ricerca
+     * @param movieFilterType Il filtro da utilizzare nella ricerca
+     * @param movieSortOrder Come ordinare i film,crescente o decrescente
+     * @return Una MovieResultsPage contenente i risultati della ricerca
+     * @throws FilmNotFoundException Viene generato se la lista dei risultati è vuota
+     */
     public MovieResultsPage makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
         if(tmdbApi == null)
@@ -157,15 +192,30 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,film not found");
         return result;
     }
+    /**
+     * Ottiene il path del poster completo del poster di un film
+     * @param movieDb Il film di cui bisogna cercare il poster
+     * @return Il path completo al poster
+     */
     public String getPosterPath(MovieDb movieDb)
     {
         return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
     }
+    /**
+     * Cambia il valore del film selezionato attualmente
+     * @param id Nuovo id del film da selezionare
+     */
     public void selectFilm(int id)
     {
         //this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
         this.currentSelectedFilm = id;
     }
+    /**
+     *
+     * @param filmID L'id del film da cercare
+     * @param error Callback per eventuali errori
+     * @param success Callback per gestire il successo della operazione
+     */
     public void filmQuery(int filmID, Consumer<Throwable> error, Consumer<MovieDb> success)
     {
         movieDbService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
@@ -173,6 +223,10 @@ public class FilmHandler
         movieDbService.setMovieId(filmID);
         movieDbService.restart();
     }
+    /**
+     * Aggiorna la libreria caricata attualmente usando una JSONArray
+     * @param jsonArray JSONArray contenente i film
+     */
     public void loadMovies(JSONArray jsonArray)
     {
         this.currentLoaded.clear();
@@ -236,7 +290,7 @@ public class FilmHandler
         protected Task<Void> createTask() {
             return new Task<Void>() {
                 @Override
-                protected Void call() throws Exception {
+                protected Void call() {
                     FilmHandler.getInstance().setGenres(tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString()));
                     return null;
                 }

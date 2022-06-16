@@ -65,7 +65,7 @@ public class MainController implements IResearchListener
 
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();
-    
+
     private GenreList genreList;
     private CurrentSearch currentSearch;
     private static boolean useCards = true;
@@ -77,51 +77,26 @@ public class MainController implements IResearchListener
             handleSwitchedView();
         },this.getClass().getSimpleName());
         this.handleLoading(true);
+        initProperties();
+        initComponents();
+        initHandlers();
         FilmHandler.getInstance().updateGenres(error -> {
             this.handleLoading(false);
             first.setDisable(true);
             first.setExpanded(false);
             second.setExpanded(false);
             second.setDisable(true);
-            handleError("connectionError.name","reloadButton.name",(event) -> {
-                    SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
-                });
-            },success -> {
-            initProperties();
+            handleError("connectionError.name","reloadButton.name",(event) -> SceneHandler.getInstance().reloadApplication(PageEnum.MAIN));},success -> {
             this.handleLoading(false);
             if(useCards)
                 enableCards.setSelected(true);
             else
                 enableTable.setSelected(true);
             CacheHandler.getInstance().reset();
-            loadNextPageButton.setOnAction(event -> loadNext(true));
-            loadPreviousPageButton.setOnAction(event -> loadNext(false));
-            this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
             ResearchHandler.getInstance().addListener(this,this.getClass().getSimpleName());
-            if (ResearchHandler.getInstance().getCurrentText().isEmpty())
-                this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-            else
-                this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
-            this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
-                if (e.getCode() != KeyCode.ENTER)
-                    return;
-                ResearchHandler.getInstance().setCurrentText(searchField.getText());
-            });
-            third.managedProperty().bind(third.visibleProperty());
             genreList = new GenreList(FilmHandler.getInstance().getGenres());
-            ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
             genreHolder.getChildren().add(genreList);
-            currentSearch = new CurrentSearch();
-            boxHolder.getChildren().add(currentSearch);
-            initComponents();
-            sortComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
-            sortOrderComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
-            first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
-                if(event.getCode().equals(KeyCode.ENTER) && !searchField.isFocused())
-                    first.setExpanded(third.isFocused() || !first.isExpanded());
-            });
-            second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
-            third.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) third.setExpanded(!third.isExpanded());});
+            ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
             });
     }
     /**
@@ -137,6 +112,9 @@ public class MainController implements IResearchListener
         }
         this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
     }
+    /**
+     * Inizializza tutte le proprietà
+     */
     private void initProperties()
     {
         enableCards.selectedProperty().addListener((changeListener) -> {if(enableCards.isSelected()) update(true);});
@@ -144,16 +122,32 @@ public class MainController implements IResearchListener
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         first.setExpanded(firstExpanded.getValue());
         second.setExpanded(secondExpanded.getValue());
-        first.expandedProperty().addListener((observableValue, aBoolean, t1) -> {
-            if (observableValue.getValue().booleanValue()) second.setExpanded(false);
-        });
-        second.expandedProperty().addListener((observableValue, aBoolean, t1) -> {
-            if (observableValue.getValue().booleanValue()) first.setExpanded(false);
-        });
+        third.managedProperty().bind(third.visibleProperty());
+        first.expandedProperty().addListener((observableValue, aBoolean, t1) -> second.setExpanded(!observableValue.getValue().booleanValue() && second.isExpanded()));
+        second.expandedProperty().addListener((observableValue, aBoolean, t1) -> first.setExpanded(!observableValue.getValue().booleanValue() && first.isExpanded()));
         firstExpanded.bind(first.expandedProperty());
         secondExpanded.bind(second.expandedProperty());
+        sortComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
+        sortOrderComboBox.disableProperty().bind(ResearchHandler.getInstance().getSortingAvailable());
     }
-
+    private void initHandlers()
+    {
+        loadNextPageButton.setOnAction(event -> loadNext(true));
+        loadPreviousPageButton.setOnAction(event -> loadNext(false));
+        first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
+            if(event.getCode().equals(KeyCode.ENTER) && !searchField.isFocused())
+                first.setExpanded(third.isFocused() || !first.isExpanded());
+        });
+        this.searchField.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+            if (e.getCode() != KeyCode.ENTER)
+                return;
+            ResearchHandler.getInstance().setCurrentText(searchField.getText());
+        });
+        second.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) second.setExpanded(!second.isExpanded());});
+        third.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) third.setExpanded(!third.isExpanded());});
+        sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.values()[sortComboBox.getSelectionModel().getSelectedIndex()]));
+        sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
+    }
     /**
      Method used to init UI components
      **/
@@ -161,10 +155,15 @@ public class MainController implements IResearchListener
     {
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
+        if (ResearchHandler.getInstance().getCurrentText().isEmpty())
+            this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
+        else
+            this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
+        this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
+        currentSearch = new CurrentSearch();
+        boxHolder.getChildren().add(currentSearch);
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
-        sortComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortType(MovieSortType.values()[sortComboBox.getSelectionModel().getSelectedIndex()]));
-        sortOrderComboBox.setOnAction((event) -> ResearchHandler.getInstance().setCurrentSortOrder(MovieSortOrder.values()[sortOrderComboBox.getSelectionModel().getSelectedIndex()]));
         for(MovieListType current : MovieListType.values())
         {
             Label label = new Label(current.getLocalizedName());
@@ -199,27 +198,29 @@ public class MainController implements IResearchListener
         else
         {
             FilmTable filmTable = new FilmTable(movieDbs);
-            filmTable.getSelectionModel().selectedItemProperty().addListener((changeListener) -> {
-                if(filmTable.getSelectionModel().isEmpty())
-                    return;
-                openFilm(filmTable.getSelectionModel().getSelectedItem());
+            filmTable.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
+                if(event.getCode() == KeyCode.ENTER && !filmTable.getSelectionModel().isEmpty())
+                    openFilm(filmTable.getSelectionModel().getSelectedItem());
             });
+            filmTable.getSelectionModel().selectedItemProperty().addListener((changeListener) -> {if(!filmTable.getSelectionModel().isEmpty()) openFilm(filmTable.getSelectionModel().getSelectedItem());});
             scrollPane.setContent(filmTable);
         }
         this.handleLoading(false);
         showCurrent();
     }
+    /**
+     * Apre la film view del film selezionato
+     * @param movieDb Il film contenuto nella film view
+     */
     private void openFilm(MovieDb movieDb)
     {
-        if(SceneHandler.getInstance().getFilmStage().isIconified() && FilmHandler.getInstance().getCurrentSelectedFilm() == movieDb.getId())
-        {
-            SceneHandler.getInstance().centerStage(SceneHandler.getInstance().getFilmStage(), SceneHandler.getInstance().getFilmStage().getWidth(), SceneHandler.getInstance().getFilmStage().getHeight());
-            SceneHandler.getInstance().getFilmStage().setIconified(false);
-            return;
-        }
         FilmHandler.getInstance().selectFilm(movieDb.getId());
         SceneHandler.getInstance().loadFilmScene();
     }
+    /**
+     * Carica la prossima o la pagina precedente
+     * @param positive Se bisogna aumentare o diminuire la currentPage di 1
+     */
     private void loadNext(boolean positive) {
         ResearchHandler.getInstance().updateCurrentPage(positive);
     }
@@ -228,13 +229,16 @@ public class MainController implements IResearchListener
     {
         this.handleLoading(true);
     }
+    /**
+     * Gestisce l'evento OnResearchSuccessed
+     * @param result I film trovati nella ricerca
+     * @param isGenre Se la ricerca è effettuata solamente su generi e sorting
+     */
     @Override
     public void OnResearchSuccessed(List<MovieDb> result,boolean isGenre)
     {
         if(!isGenre)
-        {
             genreList.clearList();
-        }
         else
         {
             searchField.clear();
@@ -250,12 +254,23 @@ public class MainController implements IResearchListener
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
     }
+
+    /**
+     * Gestisce la schermata di caricamento
+     * @param value Se bisogna mostrare la schermata di caricamento
+     */
     private void handleLoading(boolean value)
     {
         this.scrollPane.setDisable(value);
         this.bottomHolder.setDisable(value);
         this.filmsProgress.setDisable(!value);
     }
+    /**
+     * Gestisce un qualsiasi errore
+     * @param errorName Testo da mostrare all'utente
+     * @param errorButton Testo del pulsante da mostrare all'utente
+     * @param eventHandler Come gestire l'interazione con il pulsante
+     */
     private void handleError(String errorName, String errorButton, EventHandler<ActionEvent> eventHandler)
     {
         ErrorPage errorPage = new ErrorPage(errorName,errorButton,true);
@@ -271,8 +286,11 @@ public class MainController implements IResearchListener
         VBox.setVgrow(currentSearch, Priority.ALWAYS);
         currentSearch.update();
     }
+    /**
+     * Gestisce l'evento OnResearchFailed
+     */
     @Override
-    public void OnResearchFailed()
+    public void OnResearchFailed(boolean connection)
     {
         showCurrent();
         EventHandler<ActionEvent> eventHandler = (event) -> {
@@ -287,29 +305,27 @@ public class MainController implements IResearchListener
                     ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(),true);
             }
         };
-        handleError(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY && FilmHandler.getInstance().getCurrentLoaded().isEmpty() ? "emptyLibrary.name" : "errorText.name","errorButton.name",eventHandler);
+        if(!connection)
+            handleError(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY && FilmHandler.getInstance().getCurrentLoaded().isEmpty() ? "emptyLibrary.name" : "errorText.name","errorButton.name",eventHandler);
+        else
+            handleError("connectionError.name","errorButton.name",eventHandler);
     }
+    //Gestisce il cambiamento tra home e libreria
     public void handleSwitchedView()
     {
+        this.handleLoading(true);
         bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME);
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
         {
             third.setVisible(false);
             genreList.clearList();
             searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-            this.handleLoading(true);
             if(FilmHandler.getInstance().RequiresUpdate())
-            {
-                Client.getInstance().get("films",(workerStateEvent) -> {
-                    FilmHandler.getInstance().loadMovies(((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films"));
-                },(workerStateEvent) -> this.handleLoading(false));
-            }
+                Client.getInstance().get("films",(workerStateEvent) -> FilmHandler.getInstance().loadMovies(((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films")),(workerStateEvent) -> this.handleLoading(false));
             if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
                 handleError("emptyLibrary.name","backHome.name",(event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
             else
-            {
                 createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
-            }
         }
         else
         {

@@ -9,5 +9,5 @@ public interface IResearchListener
 {
     void OnResearchStarted();
     void OnResearchSuccessed(List<MovieDb> result,boolean isText);
-    void OnResearchFailed();
+    void OnResearchFailed(boolean connection);
 }

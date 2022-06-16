@@ -5,6 +5,7 @@ import com.progetto.progetto.model.exceptions.FilmNotFoundException;
 import com.progetto.progetto.model.handlers.listeners.IResearchListener;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import info.movito.themoviedbapi.tools.MovieDbException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,6 +14,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
+import java.net.NoRouteToHostException;
+import java.net.UnknownHostException;
 import java.util.*;
 
 public class ResearchHandler
@@ -37,11 +40,21 @@ public class ResearchHandler
     {
         System.out.println("Instance of Research Handler created correctly");
     }
+
+    /**
+     * Aggiunge un listener alla ricerca
+     * @param listener Il Listener da aggiungere
+     * @param value Il nome della classe
+     */
     public void addListener(IResearchListener listener,String value)
     {
         researchListeners.remove(value);
         researchListeners.put(value,listener);
     }
+    /**
+     * Esegue una ricerca usando i parametri attuali
+     * @param isList Se la ricerca è una lista predefinita
+     */
     public void search(boolean isList)
     {
         try
@@ -67,7 +80,7 @@ public class ResearchHandler
                 });
                 filmsSearchService.setOnFailed((worker) -> {
                     for(IResearchListener current : researchListeners.values())
-                        current.OnResearchFailed();
+                        current.OnResearchFailed(worker.getSource().getException() instanceof UnknownHostException || worker.getSource().getException() instanceof MovieDbException || worker.getSource().getException() instanceof NoRouteToHostException);
                 });
                 filmsSearchService.restart();
             }
@@ -84,10 +97,9 @@ public class ResearchHandler
         {
             this.currentMaxPage = 1;
             for(IResearchListener current : researchListeners.values())
-                current.OnResearchFailed();
+                current.OnResearchFailed(false);
         }
     }
-
     /**
      * Updates the current list Type
      * @param currentListType New List Type
@@ -96,7 +108,6 @@ public class ResearchHandler
         this.currentListType = currentListType;
         this.updateValue(false,true);
     }
-
     /**
      * Updates the current sort Type
      * @param currentSortType New Sort Type
@@ -107,7 +118,6 @@ public class ResearchHandler
         this.currentSortType = currentSortType;
         this.updateValue(true,true);
     }
-
     /**
      * Updates the current sort order
      * @param currentSortOrder New Sort order
@@ -118,7 +128,6 @@ public class ResearchHandler
         this.currentSortOrder = currentSortOrder;
         this.updateValue(true,true);
     }
-
     /**
      * Updates current filter type
      * @param currentFilterType New Filter Type
@@ -129,7 +138,6 @@ public class ResearchHandler
         if(update)
             this.updateValue(true,true);
     }
-
     /**
      * Updates current Genre String
      * @param currentGenre New Current Genre
@@ -140,7 +148,6 @@ public class ResearchHandler
         if(update)
             this.updateValue(true,true);
     }
-
     /**
      * Updates the current Text,used when performing a name search,always resets the current list type and the current genre
      * @param currentText The new current text
@@ -150,7 +157,6 @@ public class ResearchHandler
         this.currentText = currentText;
         this.updateValue(true,false);
     }
-
     /**
      * Method used to reset or not the current List or the current Text
      * @param resetListType If we need to reset the current List
@@ -163,7 +169,6 @@ public class ResearchHandler
         currentPage = 1;
         this.search(!resetListType);
     }
-
     /**
      * Method used to update the current page of the search
      * @param positive If we need to subtract or add by one
@@ -174,13 +179,12 @@ public class ResearchHandler
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
-
     /**
-     * Method used to update the current View Mode,fires a ViewChanged Event
+     * Method used to update the current View Mode,fires all the listeners to the property
      * @param value New MovieViewMode value
      * @param force If we need to force the event,even if the view did not change
      * @param clear If we need to clear all search filters,this will performed by the listener if needed
-     * @param search If we need to perform a search after the event,the search function will be called by the listener if needed
+     * @param search If we need to perform a search after the event,the search function will be called
      */
     public void setCurrentViewMode(MovieViewMode value,boolean force,boolean clear,boolean search)
     {
@@ -226,6 +230,12 @@ public class ResearchHandler
         }
         return builder.toString();
     }
+
+    /**
+     * Aggiunge un listener alla movieViewProperty,se un altro oggetto della stessa classe non è contenuto
+     * @param movieViewModeChangeListener Il listener da aggiungere
+     * @param value Il nome della classe
+     */
     public void addViewListener(ChangeListener<MovieViewMode> movieViewModeChangeListener,String value)
     {
         if(viewListeners.containsKey(value))

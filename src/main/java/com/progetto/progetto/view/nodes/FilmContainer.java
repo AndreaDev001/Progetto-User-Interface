@@ -13,6 +13,10 @@ public class FilmContainer extends FlowPane
     private List<MovieDb> movies;
     private final List<FilmCard> filmCards = new ArrayList<>();
 
+    /**
+     * Costruttore della classe Film Container
+     * @param movies Film contenuti nel container
+     */
     public FilmContainer(List<MovieDb> movies)
     {
         this.movies = movies;
@@ -22,6 +26,10 @@ public class FilmContainer extends FlowPane
         this.init();
         this.setFocusTraversable(false);
     }
+
+    /**
+     * Inizializza il componente
+     */
     private void init()
     {
         for(MovieDb current : movies)
@@ -31,6 +39,11 @@ public class FilmContainer extends FlowPane
             this.filmCards.add(filmCard);
         }
     }
+
+    /**
+     * Aggiorna la lista movies e inizializza il componente
+     * @param movies I nuovi film
+     */
     public void setMovies(List<MovieDb> movies)
     {
         this.movies = movies;

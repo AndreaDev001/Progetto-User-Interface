@@ -19,12 +19,20 @@ public class GenreList extends VBox
     private final List<String> values;
     private List<CheckBox> checkBoxes;
 
+    /**
+     * Costruttore della classe GenreList
+     * @param values La lista dei nomi dei generi
+     */
     public GenreList(List<String> values)
     {
         this.values = values;
         this.setSpacing(5);
         this.init();
     }
+
+    /**
+     * Inizializza il componente
+     */
     protected void init()
     {
         this.checkBoxes = new ArrayList<>();
@@ -50,6 +58,11 @@ public class GenreList extends VBox
         }
         this.getChildren().addAll(checkBoxes);
     }
+
+    /**
+     * Ottiene tutti gli indici delle checkbox selezionate
+     * @return Una Stringa contenente tutti gli indici,separati da una virgola
+     */
     public String getSelectedIndexes()
     {
         StringBuilder stringBuilder = new StringBuilder();
@@ -62,6 +75,10 @@ public class GenreList extends VBox
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * Pulisce la lista
+     */
     public void clearList()
     {
         for(Node node : this.getChildren())
