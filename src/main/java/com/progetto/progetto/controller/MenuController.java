@@ -103,6 +103,7 @@ public class MenuController
         try {
             Client.getInstance().logout();
             FilmHandler.getInstance().getCurrentLoaded().clear();
+            FilmHandler.getInstance().getMovieElementId().clear();
             ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false);
         } catch (IOException | ConnectionException e) {
             e.printStackTrace();

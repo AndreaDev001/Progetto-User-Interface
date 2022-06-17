@@ -31,8 +31,6 @@ public class FilmHandler
     private int currentSelectedFilm = 0;
     private final List<MovieDb> currentLoaded = new Vector<>();
     private final Map<MovieDb,String> movieElementId = new HashMap<>();
-    private boolean requiresUpdate = true;
-
     private final MovieQueryService movieDbService = new MovieQueryService();
     private final MovieGenreService movieGenreService = new MovieGenreService();
 
@@ -111,7 +109,7 @@ public class FilmHandler
                 {
                     firstDate = format.parse(o1.getReleaseDate());
                     secondDate = format.parse(o2.getReleaseDate());
-                    return secondDate.compareTo(firstDate);
+                    return movieSortOrder == MovieSortOrder.DESC ? secondDate.compareTo(firstDate) : firstDate.compareTo(secondDate);
                 }
                 catch (ParseException exception)
                 {
@@ -160,7 +158,7 @@ public class FilmHandler
             }
             case NAME -> {
                 for(MovieDb current : movies)
-                    if(current.getTitle().contains(value))
+                    if(current.getTitle().toLowerCase().contains(value.toLowerCase()))
                         result.add(current);
             }
         }
@@ -239,11 +237,6 @@ public class FilmHandler
             movieElementId.put(movieDb,current.getString("element_id"));
             currentLoaded.add(movieDb);
         }
-        this.requiresUpdate = false;
-    }
-    public void setRequiresUpdate(boolean value)
-    {
-        this.requiresUpdate = value;
     }
     public final int getCurrentSelectedFilm() {return currentSelectedFilm;}
     public List<Genre> getValues(){
@@ -259,7 +252,6 @@ public class FilmHandler
         this.genres = genres;
     }
     public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
-    public final boolean RequiresUpdate() {return requiresUpdate;}
     public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
     public static FilmHandler getInstance() {return instance;}
 

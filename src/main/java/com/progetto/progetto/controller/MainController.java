@@ -58,24 +58,15 @@ public class MainController implements IResearchListener
     private HBox bottomHolder;
     @FXML
     private VBox filmsProgress;
-    @FXML
-    private ToggleButton enableCards;
-    @FXML
-    private ToggleButton enableTable;
-
     private static final BooleanProperty firstExpanded = new SimpleBooleanProperty(true);
     private static final BooleanProperty secondExpanded = new SimpleBooleanProperty();
-
     private GenreList genreList;
     private CurrentSearch currentSearch;
-    private static boolean useCards = true;
 
     @FXML
     private void initialize()
     {
-        ResearchHandler.getInstance().addViewListener((obs,oldValue,newValue) -> {
-            handleSwitchedView();
-        },this.getClass().getSimpleName());
+        ResearchHandler.getInstance().addViewListener((obs,oldValue,newValue) -> handleSwitchedView(),this.getClass().getSimpleName());
         this.handleLoading(true);
         initProperties();
         initComponents();
@@ -88,10 +79,6 @@ public class MainController implements IResearchListener
             second.setDisable(true);
             handleError("connectionError.name","reloadButton.name",(event) -> SceneHandler.getInstance().reloadApplication(PageEnum.MAIN));},success -> {
             this.handleLoading(false);
-            if(useCards)
-                enableCards.setSelected(true);
-            else
-                enableTable.setSelected(true);
             CacheHandler.getInstance().reset();
             ResearchHandler.getInstance().addListener(this,this.getClass().getSimpleName());
             genreList = new GenreList(FilmHandler.getInstance().getGenres());
@@ -117,8 +104,6 @@ public class MainController implements IResearchListener
      */
     private void initProperties()
     {
-        enableCards.selectedProperty().addListener((changeListener) -> {if(enableCards.isSelected()) update(true);});
-        enableTable.selectedProperty().addListener((changeListener) -> {if(enableTable.isSelected()) update(false);});
         bottomHolder.managedProperty().bind(bottomHolder.visibleProperty());
         first.setExpanded(firstExpanded.getValue());
         second.setExpanded(secondExpanded.getValue());
@@ -185,26 +170,13 @@ public class MainController implements IResearchListener
      * @param movieDbs the movies in the new film container
      */
     private void createFilms(List<MovieDb> movieDbs) {
-        if(useCards)
+        FilmContainer filmContainer = new FilmContainer(movieDbs);
+        filmContainer.getFilmCards().forEach(filmCard ->
         {
-            FilmContainer filmContainer = new FilmContainer(movieDbs);
-            filmContainer.getFilmCards().forEach(filmCard ->
-            {
-                filmCard.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> openFilm(filmCard.getMovieDb()));
-                filmCard.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) openFilm(filmCard.getMovieDb());});
-            });
-            scrollPane.setContent(filmContainer);
-        }
-        else
-        {
-            FilmTable filmTable = new FilmTable(movieDbs);
-            filmTable.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
-                if(event.getCode() == KeyCode.ENTER && !filmTable.getSelectionModel().isEmpty())
-                    openFilm(filmTable.getSelectionModel().getSelectedItem());
-            });
-            filmTable.getSelectionModel().selectedItemProperty().addListener((changeListener) -> {if(!filmTable.getSelectionModel().isEmpty()) openFilm(filmTable.getSelectionModel().getSelectedItem());});
-            scrollPane.setContent(filmTable);
-        }
+            filmCard.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> openFilm(filmCard.getMovieDb()));
+            filmCard.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {if(event.getCode().equals(KeyCode.ENTER)) openFilm(filmCard.getMovieDb());});
+        });
+        scrollPane.setContent(filmContainer);
         this.handleLoading(false);
         showCurrent();
     }
@@ -254,7 +226,6 @@ public class MainController implements IResearchListener
         currentPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentPage()));
         maxPageLabel.setText(String.valueOf(ResearchHandler.getInstance().getCurrentMaxPage()));
     }
-
     /**
      * Gestisce la schermata di caricamento
      * @param value Se bisogna mostrare la schermata di caricamento
@@ -305,39 +276,32 @@ public class MainController implements IResearchListener
                     ResearchHandler.getInstance().setCurrentGenre(genreList.getSelectedIndexes(),true);
             }
         };
-        if(!connection)
-            handleError(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY && FilmHandler.getInstance().getCurrentLoaded().isEmpty() ? "emptyLibrary.name" : "errorText.name","errorButton.name",eventHandler);
-        else
+        if(connection)
+        {
             handleError("connectionError.name","errorButton.name",eventHandler);
+            return;
+        }
+        handleError(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY && FilmHandler.getInstance().getCurrentLoaded().isEmpty() ? "emptyLibrary.name" : "errorText.name","errorButton.name",eventHandler);
     }
     //Gestisce il cambiamento tra home e libreria
     public void handleSwitchedView()
     {
-        this.handleLoading(true);
         bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME);
+        searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
+        searchField.setText("");
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
         {
-            third.setVisible(false);
             genreList.clearList();
-            searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-            if(FilmHandler.getInstance().RequiresUpdate())
-                Client.getInstance().get("films",(workerStateEvent) -> FilmHandler.getInstance().loadMovies(((JSONObject)workerStateEvent.getSource().getValue()).getJSONArray("films")),(workerStateEvent) -> this.handleLoading(false));
-            if(FilmHandler.getInstance().getCurrentLoaded().size() == 0)
+            third.setVisible(false);
+            if(FilmHandler.getInstance().getCurrentLoaded().isEmpty())
                 handleError("emptyLibrary.name","backHome.name",(event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
             else
-                createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),MovieSortType.POPULARITY, MovieSortOrder.DESC));
+                createFilms(FilmHandler.getInstance().getCurrentLoaded());
         }
         else
         {
-            genreList.clearList();
             third.setVisible(true);
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
         }
-        handleLoading(false);
-    }
-    private void update(boolean value)
-    {
-        useCards = value;
-        ResearchHandler.getInstance().search(ResearchHandler.getInstance().getCurrentListType() != null);
     }
 }

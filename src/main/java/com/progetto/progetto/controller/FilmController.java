@@ -144,11 +144,10 @@ public class FilmController
         Film film = new Film(id,title);
         try
         {
-            FilmHandler.getInstance().setRequiresUpdate(true);
             JSONObject object = JSONUtil.toJSON(film);
             Client.getInstance().insert("films",object,success -> {
-                System.out.println("success");
                 FilmHandler.getInstance().getCurrentLoaded().add(movie);
+                FilmHandler.getInstance().getMovieElementId().put(movie,success.result().getJSONObject("response").getString("element_id"));
             },error ->
             {
                 LoggerHandler.error("Error library film {} couldn't be added to the library",error.fillInStackTrace(),film.title());
@@ -161,9 +160,9 @@ public class FilmController
     }
     private void RemoveFilm()
     {
-        Client.getInstance().remove("films",elementId,workerStateEvent -> {
-            FilmHandler.getInstance().setRequiresUpdate(true);
+        Client.getInstance().remove("films",FilmHandler.getInstance().getMovieElementId().get(this.movie),workerStateEvent -> {
             FilmHandler.getInstance().getCurrentLoaded().remove(this.movie);
+            FilmHandler.getInstance().getMovieElementId().remove(this.movie);
             if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
                  ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
         },workerStateEvent -> {

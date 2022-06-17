@@ -8,7 +8,10 @@
 .card:focused,
 .button:focused,
 .titled-pane:focused,
-.list-view:focused
+.label:focused,
+.list-view:focused,
+.combo-box:focused,
+.check-box:focused
 {
   -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
@@ -30,59 +33,6 @@
    -fx-background-color: -thirty-color;
    -fx-border-width: 0px;
 }
-.table-view
-{
-   -fx-background-color: transparent;
-   -fx-background-insets: 0;
-   -fx-padding: 0;
-   -fx-border-color: -ten-color;
-   -fx-border-width: 2px;
-}
-.table-view:focused{
-    -fx-border-color: -text-color;
-    -fx-border-width: 2px;
-}
-.table-view .column-header-background
-{
-    -fx-background-color: -scene-color;
-    -fx-border-color: -thirty-color;
-    -fx-background-insets: 0 0px 0 0;
-}
-.table-view .column-header{
-   -fx-background-color: transparent;
-}
-.table-view .corner {
-    -fx-background-color: -scene-color;
-}
-.table-view .column-header-background .filler {
-    -fx-background-color: -scene-color;
-}
-.table-row-cell:selected:focused{
-   -fx-background-color: -ten-color;
-   -fx-border-color: -thirty-color;
-}
-.table-row-cell: odd{
-    -fx-background-color: -thirty-color;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-.table-row-cell: even{
-    -fx-background-color: -thirty-color;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-.table-view .table-cell
-{
-   -fx-border-color: transparent;
-   -fx-padding: 2 0 2 10px;
-   -fx-border-color: -ten-color;
-}
-.table-row-cell:hover
-{
-   -fx-background-color: -ten-color;
-   -fx-border-color: -thirty-color;
-   -fx-cursor: hand;
-}
 .list-cell:filled:selected
 {
    -fx-font-weight: bold;
@@ -92,29 +42,6 @@
 {
    -fx-underline: true;
    -fx-font-weight: bold;
-}
-.table-view *.scroll-bar:horizontal  *.increment-button,
-.table-view *.scroll-bar:horizontal  *.decrement-button {
-    -fx-background-color: null;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-.table-view *.scroll-bar:horizontal *.increment-arrow,
-.table-view *.scroll-bar:horizontal *.decrement-arrow {
-    -fx-background-color: null;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-shape: null;
-}
-.table-view .scroll-bar * {
-    -fx-min-width: 0;
-    -fx-pref-width: 0;
-    -fx-max-width: 0;
-    -fx-min-height: 0;
-    -fx-pref-height: 0;
-    -fx-max-height: 0;
 }
 .list-view .scroll-bar:horizontal .increment-arrow,
 .list-view .scroll-bar:horizontal .decrement-arrow,
