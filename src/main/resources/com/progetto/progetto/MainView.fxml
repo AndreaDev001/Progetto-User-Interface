@@ -9,8 +9,6 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -111,9 +109,9 @@
                               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>
                                     <FontIcon iconLiteral="mdi2b-book-open-page-variant" iconSize="22" />
-                                    <Label fx:id="currentPageLabel" text="CurrentPage" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="currentPageLabel" text="..." HBox.hgrow="ALWAYS" />
                                     <Label layoutX="10.0" layoutY="10.0" text="/" />
-                                    <Label fx:id="maxPageLabel" text="MaxPage" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="maxPageLabel" text="..." HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER" layoutX="81.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0" spacing="5.0" HBox.hgrow="ALWAYS">
@@ -136,28 +134,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" layoutX="162.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0">
-                                 <children>
-                                    <ToggleButton fx:id="enableCards" mnemonicParsing="false" selected="true">
-                                       <graphic>
-                                          <FontIcon iconLiteral="mdi2c-card-plus" iconSize="22" />
-                                       </graphic>
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="ViewGroup" />
-                                       </toggleGroup>
-                                       <tooltip>
-                                          <Tooltip text="%enableCards.name" />
-                                       </tooltip>
-                                    </ToggleButton>
-                                    <ToggleButton fx:id="enableTable" mnemonicParsing="false" toggleGroup="$ViewGroup">
-                                       <graphic>
-                                          <FontIcon iconLiteral="mdi2t-table-large-plus" iconSize="22" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="%enableTable.name" />
-                                       </tooltip>
-                                    </ToggleButton>
-                                 </children></HBox>
+                              <HBox alignment="CENTER" layoutX="162.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
