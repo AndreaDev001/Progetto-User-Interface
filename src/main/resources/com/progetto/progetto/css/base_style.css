@@ -15,6 +15,10 @@
 {
   -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
+.label:hover
+{
+   -fx-underline: true;
+}
 .list-view
 {
    -fx-font-size: 14px;
@@ -119,10 +123,6 @@
    -fx-background-color: -scene-color;
    -fx-font-size: 18px;
    -fx-padding: 0px;
-}
-.showCurrent
-{
-   -fx-font-size: 16px;
 }
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;

@@ -147,6 +147,9 @@ public class MainController implements IResearchListener
         this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
         currentSearch = new CurrentSearch();
         boxHolder.getChildren().add(currentSearch);
+        boxHolder.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_PREF_SIZE);
+        boxHolder.setMaxSize(Region.USE_COMPUTED_SIZE,Region.USE_PREF_SIZE);
+        boxHolder.prefHeightProperty().bind(currentSearch.prefHeightProperty());
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
         for(MovieListType current : MovieListType.values())
