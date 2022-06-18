@@ -11,6 +11,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -155,6 +156,10 @@ public class StyleHandler {
         else
             scene.getStylesheets().remove(dyslexic_style);
 
+        //we use the root ID to load an optional css
+        URL url = MainApplication.class.getResource("css/" + scene.getRoot().getId() + ".css");
+        if(url != null)
+            scene.getStylesheets().add(url.toExternalForm());
     }
 
     private void saveCustomCSS() throws IOException {
@@ -169,8 +174,6 @@ public class StyleHandler {
         String cssString = joiner.toString();
         cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
         Files.writeString(Path.of(Options.APP_FOLDER_LOCATION + File.separator + "custom.css"),cssString);
-
-
     }
 
     private String getCssPath(StyleMode styleMode) {
