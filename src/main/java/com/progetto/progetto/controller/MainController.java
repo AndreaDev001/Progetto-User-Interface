@@ -156,6 +156,8 @@ public class MainController implements IResearchListener
             Label label = new Label(current.getLocalizedName());
             label.setFocusTraversable(true);
             label.setWrapText(true);
+            label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setStyle("-fx-font-weight: bold;-fx-underline: true"));
+            label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setStyle("-fx-font-weight: regular;-fx-underline: false"));
             label.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> ResearchHandler.getInstance().setCurrentListType(current));
             label.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
                 if(event.getCode() == KeyCode.ENTER)
