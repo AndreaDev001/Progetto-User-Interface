@@ -19,11 +19,13 @@ public class CacheHandler {
     //THIS IS THE MEMORY CACHE
     private final Map<String, Image> IMAGE_CACHE = new HashMap<>();
     private final Map<MovieDb, FilmCard> CARD_CACHE = new HashMap<>();
-    private final int MAX_SIZE = 250;
+    private final int MAX_SIZE = 150;
 
 
     public Image getImage(String url)
     {
+        if(IMAGE_CACHE.size() >= MAX_SIZE)
+            IMAGE_CACHE.clear();
         Image image = IMAGE_CACHE.get(url);
         if(image == null)
         {
@@ -34,6 +36,8 @@ public class CacheHandler {
     }
     public FilmCard getFilmBox(MovieDb id)
     {
+        if(CARD_CACHE.size() >= MAX_SIZE)
+            CARD_CACHE.clear();
         FilmCard card = new FilmCard(id);
         CARD_CACHE.put(id,card);
         return card;

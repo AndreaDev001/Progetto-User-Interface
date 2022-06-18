@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="201.0" prefWidth="208.0" style="-fx-border-width: 0px;" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MenuController">
    <top>
@@ -15,11 +16,26 @@
          <children>
             <HBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="homeButton" mnemonicParsing="false" onAction="#onHomePressed" text="%home.name" />
-                  <Button fx:id="libraryButton" mnemonicParsing="false" onAction="#onLibraryPressed" text="%library.name" />
-                  <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#onSettingsPressed" text="%settings.name" />
-                  <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLoginPressed" text="%login.name" />
-                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#onLogoutPressed" text="%logout.name" />
+                  <Button fx:id="homeButton" mnemonicParsing="false" onAction="#onHomePressed" text="%home.name">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2h-home" iconSize="25" />
+                     </graphic></Button>
+                  <Button fx:id="libraryButton" mnemonicParsing="false" onAction="#onLibraryPressed" text="%library.name">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-library-shelves" iconSize="25" />
+                     </graphic></Button>
+                  <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#onSettingsPressed" text="%settings.name">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2t-tools" iconSize="25" />
+                     </graphic></Button>
+                  <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLoginPressed" text="%login.name">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-login" iconSize="25" />
+                     </graphic></Button>
+                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#onLogoutPressed" text="%logout.name">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-logout" iconSize="25" />
+                     </graphic></Button>
                </children>
             </HBox>
          </children>

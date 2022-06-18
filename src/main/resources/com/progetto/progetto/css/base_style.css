@@ -5,17 +5,67 @@
     -fx-focus-color: transparent;
     -fx-font-family: 'Roboto',Arial,sans-serif;
 }
-
-*:focused
+.card:focused,
+.button:focused,
+.titled-pane:focused,
+.label:focused,
+.list-view:focused,
+.combo-box:focused,
+.check-box:focused
 {
-    -fx-effect: dropShadow(gaussian,-text-color,10,0.0,0.0,0.0);
+  -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
-
+.label:hover
+{
+   -fx-underline: true;
+}
+.list-view
+{
+   -fx-font-size: 14px;
+   -fx-background-color: -thirty-color;
+   -fx-padding: 0px;
+}
+.list-cell
+{
+   -fx-background-color: -thirty-color;
+   -fx-border-width: 0px;
+   -fx-padding: 5px 5px;
+   -fx-underline: false;
+}
+.list-cell:filled
+{
+   -fx-background-color: -thirty-color;
+   -fx-border-width: 0px;
+}
+.list-cell:filled:selected
+{
+   -fx-font-weight: bold;
+   -fx-underline: true;
+}
+.list-cell:hover
+{
+   -fx-underline: true;
+   -fx-font-weight: bold;
+}
+.list-view .scroll-bar:horizontal .increment-arrow,
+.list-view .scroll-bar:horizontal .decrement-arrow,
+.list-view .scroll-bar:horizontal .increment-button,
+.list-view .scroll-bar:horizontal .decrement-button {
+    -fx-padding:0;
+}
+.list-view .scroll-bar:horizontal {
+    -fx-scale-x: 0;
+}
+.list-view .scroll-bar:vertical
+{
+   -fx-scale-y: 0;
+}
 .progress-indicator
 {
     -fx-progress-color: -text-color;
+    -fx-font-size: 20px;
+    -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
-
 .ikonli-font-icon.eye-icon
 {
     -fx-font-size: 17
@@ -29,7 +79,20 @@
 {
     -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
-
+.toggle-button
+{
+   -fx-background-color: -ten-color;
+   -fx-cursor: hand;
+}
+.toggle-button:focused
+{
+   -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
+}
+.toggle-button:selected
+{
+   -fx-background-color: -thirty-color;
+   -fx-border-color: -ten-color;
+}
 .ikonli-font-icon
 {
     -fx-icon-color: -text-color;
@@ -44,8 +107,6 @@
 {
     -fx-background-color: -ten-color;
 }
-.combo-box:focused,
-.card:focused,
 .highlight
 {
     -fx-border-color: -text-color;
@@ -63,10 +124,6 @@
    -fx-font-size: 18px;
    -fx-padding: 0px;
 }
-.showCurrent
-{
-   -fx-font-size: 16px;
-}
 .titled-pane > .title > .arrow-button {
     -fx-background-color: null;
     -fx-effect: null;
@@ -77,6 +134,10 @@
 .titled-pane > .title > .arrow-button .arrow {
     -fx-background-color: -thirty-color;
     -fx-effect: null;
+}
+.context-menu {
+  -fx-background-color: -ten-color;
+  -fx-text-fill: -text-color;
 }
 .titled-pane > *.content
 {

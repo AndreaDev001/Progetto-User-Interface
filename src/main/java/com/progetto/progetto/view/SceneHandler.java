@@ -30,7 +30,8 @@ import javafx.util.Duration;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class SceneHandler {
+public class SceneHandler
+{
 
     private static final SceneHandler handler = new SceneHandler();
 
@@ -56,6 +57,7 @@ public class SceneHandler {
     public void init(Stage stage)
     {
         this.filmStage = new Stage(StageStyle.DECORATED);
+        this.filmStage.initModality(Modality.APPLICATION_MODAL);
         this.stage = stage;
         this.loadApplicationScene();
         this.stage.setScene(this.scene);
@@ -173,13 +175,13 @@ public class SceneHandler {
     }
 
     //this is used to reload all resources like the language resource bundle when locale is changed.
-    public void reloadApplication()
+    public void reloadApplication(PageEnum pageEnum)
     {
         this.currentPageProperty.set(null);
         Parent root = loadRootFromFXML("MenuView.fxml");
         this.scene.setRoot(root);
         this.menuPane = (StackPane) scene.lookup("#stackPane");
-        this.loadPage(PageEnum.SETTINGS);
+        this.loadPage(pageEnum);
     }
 
 
@@ -241,7 +243,6 @@ public class SceneHandler {
         filmStage.setResizable(false);
         filmStage.setScene(filmScene);
         filmStage.setWidth(640);
-        filmStage.setHeight(480);
         filmStage.setIconified(false);
         centerStage(filmStage,filmStage.getWidth(),filmStage.getHeight());
         this.filmStage.show();

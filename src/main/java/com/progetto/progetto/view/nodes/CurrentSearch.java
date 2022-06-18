@@ -7,6 +7,7 @@ import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class CurrentSearch extends VBox
@@ -37,6 +38,7 @@ public class CurrentSearch extends VBox
                         stringBuilder.append(",");
                 }
                 Label currentGenre = createLabel(StyleHandler.getInstance().getLocalizedString("currentGenre.name"), stringBuilder.toString());
+                currentGenre.setWrapText(true);
                 this.getChildren().add(currentGenre);
             }
             HBox hBox = new HBox();
@@ -60,12 +62,14 @@ public class CurrentSearch extends VBox
     {
         Label result = new Label(fieldName + ":" + value);
         result.setWrapText(true);
-        result.getStyleClass().add("showCurrent");
+        VBox.setVgrow(result,Priority.ALWAYS);
+        result.setStyle("-fx-font-size: 16px;");
         return result;
     }
     public void update()
     {
         this.getChildren().clear();
+        this.setVisible(true);
         this.init();
     }
 }
