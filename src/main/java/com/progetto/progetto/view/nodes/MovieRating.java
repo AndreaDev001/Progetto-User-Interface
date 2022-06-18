@@ -1,5 +1,6 @@
 package com.progetto.progetto.view.nodes;
 
+import info.movito.themoviedbapi.model.MovieDb;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -30,6 +31,7 @@ public class MovieRating extends HBox
      */
     private void init()
     {
+        MovieDb movieDb;
         this.setSpacing(2);
         for(int i = 0;i < 5;i++)
         {

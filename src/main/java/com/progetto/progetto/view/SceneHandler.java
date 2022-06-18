@@ -243,7 +243,6 @@ public class SceneHandler
         filmStage.setResizable(false);
         filmStage.setScene(filmScene);
         filmStage.setWidth(640);
-        filmStage.setHeight(480);
         filmStage.setIconified(false);
         centerStage(filmStage,filmStage.getWidth(),filmStage.getHeight());
         this.filmStage.show();

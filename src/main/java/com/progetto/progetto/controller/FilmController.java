@@ -106,7 +106,7 @@ public class FilmController
                 addToLibrary.setText(contains ? StyleHandler.getInstance().getLocalizedString("alreadyAdded.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
             }
             DecimalFormat decimalFormat = new DecimalFormat(pattern);
-            String releaseDate = film.getReleaseDate().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : film.getReleaseDate();
+            String releaseDate = film.getReleaseDate() == null || film.getReleaseDate().isEmpty() || film.getStatus().equals("Planned") ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : film.getReleaseDate();
             String overview = film.getOverview().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingOverview.name") : film.getOverview();
             float rating = film.getVoteAverage();
             long budget = film.getBudget();

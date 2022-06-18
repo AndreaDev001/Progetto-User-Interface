@@ -121,7 +121,6 @@ public class FilmHandler
             case VOTE_AVERAGE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getVoteAverage).reversed(): Comparator.comparing(MovieDb::getVoteAverage)).toList();
             case POPULARITY -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getPopularity).reversed() : Comparator.comparing(MovieDb::getPopularity)).toList();
             case VOTE_COUNT -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getVoteCount).reversed() : Comparator.comparing(MovieDb::getVoteCount)).toList();
-            case REVENUE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getRevenue).reversed() : Comparator.comparing(MovieDb::getRevenue)).toList();
         }
         return result;
     }
@@ -157,6 +156,7 @@ public class FilmHandler
                 }
             }
             case NAME -> {
+                value = value.replaceAll(" ","");
                 for(MovieDb current : movies)
                     if(current.getTitle().toLowerCase().contains(value.toLowerCase()))
                         result.add(current);
@@ -271,7 +271,7 @@ public class FilmHandler
                 @Override
                 protected MovieDb call()
                 {
-                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.releases, TmdbMovies.MovieMethod.release_dates);
+                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
                 }
             };
         }
