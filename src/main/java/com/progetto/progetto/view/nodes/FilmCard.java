@@ -4,15 +4,15 @@ import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import info.movito.themoviedbapi.model.MovieDb;
+import javafx.animation.ScaleTransition;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class FilmCard extends VBox
 {
@@ -31,9 +31,6 @@ public class FilmCard extends VBox
         this.init();
     }
 
-    /**
-     * Initializza il componente
-     */
     private void init()
     {
         Image image = CacheHandler.getInstance().getImage(FilmHandler.getInstance().getPosterPath(movieDb));
@@ -57,19 +54,37 @@ public class FilmCard extends VBox
         if(this.movieDb.getReleaseDate() != null && !this.movieDb.getReleaseDate().isEmpty())
             this.getChildren().add(new MovieRating(movieDb.getVoteAverage()));
         this.setFocusTraversable(true);
-        this.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> {
-            DropShadow dropShadow = new DropShadow();
-            dropShadow.setRadius(5.0);
-            dropShadow.setOffsetX(3.0);
-            dropShadow.setOffsetY(3.0);
-            dropShadow.setColor(Color.valueOf("#ffa200"));
-            this.setEffect(dropShadow);
+
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200));
+        scaleTransition.setFromX(1D);
+        scaleTransition.setFromY(1D);
+        scaleTransition.setFromZ(1D);
+        scaleTransition.setToX(1.1);
+        scaleTransition.setToY(1.1);
+        scaleTransition.setToZ(1.1);
+        scaleTransition.setNode(this);
+
+        ChangeListener<Boolean> changeListener = (observableValue, aBoolean, newValue) ->
+        {
+            scaleTransition.setRate(newValue ? 1D : -1D);
+            scaleTransition.play();
+            setViewOrder(newValue ? -1 : 0);
+        };
+
+        this.hoverProperty().addListener((observableValue, aBoolean, newValue) ->
+        {
+            changeListener.changed(observableValue,aBoolean,newValue);
+            if(newValue)
+                requestFocus();
         });
-        this.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> this.setEffect(null));
+        this.focusedProperty().addListener(changeListener);
+
     }
+
 
     public final MovieDb getMovieDb() { return this.movieDb; }
     public final ImageView getImageView() {return imageView;}
     public final Label getTitleLabel() {return titleLabel;}
     public final Label getReleaseDateLabel() {return releaseDateLabel;}
+
 }

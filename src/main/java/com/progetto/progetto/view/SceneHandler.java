@@ -2,6 +2,7 @@ package com.progetto.progetto.view;
 
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.client.Client;
+import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.handlers.LoggerHandler;
@@ -47,7 +48,6 @@ public class SceneHandler
         this pane contains the selected page
         which is picked from {@link PageEnum}
      */
-
     private StackPane menuPane;
     private final ReadOnlyObjectWrapper<PageEnum> currentPageProperty = new ReadOnlyObjectWrapper<>(null);
 
@@ -63,6 +63,7 @@ public class SceneHandler
         this.stage.setScene(this.scene);
         this.stage.show();
         this.stage.setOnCloseRequest((event) -> {
+            this.filmStage.close();
             try
             {
                 Client.getInstance().close();
@@ -70,7 +71,6 @@ public class SceneHandler
                 LoggerHandler.error("Error during application close request",exception);
                 createErrorMessage(ErrorType.CONNECTION);
             }
-            this.filmStage.close();
         });
     }
 
@@ -139,7 +139,6 @@ public class SceneHandler
      * generic alert message it uses the same stylesheet
      */
     public Alert createErrorMessage(String unlocalizedMessage) {
-        String message = StyleHandler.getInstance().getLocalizedString(unlocalizedMessage);
         Alert alert = new Alert(Alert.AlertType.ERROR,StyleHandler.getInstance().getLocalizedString(unlocalizedMessage));
         alert.setTitle("Error");
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
@@ -153,17 +152,17 @@ public class SceneHandler
     //---------------------------SCENES------------------------------//
     private void loadApplicationScene()
     {
+
+        StyleHandler.getInstance().init(null);
         Parent root = loadRootFromFXML("MenuView.fxml");
         if(root == null)
             return;
-        if(this.scene == null) {
+        if(this.scene == null)
             this.scene = new Scene(root);
-            StyleHandler.getInstance().init(this.scene);
-        }
         StyleHandler.getInstance().updateScene(this.scene);
         this.scene.setRoot(root);
-        stage.setMinWidth(640);
-        stage.setMinHeight(480);
+        stage.setMinWidth(Options.MAIN_WINDOW_WIDTH);
+        stage.setMinHeight(Options.MAIN_WINDOW_HEIGHT);
         stage.setResizable(true);
         stage.setTitle(StyleHandler.getInstance().getLocalizedString("mainView.name"));
         centerStage(stage,1280,720);

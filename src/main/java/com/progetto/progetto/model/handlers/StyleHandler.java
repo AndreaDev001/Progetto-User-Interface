@@ -1,6 +1,7 @@
 package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.MainApplication;
+import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.StyleMode;
 import com.progetto.progetto.view.SceneHandler;
@@ -8,12 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,9 +32,6 @@ public class StyleHandler {
 
     private Locale currentLanguage = Locale.ENGLISH;
 
-    //immutable list of supported languages
-    public final List<Locale> supportedLanguages = List.of(Locale.ENGLISH, Locale.ITALIAN,Locale.GERMAN,Locale.FRENCH,Locale.forLanguageTag("es"));
-
     private StyleHandler() {
         //loading necessary fonts
         Font.loadFont(MainApplication.class.getResourceAsStream("fonts/Roboto-Regular.ttf"),10);
@@ -47,26 +41,27 @@ public class StyleHandler {
         Font.loadFont(MainApplication.class.getResourceAsStream("fonts/OpenDyslexic-Italic.otf"),10);
     }
 
-    //read the config file and update the scene along with it
+    /**
+     * read the config file and update the scene along with it
+     * if the .film_app folder doesn't exist a new one will be created
+     * @param scene the scene to update
+     */
     public void init(Scene scene)
     {
-        Path folderPath = Path.of(getFolderPath());
+        Path folderPath = Path.of(Options.APP_FOLDER_LOCATION);
 
         try {
             Files.createDirectories(folderPath);
 
-            Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
+            Path filePath = Path.of(Options.APP_FOLDER_LOCATION + File.separator + Options.CONFIG_NAME);
             Properties properties = new Properties();
 
             if (!Files.exists(filePath)) {
                 //Use system language if it is supported by the app
-                if (this.supportedLanguages.contains(Locale.getDefault()))
+                if (Options.SUPPORTED_LANGUAGES.contains(Locale.getDefault()))
                     this.currentLanguage = Locale.getDefault();
                 saveConfigurationOnFile(properties);
             }
-
-            if (scene == null)
-                return;
 
             FileReader fileReader = new FileReader(filePath.toFile());
             properties.load(fileReader);
@@ -78,6 +73,8 @@ public class StyleHandler {
             if(localeTag != null)
                 this.setLanguage(Locale.forLanguageTag(localeTag));
 
+            if (scene == null)
+                return;
             StyleHandler.getInstance().updateScene(scene);
 
         } catch (IOException e) {
@@ -90,6 +87,12 @@ public class StyleHandler {
         return ResourceBundle.getBundle("com.progetto.progetto.lang.film",currentLanguage,MainApplication.class.getClassLoader());
     }
 
+    /**
+     * localize a string by using the {@link ResourceBundle} class
+     * the current language in StyleHandler will be used
+     * @param unlocalizedString the string to be localized
+     * @return the localized string
+     */
     public String getLocalizedString(String unlocalizedString)
     {
         try
@@ -105,8 +108,12 @@ public class StyleHandler {
         return null;
     }
 
+    /**
+     * the configuration will be saved inside the .film_app folder
+     * @throws IOException if file cannot be written
+     */
     public void saveConfigurationOnFile(Properties properties) throws IOException {
-        Path filePath = Path.of(getFolderPath() + File.separator + "config.txt");
+        Path filePath = Path.of(Options.APP_FOLDER_LOCATION + File.separator + Options.CONFIG_NAME);
         properties.setProperty("use_dyslexic_font", String.valueOf(this.dyslexic));
         properties.setProperty("style_file", String.valueOf(this.styleMode.ordinal()));
         properties.setProperty("custom_color", String.valueOf(this.customHue));
@@ -120,7 +127,7 @@ public class StyleHandler {
     }
 
     public boolean setLanguage(Locale locale) {
-        if (this.supportedLanguages.contains(locale)) {
+        if (Options.SUPPORTED_LANGUAGES.contains(locale)) {
             this.currentLanguage = locale;
             //this sets the interpreter language
             //with this even java libraries display elements in the correct language
@@ -149,27 +156,31 @@ public class StyleHandler {
         else
             scene.getStylesheets().remove(dyslexic_style);
 
+        //we use the root ID to load an optional css
+        URL url = MainApplication.class.getResource("css/" + scene.getRoot().getId() + ".css");
+        if(url != null)
+            scene.getStylesheets().add(url.toExternalForm());
     }
 
     private void saveCustomCSS() throws IOException {
-        URL cssCopy = Objects.requireNonNull(MainApplication.class.getResource("css/dark.css"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(MainApplication.class.getResourceAsStream("css/dark.css"))));
 
-        try {
-            String cssString = Files.readString(Path.of(cssCopy.toURI()));
-            cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
-            Files.writeString(Path.of(getFolderPath() + File.separator + "custom.css"),cssString);
-        } catch (URISyntaxException e) {
-            LoggerHandler.error("Malformed URI: {}",e,cssCopy);
-            SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
+        StringJoiner joiner = new StringJoiner("\n");
+        while(reader.ready()) {
+            String line = reader.readLine();
+            joiner.add(line);
         }
 
+        String cssString = joiner.toString();
+        cssString = cssString.replace("rgb(24,24,24)","hsb(" + this.customHue + ",50%,50%)");
+        Files.writeString(Path.of(Options.APP_FOLDER_LOCATION + File.separator + "custom.css"),cssString);
     }
 
     private String getCssPath(StyleMode styleMode) {
         if(styleMode != StyleMode.CUSTOM)
             return MainApplication.class.getResource("css/" + styleMode.getName() + ".css").toExternalForm();
         try {
-            return Path.of(getFolderPath() + File.separator + "custom.css").toUri().toURL().toExternalForm();
+            return Path.of(Options.APP_FOLDER_LOCATION + File.separator + "custom.css").toUri().toURL().toExternalForm();
         } catch (MalformedURLException e) {
             LoggerHandler.error("Malformed URL in cssPath",e);
             SceneHandler.getInstance().createErrorMessage(ErrorType.FILE);
@@ -181,9 +192,5 @@ public class StyleHandler {
         FontIcon result = new FontIcon(value);
         result.setIconSize(size);
         return result;
-    }
-    private String getFolderPath()
-    {
-        return System.getProperty("user.home") + File.separator + ".film_app";
     }
 }
