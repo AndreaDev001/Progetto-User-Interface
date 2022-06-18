@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -174,6 +175,7 @@ public class SceneHandler
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,StyleHandler.getInstance().getLocalizedString(unlocalizedMessage));
         alert.setTitle(StyleHandler.getInstance().getLocalizedString("exit.name"));
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
+        ((Button)alert.getDialogPane().lookupButton(ButtonType.OK)).setText(StyleHandler.getInstance().getLocalizedString("confirmation.name"));
         return alert;
     }
     //---------------------------SCENES------------------------------//
