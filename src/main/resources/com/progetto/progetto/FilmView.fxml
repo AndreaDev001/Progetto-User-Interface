@@ -15,13 +15,13 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.FilmController">
+<StackPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.FilmController">
    <children>
       <BorderPane fx:id="borderPane" styleClass="background">
          <center>
             <SplitPane dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0" styleClass="background" BorderPane.alignment="CENTER">
               <items>
-                <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="180.0">
+                <AnchorPane minWidth="-Infinity">
                      <children>
                         <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <padding>
@@ -29,7 +29,7 @@
                            </padding>
                            <children>
                               <ImageView fx:id="filmImage" fitHeight="180.0" fitWidth="160.0" pickOnBounds="true" />
-                              <Label fx:id="filmNameLeft" maxWidth="1.7976931348623157E308" text="Film name" wrapText="true">
+                              <Label fx:id="filmNameLeft" maxWidth="1.7976931348623157E308" text="Film name" wrapText="true" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -37,7 +37,7 @@
                                     <FontIcon iconLiteral="mdi2m-movie" iconSize="22" />
                                  </graphic>
                               </Label>
-                              <Label fx:id="filmReleaseDate" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" text="Film Release Date" wrapText="true">
+                              <Label fx:id="filmReleaseDate" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" text="Film Release Date" wrapText="true" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -45,8 +45,21 @@
                                     <FontIcon iconLiteral="mdi2c-calendar" iconSize="22" />
                                  </graphic>
                               </Label>
+                              <Label fx:id="filmOriginalLanguage" text="Film Original Language" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label text="%producted.name" VBox.vgrow="ALWAYS">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-flag" iconSize="22" />
+                                 </graphic>
+                              </Label>
                               <HBox fx:id="flagHolder" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" prefWidth="200.0" spacing="5.0" />
-                              <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating" wrapText="true">
+                              <Label fx:id="filmRating" layoutX="20.0" layoutY="51.0" maxWidth="1.7976931348623157E308" text="Film Rating" wrapText="true" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

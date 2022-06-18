@@ -9,6 +9,7 @@ import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
+import info.movito.themoviedbapi.model.ReleaseInfo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -47,6 +48,8 @@ public class FilmController
     private Label filmRevenue;
     @FXML
     private Label filmPopularity;
+    @FXML
+    private Label filmOriginalLanguage;
     @FXML
     private Label filmRuntime;
     @FXML
@@ -121,6 +124,8 @@ public class FilmController
             filmRevenue.setText(StyleHandler.getInstance().getLocalizedString("filmRevenue.name") + ":" + " " + (revenue > 0 ? decimalFormat.format(revenue) : "-"));
             filmPopularity.setText(StyleHandler.getInstance().getLocalizedString("popularity.name") + ":" + " " + String.valueOf(popularity));
             filmRuntime.setText(StyleHandler.getInstance().getLocalizedString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
+            filmOriginalLanguage.setText(StyleHandler.getInstance().getLocalizedString("filmOriginalLanguage.name")  + ":" + " " + film.getOriginalLanguage());
+
             createFlags(film);
         });
 

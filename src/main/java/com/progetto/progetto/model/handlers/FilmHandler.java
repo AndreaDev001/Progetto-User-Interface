@@ -271,7 +271,7 @@ public class FilmHandler
                 @Override
                 protected MovieDb call()
                 {
-                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.releases);
+                    return movies.getMovie(filmId, StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.releases, TmdbMovies.MovieMethod.release_dates);
                 }
             };
         }
