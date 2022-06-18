@@ -2,6 +2,7 @@ package com.progetto.progetto.controller;
 
 import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
+import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.enums.StyleMode;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
@@ -86,7 +87,7 @@ public class SettingsController {
         this.languageBox.valueProperty().addListener((observable, oldValue, newValue) ->
         {
             this.saveConfigurationAndUpdate();
-            SceneHandler.getInstance().reloadApplication();
+            SceneHandler.getInstance().reloadApplication(PageEnum.SETTINGS);
         });
 
 

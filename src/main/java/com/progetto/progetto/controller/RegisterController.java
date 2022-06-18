@@ -67,6 +67,7 @@ public class RegisterController {
 
         passConfirmationError.visibleProperty().bind(passwordField.textProperty().isEqualTo(passwordConfirmation.textProperty()).not());
         confirmButton.disableProperty().bind(emailError.visibleProperty().not().and(upperCaseTick.checkedProperty()).and(lowerCaseTick.checkedProperty()).and(lengthTick.checkedProperty()).and(passConfirmationError.visibleProperty().not()).not());
+
     }
     @FXML
     private void onConfirmButton(ActionEvent event) {
@@ -87,6 +88,12 @@ public class RegisterController {
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
         }
 
+    }
+
+    @FXML
+    private void onExitButton(ActionEvent event)
+    {
+        confirmButton.getScene().getWindow().hide();
     }
 
 }
