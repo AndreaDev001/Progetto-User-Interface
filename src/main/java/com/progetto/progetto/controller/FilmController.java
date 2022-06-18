@@ -9,7 +9,6 @@ import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
-import info.movito.themoviedbapi.model.ReleaseInfo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -142,6 +141,13 @@ public class FilmController
             imageView.setSmooth(true);
             imageView.setPreserveRatio(true);
             flagHolder.getChildren().add(imageView);
+        }
+        if(flagHolder.getChildren().isEmpty())
+        {
+            System.out.println(movie.getTitle());
+            Label label = new Label(StyleHandler.getInstance().getLocalizedString("missingCountry.name"));
+            label.setStyle("-fx-font-size: 14px;");
+            flagHolder.getChildren().add(label);
         }
     }
     private void AddFilm()

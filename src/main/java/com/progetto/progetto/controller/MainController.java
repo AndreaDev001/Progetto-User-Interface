@@ -1,6 +1,5 @@
 package com.progetto.progetto.controller;
 
-import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
