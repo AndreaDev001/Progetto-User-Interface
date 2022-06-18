@@ -26,7 +26,7 @@ public class MailConfirmationController
     private ProgressIndicator progress;
 
     @FXML
-    void initialize()
+    private void initialize()
     {
         emailText.setText(Client.getInstance().getEmail());
         this.sendEmail(null);
@@ -34,7 +34,7 @@ public class MailConfirmationController
     }
 
     @FXML
-    void checkEmail(ActionEvent event) {
+    private void checkEmail(ActionEvent event) {
 
         emailResult.setVisible(false);
         checkResult.setVisible(false);
@@ -62,7 +62,7 @@ public class MailConfirmationController
     }
 
     @FXML
-    void sendEmail(ActionEvent event) {
+    private void sendEmail(ActionEvent event) {
 
         emailResult.setVisible(false);
         checkResult.setVisible(false);
@@ -79,5 +79,11 @@ public class MailConfirmationController
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
         });
 
+    }
+
+    @FXML
+    private void onExitPressed(ActionEvent event)
+    {
+        this.checkResult.getScene().getWindow().hide();
     }
 }

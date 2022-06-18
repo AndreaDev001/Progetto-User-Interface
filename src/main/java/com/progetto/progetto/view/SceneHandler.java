@@ -28,7 +28,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class SceneHandler
@@ -74,12 +73,21 @@ public class SceneHandler
         });
     }
 
-    private <T> T loadRootFromFXML(String resourceName) {
+    /**
+     * This method creates a new parent from a fxml file
+     * be aware the returned node will have the css ID as resourceName
+     * this way we can automatically load a unique optional css to that page later, check {@link StyleHandler#updateScene}
+     * @param resourceName the fxml file to load
+     * @return the root node
+     */
+    private <T extends Parent> T loadRootFromFXML(String resourceName) {
         //in the docs it is stated that the resource bundle is cached,it is perfectly fine to call this method many times as needed
         ResourceBundle resourceBundle = ResourceBundle.getBundle("com.progetto.progetto.lang.film", StyleHandler.getInstance().getCurrentLanguage(),MainApplication.class.getClassLoader());
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(resourceName),resourceBundle);
         try {
-            return fxmlLoader.load();
+            T node = fxmlLoader.load();
+            node.setId(resourceName.split("\\.")[0]);
+            return node;
         } catch (Exception e) {
             LoggerHandler.error("Couldn't load fxml page: {}",e,resourceName);
             createErrorMessage(ErrorType.LOADING_PAGE);
@@ -94,6 +102,7 @@ public class SceneHandler
      */
     public boolean loadPage(PageEnum page)
     {
+
         if(stage == null)
             return false;
 
@@ -236,7 +245,6 @@ public class SceneHandler
         Scene filmScene = new Scene(root);
         filmScene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(filmScene);
-        filmScene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("css" + "/" + "FilmView.css")).toExternalForm());
         filmScene.setRoot(root);
         filmStage.setTitle("Film View");
         filmStage.setResizable(false);

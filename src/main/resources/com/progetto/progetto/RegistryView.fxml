@@ -27,12 +27,14 @@
                      </font></Label>
                   <PasswordField fx:id="passwordField" />
                   <VBox alignment="TOP_CENTER" maxWidth="-Infinity" spacing="2.0">
-                     <children>
-                        <CheckLabel fx:id="upperCaseTick" text="%upperCaseCheck.name" checked="false"/>
-                        <CheckLabel fx:id="lowerCaseTick" text="%lowerCaseCheck.name" checked="false"/>
-                        <CheckLabel fx:id="numberTick" text="%numberCheck.name" checked="false"/>
-                        <CheckLabel fx:id="lengthTick" text="%lengthCheck.name" checked="false"/>
-                     </children>
+
+                        <children>
+                           <CheckLabel fx:id="upperCaseTick" text="%upperCaseCheck.name" checked="false"/>
+                           <CheckLabel fx:id="lowerCaseTick" text="%lowerCaseCheck.name" checked="false"/>
+                           <CheckLabel fx:id="numberTick" text="%numberCheck.name" checked="false"/>
+                           <CheckLabel fx:id="lengthTick" text="%lengthCheck.name" checked="false"/>
+                        </children>
+
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -55,7 +57,12 @@
             </VBox>
          </children>
       </VBox>
-      <Button fx:id="confirmButton" disable="true" mnemonicParsing="false" onAction="#onConfirmButton" text="%createAccount.name" />
+      <HBox alignment="CENTER" spacing="20.0">
+         <children>
+            <Button fx:id="confirmButton" disable="true" minWidth="100.0" mnemonicParsing="false" onAction="#onConfirmButton" text="%createAccount.name" />
+            <Button minWidth="100.0" mnemonicParsing="false" onAction="#onExitButton" text="%exit.name" />
+         </children>
+      </HBox>
    </children>
    <padding>
       <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />

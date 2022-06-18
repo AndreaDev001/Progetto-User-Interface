@@ -5,6 +5,10 @@
     -fx-focus-color: transparent;
     -fx-font-family: 'Roboto',Arial,sans-serif;
 }
+
+
+.radio-button:focused,
+.color-bar:focused,
 .card:focused,
 .button:focused,
 .titled-pane:focused,
@@ -15,10 +19,7 @@
 {
   -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
-.label:hover
-{
-   -fx-underline: true;
-}
+
 .list-view
 {
    -fx-font-size: 14px;
