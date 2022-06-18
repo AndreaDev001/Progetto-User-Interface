@@ -2,6 +2,7 @@ package com.progetto.progetto.view.nodes;
 
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
+import com.progetto.progetto.model.handlers.StyleHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.animation.ScaleTransition;
 import javafx.beans.value.ChangeListener;
@@ -20,21 +21,23 @@ public class FilmCard extends VBox
     private Label titleLabel;
     private Label releaseDateLabel;
 
+    /**
+     * Costruttore della classe FilmCard
+     * @param movieDb Il film della carta
+     */
     public FilmCard(MovieDb movieDb)
     {
         this.movieDb = movieDb;
         this.init();
     }
 
-
-
     private void init()
     {
         Image image = CacheHandler.getInstance().getImage(FilmHandler.getInstance().getPosterPath(movieDb));
         imageView = new ImageView(image);
         titleLabel = new Label(movieDb.getTitle());
-        releaseDateLabel = new Label(movieDb.getReleaseDate());
-        this.setAlignment(Pos.CENTER);
+        releaseDateLabel = new Label(movieDb.getReleaseDate() == null || movieDb.getReleaseDate().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : movieDb.getReleaseDate());
+        this.setAlignment(Pos.TOP_CENTER);
         this.setPrefSize(100,50);
         this.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
         this.setMaxSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
@@ -48,7 +51,8 @@ public class FilmCard extends VBox
         this.getChildren().add(imageView);
         this.getChildren().add(titleLabel);
         this.getChildren().add(releaseDateLabel);
-        this.getChildren().add(new MovieRating(movieDb.getVoteAverage()));
+        if(this.movieDb.getReleaseDate() != null && !this.movieDb.getReleaseDate().isEmpty())
+            this.getChildren().add(new MovieRating(movieDb.getVoteAverage()));
         this.setFocusTraversable(true);
 
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200));

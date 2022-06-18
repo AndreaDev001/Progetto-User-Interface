@@ -9,6 +9,7 @@ import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
+import info.movito.themoviedbapi.model.ReleaseInfo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,8 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.json.JSONObject;
@@ -46,6 +49,8 @@ public class FilmController
     @FXML
     private Label filmPopularity;
     @FXML
+    private Label filmOriginalLanguage;
+    @FXML
     private Label filmRuntime;
     @FXML
     private Button addToLibrary;
@@ -54,6 +59,7 @@ public class FilmController
     @FXML
     private BorderPane borderPane;
 
+    private MovieDb movie;
     private String title;
     private int id;
     private String elementId;
@@ -63,19 +69,22 @@ public class FilmController
     {
         String pattern = "###,###.###";
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
-
         borderPane.setVisible(false);
+        borderPane.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
+            if(event.getCode() == KeyCode.ESCAPE)
+                SceneHandler.getInstance().getFilmStage().close();
+        });
         FilmHandler.getInstance().filmQuery(id, error ->
         {
             LoggerHandler.error("Failed to retrive movie information using TMDB API, movie API: {}",error.getCause().fillInStackTrace(),id);
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
+            SceneHandler.getInstance().getFilmStage().close();
         }, film ->
         {
+            this.movie = film;
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
-
             title = film.getTitle();
-            addToLibrary.setGraphic(StyleHandler.getInstance().createIcon("mdi2l-library-shelves",22));
             addToLibrary.disableProperty().bind(Client.getInstance().isLogged().not());
             addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
             addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
@@ -97,7 +106,7 @@ public class FilmController
                 addToLibrary.setText(contains ? StyleHandler.getInstance().getLocalizedString("alreadyAdded.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
             }
             DecimalFormat decimalFormat = new DecimalFormat(pattern);
-            String releaseDate = film.getReleaseDate().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : film.getReleaseDate();
+            String releaseDate = film.getReleaseDate() == null || film.getReleaseDate().isEmpty() || film.getStatus().equals("Planned") ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : film.getReleaseDate();
             String overview = film.getOverview().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingOverview.name") : film.getOverview();
             float rating = film.getVoteAverage();
             long budget = film.getBudget();
@@ -106,12 +115,6 @@ public class FilmController
             int runtime = film.getRuntime();
             String path = FilmHandler.getInstance().getPosterPath(film);
             filmImage.setImage(CacheHandler.getInstance().getImage(path));
-            filmPopularity.setGraphic(StyleHandler.getInstance().createIcon("mdi2a-account-group",22));
-            filmNameTop.setGraphic(StyleHandler.getInstance().createIcon("mdi2m-movie",22));
-            filmRuntime.setGraphic(StyleHandler.getInstance().createIcon("mdi2c-clock-time-three",22));
-            filmReleaseDate.setGraphic(StyleHandler.getInstance().createIcon("mdi2c-calendar",22));
-            filmRating.setGraphic(StyleHandler.getInstance().createIcon("mdi2v-vote",22));
-            filmNameLeft.setGraphic(StyleHandler.getInstance().createIcon("mdi2m-movie",22));
             filmNameTop.setText(title);
             filmNameLeft.setText(title);
             filmReleaseDate.setText(releaseDate);
@@ -121,6 +124,8 @@ public class FilmController
             filmRevenue.setText(StyleHandler.getInstance().getLocalizedString("filmRevenue.name") + ":" + " " + (revenue > 0 ? decimalFormat.format(revenue) : "-"));
             filmPopularity.setText(StyleHandler.getInstance().getLocalizedString("popularity.name") + ":" + " " + String.valueOf(popularity));
             filmRuntime.setText(StyleHandler.getInstance().getLocalizedString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
+            filmOriginalLanguage.setText(StyleHandler.getInstance().getLocalizedString("filmOriginalLanguage.name")  + ":" + " " + film.getOriginalLanguage());
+
             createFlags(film);
         });
 
@@ -144,9 +149,11 @@ public class FilmController
         Film film = new Film(id,title);
         try
         {
-            FilmHandler.getInstance().setRequiresUpdate(true);
             JSONObject object = JSONUtil.toJSON(film);
-            Client.getInstance().insert("films",object,success -> System.out.println("success"),error ->
+            Client.getInstance().insert("films",object,success -> {
+                FilmHandler.getInstance().getCurrentLoaded().add(movie);
+                FilmHandler.getInstance().getMovieElementId().put(movie,success.result().getJSONObject("response").getString("element_id"));
+            },error ->
             {
                 LoggerHandler.error("Error library film {} couldn't be added to the library",error.fillInStackTrace(),film.title());
                 SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
@@ -158,9 +165,11 @@ public class FilmController
     }
     private void RemoveFilm()
     {
-        Client.getInstance().remove("films",elementId,workerStateEvent -> {
-            FilmHandler.getInstance().setRequiresUpdate(true);
-            ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
+        Client.getInstance().remove("films",FilmHandler.getInstance().getMovieElementId().get(this.movie),workerStateEvent -> {
+            FilmHandler.getInstance().getCurrentLoaded().remove(this.movie);
+            FilmHandler.getInstance().getMovieElementId().remove(this.movie);
+            if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
+                 ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.LIBRARY,true,false,true);
         },workerStateEvent -> {
             LoggerHandler.error("Failed to remove movie from {} library",workerStateEvent.getSource().getException().fillInStackTrace(),Client.getInstance().getEmail());
             SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);

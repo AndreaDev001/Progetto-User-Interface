@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane prefHeight="300.0" prefWidth="500.0" styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.LoginController">
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -18,6 +19,11 @@
                      <font>
                         <Font name="System Bold" size="15.0" />
                      </font>
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2c-card-account-mail" iconSize="22" />
+                     </graphic>
+                     <tooltip>
+                     </tooltip>
                   </Label>
                   <TextField fx:id="usernameField" HBox.hgrow="ALWAYS" />
                </children>
@@ -31,6 +37,11 @@
                      <font>
                         <Font name="System Bold" size="15.0" />
                      </font>
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2f-form-textbox-password" iconSize="22" />
+                     </graphic>
+                     <tooltip>
+                     </tooltip>
                   </Label>
                   <TogglePasswordField fx:id="togglePassword" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                </children>
@@ -44,6 +55,9 @@
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-login" iconSize="22" />
+                     </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#onAccountPressed" text="%createAccount.name">
                      <padding>

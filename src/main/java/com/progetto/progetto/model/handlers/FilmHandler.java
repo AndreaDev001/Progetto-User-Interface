@@ -13,9 +13,9 @@ import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,24 +25,41 @@ public class FilmHandler
 {
     private static final FilmHandler instance = new FilmHandler();
     private List<Genre> genres = new ArrayList<>();
-    private final TmdbApi tmdbApi;
-    private final TmdbMovies movies;
-    private final String defaultPath;
+    private TmdbApi tmdbApi;
+    private TmdbMovies movies;
+    private String defaultPath;
     private int currentSelectedFilm = 0;
-    private List<MovieDb> currentLoaded = new Vector<>();
-    private Map<MovieDb,String> movieElementId = new HashMap<>();
-    private boolean requiresUpdate = true;
-
-    private MovieQueryService movieDbService = new MovieQueryService();
+    private final List<MovieDb> currentLoaded = new Vector<>();
+    private final Map<MovieDb,String> movieElementId = new HashMap<>();
+    private final MovieQueryService movieDbService = new MovieQueryService();
+    private final MovieGenreService movieGenreService = new MovieGenreService();
 
     private FilmHandler()
     {
         System.out.println("Instance of Film Handler created correctly");
-        String apiKey = "3837271101e801680438310f38a3feff";
-        tmdbApi = new TmdbApi(apiKey);
-        movies = tmdbApi.getMovies();
-        defaultPath = "https://image.tmdb.org/t/p/w500";
+        init();
     }
+    private void init()
+    {
+        String apiKey = "3837271101e801680438310f38a3feff";
+        try
+        {
+            tmdbApi = new TmdbApi(apiKey);
+            movies = tmdbApi.getMovies();
+            defaultPath = "https://image.tmdb.org/t/p/w500";
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+    /**
+     * Legge i film delle liste predefinite fornite dalla API
+     * @param page Il numero della pagina da cercare
+     * @param movieListType Il tipo della lista
+     * @return Una MovieResultsPage che contiene i risultati dei film
+     * @throws FilmNotFoundException Viene generata questo errore se nessun film è stato trovato
+     */
     public MovieResultsPage getMovies(int page, MovieListType movieListType) throws FilmNotFoundException
     {
         MovieResultsPage movieDbs = null;
@@ -56,11 +73,27 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,result is empty");
         return movieDbs;
     }
-    public void updateGenres()
+    /**
+     * Aggiorna i generi,leggendoli dalla API,necessario quando bisogna cambiare linguaggio
+     * @param error Callback per gestire eventuali errori
+     * @param success Callback per gestire il successo della operazione
+     */
+    public void updateGenres(Consumer<Throwable> error, Consumer<WorkerStateEvent> success)
     {
-        List<Genre> genres = tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString());
-        this.genres = genres;
+        if(tmdbApi == null)
+            this.init();
+        movieGenreService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
+        movieGenreService.setOnSucceeded(success::accept);
+        movieGenreService.restart();
     }
+
+    /**
+     * Ordina una lista di film,seguendo un ordine specificato
+     * @param values La lista dei film da ordinare
+     * @param movieSortType Il tipo di ordinamento da utilizzare
+     * @param movieSortOrder Come ordinare la lista,crescente o decrescente
+     * @return La lista di film ordinata
+     */
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType,MovieSortOrder movieSortOrder)
     {
         List<MovieDb> result = new ArrayList<>();
@@ -76,7 +109,7 @@ public class FilmHandler
                 {
                     firstDate = format.parse(o1.getReleaseDate());
                     secondDate = format.parse(o2.getReleaseDate());
-                    return secondDate.compareTo(firstDate);
+                    return movieSortOrder == MovieSortOrder.DESC ? secondDate.compareTo(firstDate) : firstDate.compareTo(secondDate);
                 }
                 catch (ParseException exception)
                 {
@@ -88,12 +121,21 @@ public class FilmHandler
             case VOTE_AVERAGE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getVoteAverage).reversed(): Comparator.comparing(MovieDb::getVoteAverage)).toList();
             case POPULARITY -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getPopularity).reversed() : Comparator.comparing(MovieDb::getPopularity)).toList();
             case VOTE_COUNT -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getVoteCount).reversed() : Comparator.comparing(MovieDb::getVoteCount)).toList();
-            case REVENUE -> result = values.stream().sorted(movieSortOrder == MovieSortOrder.DESC ? Comparator.comparing(MovieDb::getRevenue).reversed() : Comparator.comparing(MovieDb::getRevenue)).toList();
         }
         return result;
     }
+    /**
+     * Filtra una lista di film,usando il tipo di filtro specificato come parametro
+     * @param movies La lista contenente i film da filtrare
+     * @param movieFilterType Il tipo di filtro da utilizzare
+     * @param value Il genere o il nome utilizzato per filtrare
+     * @return Una nuova lista contenente i risultati validi
+     * @throws FilmNotFoundException Viene generato se la lista dei nuovi film è vuota
+     */
     public List<MovieDb> filterMovies(List<MovieDb> movies,MovieFilterType movieFilterType,String value) throws FilmNotFoundException
     {
+        if(movies == null || movies.isEmpty())
+            throw  new FilmNotFoundException("Movies is empty");
         if(value == null || value.isEmpty())
             return movies;
         List<MovieDb> result = new ArrayList<>();
@@ -114,8 +156,9 @@ public class FilmHandler
                 }
             }
             case NAME -> {
+                value = value.replaceAll(" ","");
                 for(MovieDb current : movies)
-                    if(current.getTitle().contains(value))
+                    if(current.getTitle().toLowerCase().contains(value.toLowerCase()))
                         result.add(current);
             }
         }
@@ -123,8 +166,20 @@ public class FilmHandler
             throw new FilmNotFoundException("Result Set is Empty");
         return result;
     }
+    /**
+     * Effettua una ricerca utilizzando la API
+     * @param value Il genere o il nome da utilizzare nella ricerca
+     * @param page La pagina da cercare
+     * @param movieSortType Il tipo di sort da utilizzare nella ricerca
+     * @param movieFilterType Il filtro da utilizzare nella ricerca
+     * @param movieSortOrder Come ordinare i film,crescente o decrescente
+     * @return Una MovieResultsPage contenente i risultati della ricerca
+     * @throws FilmNotFoundException Viene generato se la lista dei risultati è vuota
+     */
     public MovieResultsPage makeSearch(String value,int page, MovieSortType movieSortType, MovieFilterType movieFilterType, MovieSortOrder movieSortOrder) throws FilmNotFoundException
     {
+        if(tmdbApi == null)
+            this.init();
         MovieResultsPage result = new MovieResultsPage();
         switch (movieFilterType)
         {
@@ -135,16 +190,30 @@ public class FilmHandler
             throw new FilmNotFoundException("An error has occured,film not found");
         return result;
     }
+    /**
+     * Ottiene il path del poster completo del poster di un film
+     * @param movieDb Il film di cui bisogna cercare il poster
+     * @return Il path completo al poster
+     */
     public String getPosterPath(MovieDb movieDb)
     {
         return (movieDb.getPosterPath() == null || movieDb.getPosterPath().isEmpty()) ? MainApplication.class.getResource("images" + "/" + "notfound.png").toExternalForm() : defaultPath + movieDb.getPosterPath();
     }
+    /**
+     * Cambia il valore del film selezionato attualmente
+     * @param id Nuovo id del film da selezionare
+     */
     public void selectFilm(int id)
     {
         //this.currentSelectedFilm = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.images, TmdbMovies.MovieMethod.credits);
         this.currentSelectedFilm = id;
     }
-
+    /**
+     *
+     * @param filmID L'id del film da cercare
+     * @param error Callback per eventuali errori
+     * @param success Callback per gestire il successo della operazione
+     */
     public void filmQuery(int filmID, Consumer<Throwable> error, Consumer<MovieDb> success)
     {
         movieDbService.setOnFailed(workerStateEvent -> error.accept(workerStateEvent.getSource().getException()));
@@ -152,8 +221,10 @@ public class FilmHandler
         movieDbService.setMovieId(filmID);
         movieDbService.restart();
     }
-
-
+    /**
+     * Aggiorna la libreria caricata attualmente usando una JSONArray
+     * @param jsonArray JSONArray contenente i film
+     */
     public void loadMovies(JSONArray jsonArray)
     {
         this.currentLoaded.clear();
@@ -166,11 +237,6 @@ public class FilmHandler
             movieElementId.put(movieDb,current.getString("element_id"));
             currentLoaded.add(movieDb);
         }
-        this.requiresUpdate = false;
-    }
-    public void setRequiresUpdate(boolean value)
-    {
-        this.requiresUpdate = value;
     }
     public final int getCurrentSelectedFilm() {return currentSelectedFilm;}
     public List<Genre> getValues(){
@@ -182,12 +248,12 @@ public class FilmHandler
             values.add(current.getName());
         return values;
     }
+    public void setGenres(List<Genre> genres){
+        this.genres = genres;
+    }
     public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
-    public final boolean RequiresUpdate() {return requiresUpdate;}
     public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
     public static FilmHandler getInstance() {return instance;}
-
-
 
     private class MovieQueryService extends Service<MovieDb>
     {
@@ -197,7 +263,6 @@ public class FilmHandler
         {
             this.filmId = filmId;
         }
-
         @Override
         protected Task<MovieDb> createTask()
         {
@@ -211,5 +276,17 @@ public class FilmHandler
             };
         }
     }
-
+    private class MovieGenreService extends Service<Void>
+    {
+        @Override
+        protected Task<Void> createTask() {
+            return new Task<Void>() {
+                @Override
+                protected Void call() {
+                    FilmHandler.getInstance().setGenres(tmdbApi.getGenre().getGenreList(StyleHandler.getInstance().getCurrentLanguage().toString()));
+                    return null;
+                }
+            };
+        }
+    }
 }
