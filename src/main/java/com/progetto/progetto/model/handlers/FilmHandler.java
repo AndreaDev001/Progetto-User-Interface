@@ -16,6 +16,12 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -158,7 +164,7 @@ public class FilmHandler
             case NAME -> {
                 value = value.replaceAll(" ","");
                 for(MovieDb current : movies)
-                    if(current.getTitle().toLowerCase().contains(value.toLowerCase()))
+                    if(current.getTitle().replaceAll(" ","").toLowerCase().contains(value.toLowerCase()))
                         result.add(current);
             }
         }
