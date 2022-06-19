@@ -3,7 +3,6 @@ package com.progetto.progetto.view.nodes;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;

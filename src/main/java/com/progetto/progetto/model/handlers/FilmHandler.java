@@ -1,6 +1,7 @@
 package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.MainApplication;
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.enums.MovieListType;
 import com.progetto.progetto.model.enums.MovieSortOrder;
@@ -16,6 +17,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -221,6 +223,19 @@ public class FilmHandler
         movieDbService.setMovieId(filmID);
         movieDbService.restart();
     }
+
+    public void updateLibrary()
+    {
+
+        if(Client.getInstance().isLogged().get())
+        {
+            Client.getInstance().get("films",success -> {
+                JSONObject jsonObject = success.result();
+                FilmHandler.getInstance().loadMovies(jsonObject.getJSONArray("films"));
+            },error -> System.out.print("Client get function failed"));
+        }
+    }
+
     /**
      * Aggiorna la libreria caricata attualmente usando una JSONArray
      * @param jsonArray JSONArray contenente i film
@@ -228,7 +243,7 @@ public class FilmHandler
     public void loadMovies(JSONArray jsonArray)
     {
         this.currentLoaded.clear();
-        movieElementId.clear();
+        this.movieElementId.clear();
         for(int i = 0;i < jsonArray.length();i++)
         {
             JSONObject current = jsonArray.getJSONObject(i);
