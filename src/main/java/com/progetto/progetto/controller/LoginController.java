@@ -60,7 +60,4 @@ public class LoginController
         SceneHandler.getInstance().loadRegisterScene();
     }
 
-    @FXML
-    void onCloseMessage(ActionEvent event) {
-    }
 }

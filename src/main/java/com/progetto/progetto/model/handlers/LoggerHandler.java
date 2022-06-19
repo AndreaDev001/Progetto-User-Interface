@@ -34,13 +34,12 @@ public class LoggerHandler
         if(logger == null)
             return;
 
-        if (!logger.isLoggable(Level.SEVERE)) {
+        if (!logger.isLoggable(level)) {
             return;
         }
         for(Object o : objects)
             message = message.replaceFirst("\\{}",o.toString());
-
-        LogRecord lr = new LogRecord(Level.SEVERE, message);
+        LogRecord lr = new LogRecord(level, message);
         lr.setParameters(objects);
         lr.setThrown(throwable);
         logger.log(lr);

@@ -27,9 +27,9 @@ public class TogglePasswordField extends HBox {
         };
         passwordField.getStyleClass().add("toggle-password");
 
-        FontIcon eyeIcon = new FontIcon(UNTOGGLED_EYE);
+        FontIcon eyeIcon = new FontIcon(TOGGLED_EYE);
         eyeIcon.getStyleClass().add("eye-icon");
-        toggleEye.selectedProperty().addListener((observable, oldValue, newValue) -> eyeIcon.setIconLiteral(newValue ? TOGGLED_EYE : UNTOGGLED_EYE));
+        toggleEye.selectedProperty().addListener((observable, oldValue, newValue) -> eyeIcon.setIconLiteral(newValue ? UNTOGGLED_EYE : TOGGLED_EYE));
         toggleEye.setGraphic(eyeIcon);
         passwordField.setSkin(new TogglePasswordSkin(passwordField,toggleEye.selectedProperty()));
 

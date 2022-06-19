@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
@@ -29,7 +30,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -52,12 +53,15 @@ public class SceneHandler
      */
     private StackPane menuPane;
     private final ReadOnlyObjectWrapper<PageEnum> currentPageProperty = new ReadOnlyObjectWrapper<>(null);
+    private Image appIcon;
 
     private SceneHandler(){}
 
     //with this we initialize a new stage
     public void init(Stage stage)
     {
+        this.appIcon = new Image(Objects.requireNonNull(MainApplication.class.getResourceAsStream("images/filmsharp_32.png")));
+
         this.filmStage = new Stage(StageStyle.DECORATED);
         this.filmStage.initModality(Modality.APPLICATION_MODAL);
         this.stage = stage;
@@ -83,6 +87,9 @@ public class SceneHandler
                 createErrorMessage(ErrorType.CONNECTION);
             }
         });
+        this.stage.getIcons().add(appIcon);
+        this.filmStage.getIcons().add(appIcon);
+
     }
 
     /**
@@ -114,7 +121,6 @@ public class SceneHandler
      */
     public boolean loadPage(PageEnum page)
     {
-
         if(stage == null)
             return false;
 
@@ -163,6 +169,7 @@ public class SceneHandler
         Alert alert = new Alert(Alert.AlertType.ERROR,StyleHandler.getInstance().getLocalizedString(unlocalizedMessage));
         alert.setTitle("Error");
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(appIcon);
         alert.showAndWait();
         return alert;
     }
@@ -229,6 +236,7 @@ public class SceneHandler
         stage.setHeight(stage.getMinHeight());
         stage.setResizable(false);
         stage.setScene(scene);
+        stage.getIcons().add(appIcon);
         stage.show();
     }
 
@@ -250,9 +258,8 @@ public class SceneHandler
         stage.setHeight(stage.getMinHeight());
         stage.setResizable(false);
         stage.setScene(scene);
+        stage.getIcons().add(appIcon);
         stage.show();
-
-
     }
 
     public void loadFilmScene()
@@ -280,4 +287,5 @@ public class SceneHandler
         stage.setY((screenBounds.getHeight() - height) / 2);
     }
     public final Stage getFilmStage() {return filmStage;}
+
 }
