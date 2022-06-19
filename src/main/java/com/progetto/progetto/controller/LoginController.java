@@ -7,13 +7,12 @@ import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.view.SceneHandler;
-import com.progetto.progetto.view.TogglePasswordField;
+import com.progetto.progetto.view.nodes.TogglePasswordField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -41,10 +40,7 @@ public class LoginController
                     SceneHandler.getInstance().loadEmailConfirmation();
                 else
                     SceneHandler.getInstance().loadPage(PageEnum.MAIN);
-                Client.getInstance().get("films",success -> {
-                    JSONObject jsonObject = success.result();
-                    FilmHandler.getInstance().loadMovies(jsonObject.getJSONArray("films"));
-                },error -> System.out.print("Client get function failed"));
+                FilmHandler.getInstance().updateLibrary();
             }
             else{
                 SceneHandler.getInstance().createErrorMessage("loginFail.name");

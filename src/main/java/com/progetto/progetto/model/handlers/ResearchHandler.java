@@ -41,7 +41,6 @@ public class ResearchHandler
 
     private ResearchHandler()
     {
-        System.out.println("Instance of Research Handler created correctly");
     }
 
     /**

@@ -143,7 +143,6 @@ public class FilmController
         }
         if(flagHolder.getChildren().isEmpty())
         {
-            System.out.println(movie.getTitle());
             Label label = new Label(StyleHandler.getInstance().getLocalizedString("missingCountry.name"));
             label.setStyle("-fx-font-size: 14px;");
             flagHolder.getChildren().add(label);
