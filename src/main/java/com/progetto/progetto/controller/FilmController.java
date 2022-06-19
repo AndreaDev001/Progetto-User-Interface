@@ -119,8 +119,8 @@ public class FilmController
             filmReleaseDate.setText(releaseDate);
             filmRating.setText(StyleHandler.getInstance().getLocalizedString("rating.name") + ":" + " " + String.valueOf(rating));
             filmDescription.setText(overview);
-            filmBudget.setText(StyleHandler.getInstance().getLocalizedString("filmBudget.name") + ":" + " " + (budget > 0 ? decimalFormat.format(budget) : "-"));
-            filmRevenue.setText(StyleHandler.getInstance().getLocalizedString("filmRevenue.name") + ":" + " " + (revenue > 0 ? decimalFormat.format(revenue) : "-"));
+            filmBudget.setText((budget > 0 ? decimalFormat.format(budget) : "-"));
+            filmRevenue.setText((revenue > 0 ? decimalFormat.format(revenue) : "-"));
             filmPopularity.setText(StyleHandler.getInstance().getLocalizedString("popularity.name") + ":" + " " + String.valueOf(popularity));
             filmRuntime.setText(StyleHandler.getInstance().getLocalizedString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
             filmOriginalLanguage.setText(StyleHandler.getInstance().getLocalizedString("filmOriginalLanguage.name")  + ":" + " " + film.getOriginalLanguage());

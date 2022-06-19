@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
-<StackPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.FilmController">
+<StackPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.FilmController">
    <children>
       <BorderPane fx:id="borderPane" styleClass="background">
          <center>
@@ -90,27 +90,45 @@
                                     <Font name="Arial" size="14.0" />
                                  </font>
                               </TextArea>
-                              <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
+                              <HBox alignment="CENTER" spacing="60.0">
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>
                                  <children>
-                                    <Label fx:id="filmBudget" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="Film Budget">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconLiteral="mdi2c-currency-usd" iconSize="22" />
-                                       </graphic>
-                                    </Label>
-                                    <Label fx:id="filmRevenue" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="Film Revenue">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconLiteral="mdi2c-currency-usd" iconSize="22" />
-                                       </graphic>
-                                    </Label>
+                                    <VBox alignment="TOP_CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="%filmBudget.name" wrapText="true">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="filmBudget" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="454444" wrapText="true">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2c-currency-usd" iconSize="22" />
+                                             </graphic>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="TOP_CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="%filmRevenue.name" wrapText="true">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="filmRevenue" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="454444" wrapText="true">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2c-currency-usd" iconSize="22" />
+                                             </graphic>
+                                          </Label>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </HBox>
                               <Button fx:id="addToLibrary" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%addToLibrary.name" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">

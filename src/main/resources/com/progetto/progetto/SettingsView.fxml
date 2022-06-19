@@ -12,7 +12,7 @@
             <content>
                <VBox alignment="TOP_CENTER" spacing="30.0" styleClass="background">
                   <children>
-                     <VBox alignment="TOP_CENTER" maxWidth="500.0" spacing="10.0" styleClass="card" VBox.vgrow="NEVER">
+                     <VBox alignment="TOP_CENTER" maxWidth="500.0" spacing="10.0" styleClass="rounded-foreground" VBox.vgrow="NEVER">
                         <children>
                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxWidth="1.7976931348623157E308" text="%applicationColor.name" wrapText="true">
                               <font>
@@ -32,7 +32,7 @@
                            <Insets left="15.0" right="15.0" top="10.0" />
                         </VBox.margin>
                      </VBox>
-                     <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="10.0" styleClass="card">
+                     <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="10.0" styleClass="rounded-foreground">
                         <VBox.margin>
                            <Insets left="10.0" right="10.0" />
                         </VBox.margin>

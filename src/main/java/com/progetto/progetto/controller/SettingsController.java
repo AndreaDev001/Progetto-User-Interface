@@ -4,7 +4,6 @@ import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.enums.StyleMode;
-import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import com.progetto.progetto.view.SceneHandler;
