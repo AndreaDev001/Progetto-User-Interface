@@ -274,7 +274,7 @@ public class SceneHandler
         filmScene.getStylesheets().clear();
         StyleHandler.getInstance().updateScene(filmScene);
         filmScene.setRoot(root);
-        filmStage.setTitle("Film View");
+        filmStage.setTitle(StyleHandler.getInstance().getLocalizedString("filmView.name"));
         filmStage.setResizable(false);
         filmStage.setScene(filmScene);
         filmStage.setWidth(640);

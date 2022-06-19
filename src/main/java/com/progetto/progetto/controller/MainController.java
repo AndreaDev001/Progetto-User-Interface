@@ -76,12 +76,12 @@ public class MainController implements IResearchListener
          */
         FilmHandler.getInstance().updateGenres(error -> {
             this.handleLoading(false);
-            first.setDisable(true);
             first.setExpanded(false);
             second.setExpanded(false);
-            second.setDisable(true);
             handleError("connectionError.name","reloadButton.name",(event) -> SceneHandler.getInstance().reloadApplication(PageEnum.MAIN));},success -> {
             this.handleLoading(false);
+            first.setDisable(false);
+            second.setDisable(false);
             CacheHandler.getInstance().reset();
             ResearchHandler.getInstance().addListener(this,this.getClass().getSimpleName());
             genreList = new GenreList(FilmHandler.getInstance().getGenres());
