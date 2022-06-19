@@ -30,7 +30,6 @@ public class MailConfirmationController
     {
         emailText.setText(Client.getInstance().getEmail());
         this.sendEmail(null);
-
     }
 
     @FXML
