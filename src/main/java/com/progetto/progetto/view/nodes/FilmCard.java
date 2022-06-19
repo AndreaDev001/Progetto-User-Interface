@@ -31,6 +31,9 @@ public class FilmCard extends VBox
         this.init();
     }
 
+    /**
+     * Inizializza il componente
+     */
     private void init()
     {
         Image image = CacheHandler.getInstance().getImage(FilmHandler.getInstance().getPosterPath(movieDb));
