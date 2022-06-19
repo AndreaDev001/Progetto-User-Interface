@@ -1,5 +1,6 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
@@ -22,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainController implements IResearchListener
@@ -80,6 +82,15 @@ public class MainController implements IResearchListener
             first.setExpanded(false);
             second.setExpanded(false);
             second.setDisable(true);
+            if(Client.getInstance().isLogged().get()) {
+                try {
+                    Client.getInstance().logout();
+                }catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,false,false);
             handleError("connectionError.name","reloadButton.name",(event) -> SceneHandler.getInstance().reloadApplication(PageEnum.MAIN));},success -> {
             this.handleLoading(false);
             CacheHandler.getInstance().reset();
@@ -105,7 +116,6 @@ public class MainController implements IResearchListener
             String value = StyleHandler.getInstance().getLocalizedString(current.toString() + ".name");
             comboBox.getItems().add(value);
         }
-        this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
     }
     /**
      * Inizializza tutte le proprietà
@@ -174,16 +184,26 @@ public class MainController implements IResearchListener
             Label label = enumList.getLabels().get(i);
             label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setStyle("-fx-font-weight: bold;-fx-underline: true"));
             label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setStyle("-fx-underline: false"));
-            label.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> ResearchHandler.getInstance().setCurrentListType(enumList.getValues()[finalI]));
+            label.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> {
+                resetSearchField();
+                ResearchHandler.getInstance().setCurrentListType(enumList.getValues()[finalI]);
+            });
             label.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
                 if(event.getCode() == KeyCode.ENTER)
                 {
                     event.consume();
+                    resetSearchField();
                     ResearchHandler.getInstance().setCurrentListType(enumList.getValues()[finalI]);
                 }
             });
         }
         listHolder.getChildren().add(enumList);
+    }
+    //Reimposta il field della ricerca
+    private void resetSearchField()
+    {
+        this.searchField.clear();
+        this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
     }
     /**
      * Metodo utilizzato per creare un film container contenente tutti i film trovati
@@ -235,14 +255,11 @@ public class MainController implements IResearchListener
     public void OnResearchSucceeded(List<MovieDb> result,boolean isGenre)
     {
         //Il metodo viene gestito in maniera differente se siamo nella sezione home o nella libreria
-        //Se la ricerca non basata su generi, bisogna ripulire la lista dei generi, in caso contrario bisogna reimpostare il nome attuale
+        //Se la ricerca non è basata su generi, bisogna ripulire la lista dei generi, in caso contrario bisogna reimpostare il nome attuale
         if(!isGenre)
             genreList.clearList();
         else
-        {
-            searchField.clear();
-            searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-        }
+            resetSearchField();
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
             createFilms(result);
         else
@@ -319,8 +336,7 @@ public class MainController implements IResearchListener
     public void handleSwitchedView()
     {
         bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME);
-        searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-        searchField.setText("");
+        resetSearchField();
         sortComboBox.getSelectionModel().select(2);
         sortOrderComboBox.getSelectionModel().select(1);
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
