@@ -51,6 +51,9 @@ public class JSONUtil {
                 res.append("]");
             return res.toString();
         }
+        if(Number.class.isAssignableFrom(o.getClass())) {
+            return o.toString();
+        }
         if(String.class.isAssignableFrom(o.getClass()) || isWrapper(o.getClass())) {
             return "\"" + o + "\"";
         }

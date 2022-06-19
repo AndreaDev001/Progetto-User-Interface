@@ -19,13 +19,14 @@ class Authentication {
     }
 
     private void resetTokens() {
+        client.email = null;
         client.user = null;
         client.token = null;
         client.refreshToken = null;
     }
 
     boolean logout() throws IOException, ConnectionException {
-        if(client.user == null || client.token == null || client.refreshToken == null) {
+        if(client.email == null || client.user == null || client.token == null || client.refreshToken == null) {
             resetTokens();
             return true;
         }
@@ -37,7 +38,7 @@ class Authentication {
         return false;
     }
 
-    String login(String username, String password) throws IOException,ConnectionException {
+    String login(String username, String password) throws IOException, ConnectionException {
         return loginRegister(username, password, true);
     }
 
@@ -45,7 +46,7 @@ class Authentication {
         return loginRegister(username, password, false);
     }
 
-    private String loginRegister(String username, String password, boolean login) throws ConnectionException,IOException {
+    private String loginRegister(String username, String password, boolean login) throws IOException, ConnectionException {
         Objects.requireNonNull(username, "Username cannot be null");
         Objects.requireNonNull(password, "Password cannot be null");
         String action = login ? "login" : "register";
@@ -53,7 +54,6 @@ class Authentication {
         if(result.success()) {
             JSONObject output = new JSONObject(result.message());
             if (output.has("localId")) {
-                System.out.println("Logged");
                 client.email = username;
                 client.user = output.getString("localId");
                 client.token = output.getString("idToken");

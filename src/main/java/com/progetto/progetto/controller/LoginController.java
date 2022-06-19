@@ -42,7 +42,7 @@ public class LoginController
                 else
                     SceneHandler.getInstance().loadPage(PageEnum.MAIN);
                 Client.getInstance().get("films",success -> {
-                    JSONObject jsonObject = (JSONObject) success.getSource().getValue();
+                    JSONObject jsonObject = success.result();
                     FilmHandler.getInstance().loadMovies(jsonObject.getJSONArray("films"));
                 },error -> System.out.print("Client get function failed"));
             }
@@ -60,7 +60,4 @@ public class LoginController
         SceneHandler.getInstance().loadRegisterScene();
     }
 
-    @FXML
-    void onCloseMessage(ActionEvent event) {
-    }
 }

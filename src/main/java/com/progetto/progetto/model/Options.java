@@ -1,7 +1,5 @@
 package com.progetto.progetto.model;
 
-import javafx.scene.image.Image;
-
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -18,12 +16,4 @@ public class Options
 
     public static final int MAIN_WINDOW_WIDTH = 640;
     public static final int MAIN_WINDOW_HEIGHT = 480;
-
-    public static final Image[] APP_ICONS = new Image[2];
-
-    //TODO Aggiungere immagini per l'app
-    static
-    {
-    }
-
 }

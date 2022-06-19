@@ -4,10 +4,11 @@ import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.enums.StyleMode;
+import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
-import com.progetto.progetto.view.ColorBarPicker;
 import com.progetto.progetto.view.SceneHandler;
+import com.progetto.progetto.view.nodes.ColorBarPicker;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -73,7 +74,7 @@ public class SettingsController {
 
         this.toggleGroup.selectToggle(this.toggleGroup.getToggles().get(this.styleHandler.styleMode.ordinal()));
 
-        //THIS PART OF CODE HANDLEL THE UPDATE OF THE STYLE----------
+        //THIS PART OF CODE HANDLER THE UPDATE OF THE STYLE----------
 
         //the style mode
         toggleGroup.selectedToggleProperty().addListener((observableValue, toggle, selectedRadio) -> {saveConfigurationAndUpdate();});
@@ -88,10 +89,8 @@ public class SettingsController {
         {
             this.saveConfigurationAndUpdate();
             SceneHandler.getInstance().reloadApplication(PageEnum.SETTINGS);
+            FilmHandler.getInstance().updateLibrary();
         });
-
-
-
     }
 
 
@@ -107,7 +106,6 @@ public class SettingsController {
             this.styleHandler.setLanguage(this.languageBox.getValue());
             this.styleHandler.updateScene(this.customModeToggle.getScene());
             this.styleHandler.saveConfigurationOnFile(new Properties());
-
         } catch (IOException e)
         {
             LoggerHandler.error("Error during configuration settings update!",e.fillInStackTrace());

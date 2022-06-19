@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.progetto.progetto.view.ColorBarPicker?>
+<?import com.progetto.progetto.view.nodes.ColorBarPicker?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -21,7 +21,7 @@
                            </Label>
                            <RadioButton fx:id="lightModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" text="%lightMode.name" />
                            <RadioButton fx:id="darkModeToggle" mnemonicParsing="false" text="%darkMode.name" />
-                           <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="%costumMode.name" />
+                           <RadioButton fx:id="customModeToggle" mnemonicParsing="false" text="%customMode.name" />
                            <ColorBarPicker fx:id="colorPicker" maxHeight="13.0" focusTraversable="true">
                               <VBox.margin>
                                  <Insets left="20.0" right="20.0" />
