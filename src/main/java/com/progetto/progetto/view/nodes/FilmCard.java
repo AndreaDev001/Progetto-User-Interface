@@ -68,6 +68,7 @@ public class FilmCard extends VBox
         scaleTransition.setToZ(1.1);
         scaleTransition.setNode(this);
 
+
         ChangeListener<Boolean> changeListener = (observableValue, aBoolean, newValue) ->
         {
             scaleTransition.setRate(newValue ? 1D : -1D);

@@ -2,11 +2,9 @@ package com.progetto.progetto.model.handlers;
 
 import com.progetto.progetto.MainApplication;
 import com.progetto.progetto.client.Client;
-import com.progetto.progetto.model.enums.MovieFilterType;
-import com.progetto.progetto.model.enums.MovieListType;
-import com.progetto.progetto.model.enums.MovieSortOrder;
-import com.progetto.progetto.model.enums.MovieSortType;
+import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.exceptions.FilmNotFoundException;
+import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.Genre;
@@ -38,7 +36,6 @@ public class FilmHandler
 
     private FilmHandler()
     {
-        System.out.println("Instance of Film Handler created correctly");
         init();
     }
     private void init()
@@ -232,7 +229,11 @@ public class FilmHandler
             Client.getInstance().get("films",success -> {
                 JSONObject jsonObject = success.result();
                 FilmHandler.getInstance().loadMovies(jsonObject.getJSONArray("films"));
-            },error -> System.out.print("Client get function failed"));
+            },error ->
+            {
+                LoggerHandler.error("Error During Library Update!",error.fillInStackTrace());
+                SceneHandler.getInstance().createErrorMessage(ErrorType.CONNECTION);
+            });
         }
     }
 
