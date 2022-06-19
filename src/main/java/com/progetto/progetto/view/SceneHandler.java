@@ -20,6 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -28,8 +30,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class SceneHandler
@@ -70,6 +72,15 @@ public class SceneHandler
             this.filmStage.close();
             try
             {
+                Alert alert = createQuitMessage("leaveApp.name");
+                Optional<ButtonType> buttonType = alert.showAndWait();
+                if(buttonType.isEmpty())
+                    return;
+                if(buttonType.get() == ButtonType.CANCEL)
+                {
+                    event.consume();
+                    return;
+                }
                 Client.getInstance().close();
             } catch (Exception exception) {
                 LoggerHandler.error("Error during application close request",exception);
@@ -165,7 +176,14 @@ public class SceneHandler
     public Alert createErrorMessage(ErrorType errorType) {
         return createErrorMessage(errorType.getUnlocalizedMessage());
     }
-
+    public Alert createQuitMessage(String unlocalizedMessage)
+    {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,StyleHandler.getInstance().getLocalizedString(unlocalizedMessage));
+        alert.setTitle(StyleHandler.getInstance().getLocalizedString("exit.name"));
+        alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
+        ((Button)alert.getDialogPane().lookupButton(ButtonType.OK)).setText(StyleHandler.getInstance().getLocalizedString("confirmation.name"));
+        return alert;
+    }
     //---------------------------SCENES------------------------------//
     private void loadApplicationScene()
     {

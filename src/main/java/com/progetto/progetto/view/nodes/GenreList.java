@@ -1,6 +1,5 @@
 package com.progetto.progetto.view.nodes;
 
-import com.progetto.progetto.model.enums.MovieFilterType;
 import com.progetto.progetto.model.handlers.ResearchHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import javafx.geometry.NodeOrientation;
@@ -36,6 +35,7 @@ public class GenreList extends VBox
     protected void init()
     {
         this.checkBoxes = new ArrayList<>();
+        //Crea tutte le checkbox,ognuna delle quali contiene un genere
         for(String current : values)
         {
             CheckBox checkBox = new CheckBox(current);
@@ -44,10 +44,6 @@ public class GenreList extends VBox
             checkBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
             checkBox.setWrapText(false);
             checkBox.setTooltip(new Tooltip(StyleHandler.getInstance().getLocalizedString("firstTool.name") + " " + current + " " + StyleHandler.getInstance().getLocalizedString("secondTool.name")));
-            checkBox.setOnAction((event) -> {
-                ResearchHandler.getInstance().setCurrentFilterType(MovieFilterType.GENRE,false);
-                ResearchHandler.getInstance().setCurrentGenre(getSelectedIndexes(),true);
-            });
             checkBoxes.add(checkBox);
         }
         if(ResearchHandler.getInstance().getCurrentGenre() != null && !ResearchHandler.getInstance().getCurrentGenre().isEmpty())

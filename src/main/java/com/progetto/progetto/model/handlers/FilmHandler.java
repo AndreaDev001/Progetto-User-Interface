@@ -74,7 +74,7 @@ public class FilmHandler
         return movieDbs;
     }
     /**
-     * Aggiorna i generi,leggendoli dalla API,necessario quando bisogna cambiare linguaggio
+     * Aggiorna i generi, leggendoli dalla API,necessario quando bisogna cambiare linguaggio
      * @param error Callback per gestire eventuali errori
      * @param success Callback per gestire il successo della operazione
      */
@@ -88,10 +88,10 @@ public class FilmHandler
     }
 
     /**
-     * Ordina una lista di film,seguendo un ordine specificato
+     * Ordina una lista di film, seguendo un ordine specificato
      * @param values La lista dei film da ordinare
      * @param movieSortType Il tipo di ordinamento da utilizzare
-     * @param movieSortOrder Come ordinare la lista,crescente o decrescente
+     * @param movieSortOrder Come ordinare la lista, crescente o decrescente
      * @return La lista di film ordinata
      */
     public List<MovieDb> sortMovies(List<MovieDb> values, MovieSortType movieSortType,MovieSortOrder movieSortOrder)
@@ -125,7 +125,7 @@ public class FilmHandler
         return result;
     }
     /**
-     * Filtra una lista di film,usando il tipo di filtro specificato come parametro
+     * Filtra una lista di film, usando il tipo di filtro specificato come parametro
      * @param movies La lista contenente i film da filtrare
      * @param movieFilterType Il tipo di filtro da utilizzare
      * @param value Il genere o il nome utilizzato per filtrare
@@ -158,7 +158,7 @@ public class FilmHandler
             case NAME -> {
                 value = value.replaceAll(" ","");
                 for(MovieDb current : movies)
-                    if(current.getTitle().toLowerCase().contains(value.toLowerCase()))
+                    if(current.getTitle().replaceAll(" ","").toLowerCase().contains(value.toLowerCase()))
                         result.add(current);
             }
         }
@@ -172,7 +172,7 @@ public class FilmHandler
      * @param page La pagina da cercare
      * @param movieSortType Il tipo di sort da utilizzare nella ricerca
      * @param movieFilterType Il filtro da utilizzare nella ricerca
-     * @param movieSortOrder Come ordinare i film,crescente o decrescente
+     * @param movieSortOrder Come ordinare i film, crescente o decrescente
      * @return Una MovieResultsPage contenente i risultati della ricerca
      * @throws FilmNotFoundException Viene generato se la lista dei risultati è vuota
      */
