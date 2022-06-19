@@ -31,10 +31,14 @@ public class FilmCard extends VBox
         this.init();
     }
 
+    /**
+     * Inizializza il componente
+     */
     private void init()
     {
         Image image = CacheHandler.getInstance().getImage(FilmHandler.getInstance().getPosterPath(movieDb));
         imageView = new ImageView(image);
+        imageView.setPreserveRatio(true);
         titleLabel = new Label(movieDb.getTitle());
         releaseDateLabel = new Label(movieDb.getReleaseDate() == null || movieDb.getReleaseDate().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : movieDb.getReleaseDate());
         this.setAlignment(Pos.TOP_CENTER);

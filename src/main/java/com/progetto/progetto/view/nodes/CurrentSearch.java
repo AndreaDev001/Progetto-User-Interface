@@ -12,11 +12,13 @@ import javafx.scene.layout.VBox;
 
 public class CurrentSearch extends VBox
 {
+    //Costruttore del componente CurrentSearch
     public CurrentSearch()
     {
         this.setAlignment(Pos.CENTER);
         this.init();
     }
+    //Inizializza il componente,legge dal ResearchHandler e imposta le proprie label in base alle informazioni lette
     private void init()
     {
         if(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY && ResearchHandler.getInstance().getCurrentListType() != null)
@@ -58,6 +60,13 @@ public class CurrentSearch extends VBox
             this.getChildren().add(currentText);
         }
     }
+
+    /**
+     * Crea una label contenente informazioni dal ResearchHandler
+     * @param fieldName Il nome del field
+     * @param value Il valore del field
+     * @return Ritorna una label contente "Nome del field":"Valore del field"
+     */
     private Label createLabel(String fieldName,String value)
     {
         Label result = new Label(fieldName + ":" + value);
@@ -66,6 +75,10 @@ public class CurrentSearch extends VBox
         result.setStyle("-fx-font-size: 16px;");
         return result;
     }
+
+    /**
+     * Rimuove tutti i figli di currentSearch e inizializza nuovamente il componente
+     */
     public void update()
     {
         this.getChildren().clear();

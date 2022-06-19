@@ -11,12 +11,22 @@ public class ErrorPage extends VBox
     private final Label errorText;
     private final Button errorButton;
 
+    /**
+     * Costruttore della classe ErrorPage
+     * @param errorMessage Il messaggio da mostrare all'utente
+     * @param buttonText Il testo del pulsante
+     * @param useResources Se utilizzare una stringa localizzata
+     */
     public ErrorPage(String errorMessage,String buttonText,boolean useResources)
     {
         this.errorText = new Label(useResources ? StyleHandler.getInstance().getLocalizedString(errorMessage) : errorMessage);
         this.errorButton = new Button(useResources ? StyleHandler.getInstance().getLocalizedString(buttonText) : buttonText);
         this.init();
     }
+
+    /**
+     * Inizializza il componente
+     */
     private void init()
     {
         this.getStyleClass().add("background");

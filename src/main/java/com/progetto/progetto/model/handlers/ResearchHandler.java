@@ -76,7 +76,7 @@ public class ResearchHandler
                     MovieResultsPage result = (MovieResultsPage) workerStateEvent.getSource().getValue();
                     currentMaxPage = Math.max(1,result.getTotalPages());
                     for(IResearchListener current : researchListeners.values())
-                        current.OnResearchSuccessed(result.getResults(),value);
+                        current.OnResearchSucceeded(result.getResults(),value);
                 });
                 filmsSearchService.setOnFailed((worker) -> {
                     for(IResearchListener current : researchListeners.values())
@@ -90,7 +90,7 @@ public class ResearchHandler
                 movies = FilmHandler.getInstance().filterMovies(FilmHandler.getInstance().getCurrentLoaded(), currentFilterType,currentFilterType == MovieFilterType.GENRE ? currentGenre : currentText);
                 movies = FilmHandler.getInstance().sortMovies((currentGenre != null && !currentGenre.isEmpty() && currentFilterType == MovieFilterType.GENRE) || (currentText != null && !currentText.isEmpty() && currentFilterType == MovieFilterType.NAME) ? movies : FilmHandler.getInstance().getCurrentLoaded(),currentSortType,currentSortOrder);
                 for(IResearchListener current : researchListeners.values())
-                    current.OnResearchSuccessed(movies,value);
+                    current.OnResearchSucceeded(movies,value);
             }
         }
         catch (FilmNotFoundException exception)
@@ -100,17 +100,19 @@ public class ResearchHandler
                 current.OnResearchFailed(false);
         }
     }
+
     /**
-     * Updates the current list Type
-     * @param currentListType New List Type
+     * Aggiorna la lista attuale
+     * @param currentListType Nuovo tipo di lista
      */
     public void setCurrentListType(MovieListType currentListType) {
         this.currentListType = currentListType;
         this.updateValue(false,true);
     }
+
     /**
-     * Updates the current sort Type
-     * @param currentSortType New Sort Type
+     * Aggiorna il tipo attuale di ordinamento
+     * @param currentSortType Tipo attuale di ordinamento
      */
     public void setCurrentSortType(MovieSortType currentSortType) {
         if(!currentText.isEmpty())
@@ -118,9 +120,10 @@ public class ResearchHandler
         this.currentSortType = currentSortType;
         this.updateValue(true,true);
     }
+
     /**
-     * Updates the current sort order
-     * @param currentSortOrder New Sort order
+     * Aggiorna l'ordine attuale di ordinamento
+     * @param currentSortOrder Tipo attuale ordine di ordinamento
      */
     public void setCurrentSortOrder(MovieSortOrder currentSortOrder) {
         if(!currentText.isEmpty())
@@ -128,39 +131,43 @@ public class ResearchHandler
         this.currentSortOrder = currentSortOrder;
         this.updateValue(true,true);
     }
+
     /**
-     * Updates current filter type
-     * @param currentFilterType New Filter Type
-     * @param update If we need to reset the current list type and the current text
+     * Aggiorna il tipo di filtro da utilizzare nella ricerca
+     * @param currentFilterType Il tipo di filtro
+     * @param update Se reimpostare la lista e il testo attuale, ed eseguire una ricerca subito dopo
      */
     public void setCurrentFilterType(MovieFilterType currentFilterType,boolean update) {
         this.currentFilterType = currentFilterType;
         if(update)
             this.updateValue(true,true);
     }
+
     /**
-     * Updates current Genre String
-     * @param currentGenre New Current Genre
-     * @param update If we need to reset the current list type and the current text
+     * Aggiorna il genere attuale
+     * @param currentGenre Genere attuale
+     * @param update Se reimpostare il tipo di lista e il testo attuale e se eseguire una ricerca subito dopo
      */
     public void setCurrentGenre(String currentGenre,boolean update) {
         this.currentGenre = currentGenre;
         if(update)
             this.updateValue(true,true);
     }
+
     /**
-     * Updates the current Text,used when performing a name search,always resets the current list type and the current genre
-     * @param currentText The new current text
+     * Imposta il nome della ricerca attuale(ricerca per testo)
+     * @param currentText Testo attuale
      */
     public void setCurrentText(String currentText) {
         this.currentFilterType = MovieFilterType.NAME;
         this.currentText = currentText;
         this.updateValue(true,false);
     }
+
     /**
-     * Method used to reset or not the current List or the current Text
-     * @param resetListType If we need to reset the current List
-     * @param resetText If we need to reset the current Text
+     * Reimposta la lista e il testo, ed esegue una ricerca
+     * @param resetListType Se reimpostare la lista attuale
+     * @param resetText Se reimpostare il testo attuale
      */
     public void updateValue(boolean resetListType,boolean resetText)
     {
@@ -169,9 +176,10 @@ public class ResearchHandler
         currentPage = 1;
         this.search(!resetListType);
     }
+
     /**
-     * Method used to update the current page of the search
-     * @param positive If we need to subtract or add by one
+     * Aggiorna la pagina attuale
+     * @param positive Se incrementare o diminuire currentPage di 1
      */
     public void updateCurrentPage(boolean positive)
     {
@@ -179,12 +187,13 @@ public class ResearchHandler
         currentPage = Math.max(currentPage,1);
         this.search(currentListType != null);
     }
+
     /**
-     * Method used to update the current View Mode,fires all the listeners to the property
-     * @param value New MovieViewMode value
-     * @param force If we need to force the event,even if the view did not change
-     * @param clear If we need to clear all search filters,this will performed by the listener if needed
-     * @param search If we need to perform a search after the event,the search function will be called
+     * Imposta la movie view attuale
+     * @param value Nuovo tipo di valore
+     * @param force Se forzare il cambiamento, anche se non c'è stata nessuna modifica
+     * @param clear Se reimpostare tutti i filtri
+     * @param search Se effettuare una ricerca subito dopo il cambiamento della movie view
      */
     public void setCurrentViewMode(MovieViewMode value,boolean force,boolean clear,boolean search)
     {
@@ -199,8 +208,9 @@ public class ResearchHandler
                 this.search(currentListType != null);
         }
     }
+
     /**
-     * Method used the reset the current search
+     * Metodo utilizzato per reimpostare la ricerca
      */
     public void clearSearch()
     {
@@ -210,9 +220,10 @@ public class ResearchHandler
         this.currentSortType = MovieSortType.POPULARITY;
         this.currentSortOrder = MovieSortOrder.DESC;
     }
+
     /**
-     * Method used to get the corrected Genre to use in a search,the genre received is a list of indexes separated by commas,update the values with the correct genre ids
-     * @return A String containing the genre ids to search
+     * Metodo utilizzato per ottenere la stringa corretta per effettuare una ricerca usando il genere attuale
+     * @return Ritorna una stringa contente l'id di ogni genere contenuto nella ricerca, ognuno separato da una virgola
      */
     private String getCalculatedGenre()
     {
@@ -232,7 +243,7 @@ public class ResearchHandler
     }
 
     /**
-     * Aggiunge un listener alla movieViewProperty,se un altro oggetto della stessa classe non è contenuto
+     * Aggiunge un listener alla movieViewProperty, se un altro oggetto della stessa classe non è contenuto
      * @param movieViewModeChangeListener Il listener da aggiungere
      * @param value Il nome della classe
      */

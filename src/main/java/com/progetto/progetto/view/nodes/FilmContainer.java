@@ -3,7 +3,6 @@ package com.progetto.progetto.view.nodes;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 
 import java.util.ArrayList;
 import java.util.List;
