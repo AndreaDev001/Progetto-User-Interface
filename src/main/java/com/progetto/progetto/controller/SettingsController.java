@@ -89,7 +89,6 @@ public class SettingsController {
         {
             this.saveConfigurationAndUpdate();
             SceneHandler.getInstance().reloadApplication(PageEnum.SETTINGS);
-            FilmHandler.getInstance().updateLibrary();
         });
     }
 
