@@ -1,4 +1,4 @@
-package com.progetto.progetto.view;
+package com.progetto.progetto.view.nodes;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;

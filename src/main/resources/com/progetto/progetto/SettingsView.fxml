@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.progetto.progetto.view.ColorBarPicker?>
+<?import com.progetto.progetto.view.nodes.ColorBarPicker?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>

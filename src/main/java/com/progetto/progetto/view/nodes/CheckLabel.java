@@ -1,4 +1,4 @@
-package com.progetto.progetto.view;
+package com.progetto.progetto.view.nodes;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
