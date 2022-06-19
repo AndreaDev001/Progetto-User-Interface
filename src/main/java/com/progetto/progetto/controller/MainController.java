@@ -105,7 +105,6 @@ public class MainController implements IResearchListener
             String value = StyleHandler.getInstance().getLocalizedString(current.toString() + ".name");
             comboBox.getItems().add(value);
         }
-        this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
     }
     /**
      * Inizializza tutte le proprietà
@@ -239,10 +238,7 @@ public class MainController implements IResearchListener
         if(!isGenre)
             genreList.clearList();
         else
-        {
-            searchField.clear();
-            searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-        }
+            resetSearchField();
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
             createFilms(result);
         else
@@ -319,8 +315,7 @@ public class MainController implements IResearchListener
     public void handleSwitchedView()
     {
         bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME);
-        searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
-        searchField.setText("");
+        resetSearchField();
         sortComboBox.getSelectionModel().select(2);
         sortOrderComboBox.getSelectionModel().select(1);
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
@@ -331,12 +326,18 @@ public class MainController implements IResearchListener
             if(FilmHandler.getInstance().getCurrentLoaded().isEmpty())
                 handleError("emptyLibrary.name","backHome.name",(event) -> ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false));
             else
-                createFilms(FilmHandler.getInstance().getCurrentLoaded());
+                createFilms(FilmHandler.getInstance().sortMovies(FilmHandler.getInstance().getCurrentLoaded(),ResearchHandler.getInstance().getCurrentSortType(),ResearchHandler.getInstance().getCurrentSortOrder()));
         }
         else
         {
             third.setVisible(true);
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
         }
+    }
+
+    private void resetSearchField()
+    {
+        this.searchField.clear();
+        this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
     }
 }
