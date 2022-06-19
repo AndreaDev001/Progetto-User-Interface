@@ -1,5 +1,6 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
@@ -78,7 +79,12 @@ public class MainController implements IResearchListener
             this.handleLoading(false);
             first.setExpanded(false);
             second.setExpanded(false);
-            handleError("connectionError.name","reloadButton.name",(event) -> SceneHandler.getInstance().reloadApplication(PageEnum.MAIN));},success -> {
+            handleError("connectionError.name","reloadButton.name",(event) -> {
+                ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,false,false);
+                SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
+            });},success -> {;
+            if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable().get())
+                FilmHandler.getInstance().updateLibrary();
             this.handleLoading(false);
             first.setDisable(false);
             second.setDisable(false);
@@ -173,11 +179,15 @@ public class MainController implements IResearchListener
             Label label = enumList.getLabels().get(i);
             label.addEventHandler(MouseEvent.MOUSE_ENTERED,(event) -> label.setStyle("-fx-font-weight: bold;-fx-underline: true"));
             label.addEventHandler(MouseEvent.MOUSE_EXITED,(event) -> label.setStyle("-fx-underline: false"));
-            label.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> ResearchHandler.getInstance().setCurrentListType(enumList.getValues()[finalI]));
+            label.addEventHandler(MouseEvent.MOUSE_CLICKED,(event) -> {
+                resetSearchField();
+                ResearchHandler.getInstance().setCurrentListType(enumList.getValues()[finalI]);
+            });
             label.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
                 if(event.getCode() == KeyCode.ENTER)
                 {
                     event.consume();
+                    resetSearchField();
                     ResearchHandler.getInstance().setCurrentListType(enumList.getValues()[finalI]);
                 }
             });
@@ -320,6 +330,8 @@ public class MainController implements IResearchListener
         sortOrderComboBox.getSelectionModel().select(1);
         if(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.LIBRARY)
         {
+            if(genreList == null)
+                return;
             genreList.clearList();
             third.setVisible(false);
             //Se la libreria è vuota bisogna mostrare una pagina di errore al'utente

@@ -9,6 +9,7 @@ import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -66,6 +67,7 @@ public class FilmController
     @FXML
     private void initialize()
     {
+        FilmHandler.getInstance().IsLibraryAvailable().addListener((obs,oldValue,newValue) -> Platform.runLater(this::initButton));
         String pattern = "###,###.###";
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
         borderPane.setVisible(false);
@@ -84,26 +86,7 @@ public class FilmController
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
             title = film.getTitle();
-            addToLibrary.disableProperty().bind(Client.getInstance().isLogged().not());
-            addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
-            addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
-            if(!addToLibrary.isDisable())
-            {
-                List<MovieDb> movies = FilmHandler.getInstance().getCurrentLoaded();
-                boolean contains = movies.contains(film);
-                addToLibrary.setOnAction((event) ->
-                {
-                    if(movies.contains(film))
-                    {
-                        elementId = FilmHandler.getInstance().getMovieElementId().get(film);
-                        RemoveFilm();
-                    }
-                    else
-                        AddFilm();
-                    SceneHandler.getInstance().getFilmStage().close();
-                });
-                addToLibrary.setText(contains ? StyleHandler.getInstance().getLocalizedString("alreadyAdded.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
-            }
+            initButton();
             DecimalFormat decimalFormat = new DecimalFormat(pattern);
             String releaseDate = film.getReleaseDate() == null || film.getReleaseDate().isEmpty() || film.getStatus().equals("Planned") ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : film.getReleaseDate();
             String overview = film.getOverview().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingOverview.name") : film.getOverview();
@@ -126,7 +109,30 @@ public class FilmController
             filmOriginalLanguage.setText(StyleHandler.getInstance().getLocalizedString("filmOriginalLanguage.name")  + ":" + " " + film.getOriginalLanguage());
             createFlags(film);
         });
-
+    }
+    private void initButton()
+    {
+        if(FilmHandler.getInstance().IsLibraryAvailable().get())
+            addToLibrary.setDisable(false);
+        addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
+        addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
+        if(!addToLibrary.isDisable())
+        {
+            List<MovieDb> movies = FilmHandler.getInstance().getCurrentLoaded();
+            boolean contains = movies.contains(movie);
+            addToLibrary.setOnAction((event) ->
+            {
+                if(movies.contains(movie))
+                {
+                    elementId = FilmHandler.getInstance().getMovieElementId().get(movie);
+                    RemoveFilm();
+                }
+                else
+                    AddFilm();
+                SceneHandler.getInstance().getFilmStage().close();
+            });
+            addToLibrary.setText(contains ? StyleHandler.getInstance().getLocalizedString("alreadyAdded.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
+        }
     }
     private void createFlags(MovieDb film)
     {

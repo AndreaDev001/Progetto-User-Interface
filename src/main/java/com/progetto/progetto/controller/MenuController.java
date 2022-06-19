@@ -40,7 +40,7 @@ public class MenuController
     {
         this.loginButton.visibleProperty().bind(Client.getInstance().isLogged().not());
         this.logoutButton.visibleProperty().bind(Client.getInstance().isLogged());
-        this.libraryButton.disableProperty().bind(Client.getInstance().isLogged().not());
+        this.libraryButton.disableProperty().bind(FilmHandler.getInstance().IsLibraryAvailable().not());
         this.loginButton.managedProperty().bind(Client.getInstance().isLogged().not());
         this.logoutButton.managedProperty().bind(Client.getInstance().isLogged());
         SceneHandler.getInstance().currentPageProperty().addListener((observable, oldValue, newValue) -> {
@@ -102,8 +102,6 @@ public class MenuController
     {
         try {
             Client.getInstance().logout();
-            FilmHandler.getInstance().getCurrentLoaded().clear();
-            FilmHandler.getInstance().getMovieElementId().clear();
             ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false);
         } catch (IOException | ConnectionException e) {
             e.printStackTrace();

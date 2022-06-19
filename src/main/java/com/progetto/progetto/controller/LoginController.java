@@ -40,7 +40,6 @@ public class LoginController
                     SceneHandler.getInstance().loadEmailConfirmation();
                 else
                     SceneHandler.getInstance().loadPage(PageEnum.MAIN);
-                FilmHandler.getInstance().updateLibrary();
             }
             else{
                 SceneHandler.getInstance().createErrorMessage("loginFail.name");

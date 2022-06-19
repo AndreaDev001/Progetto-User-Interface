@@ -10,6 +10,8 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -33,6 +35,7 @@ public class FilmHandler
     private final Map<MovieDb,String> movieElementId = new HashMap<>();
     private final MovieQueryService movieDbService = new MovieQueryService();
     private final MovieGenreService movieGenreService = new MovieGenreService();
+    private final BooleanProperty libraryAvailable = new SimpleBooleanProperty(false);
 
     private FilmHandler()
     {
@@ -41,6 +44,12 @@ public class FilmHandler
     private void init()
     {
         String apiKey = "3837271101e801680438310f38a3feff";
+        Client.getInstance().isLogged().addListener((observable,oldValue,newValue) -> {
+            FilmHandler.getInstance().currentLoaded.clear();
+            FilmHandler.getInstance().movieElementId.clear();
+            if(!Client.getInstance().isLogged().get())
+                libraryAvailable.set(false);
+        });
         try
         {
             tmdbApi = new TmdbApi(apiKey);
@@ -223,12 +232,13 @@ public class FilmHandler
 
     public void updateLibrary()
     {
-
+        libraryAvailable.set(false);
         if(Client.getInstance().isLogged().get())
         {
             Client.getInstance().get("films",success -> {
                 JSONObject jsonObject = success.result();
                 FilmHandler.getInstance().loadMovies(jsonObject.getJSONArray("films"));
+                libraryAvailable.set(true);
             },error ->
             {
                 LoggerHandler.error("Error During Library Update!",error.fillInStackTrace());
@@ -236,7 +246,6 @@ public class FilmHandler
             });
         }
     }
-
     /**
      * Aggiorna la libreria caricata attualmente usando una JSONArray
      * @param jsonArray JSONArray contenente i film
@@ -250,6 +259,8 @@ public class FilmHandler
             JSONObject current = jsonArray.getJSONObject(i);
             int id = current.getInt("filmId");
             MovieDb movieDb = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
+            if(this.currentLoaded.contains(movieDb))
+                continue;
             movieElementId.put(movieDb,current.getString("element_id"));
             currentLoaded.add(movieDb);
         }
@@ -267,8 +278,10 @@ public class FilmHandler
     public void setGenres(List<Genre> genres){
         this.genres = genres;
     }
+
     public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
     public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
+    public final BooleanProperty IsLibraryAvailable() {return libraryAvailable;}
     public static FilmHandler getInstance() {return instance;}
 
     private class MovieQueryService extends Service<MovieDb>
