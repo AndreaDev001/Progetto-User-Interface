@@ -60,12 +60,10 @@ public class FilmCard extends VBox
         this.setFocusTraversable(true);
 
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200));
-        scaleTransition.setFromX(1D);
-        scaleTransition.setFromY(1D);
-        scaleTransition.setFromZ(1D);
-        scaleTransition.setToX(1.1);
-        scaleTransition.setToY(1.1);
-        scaleTransition.setToZ(1.1);
+        scaleTransition.setFromX(1.0D);
+        scaleTransition.setFromY(1.0D);
+        scaleTransition.setToX(1.1D);
+        scaleTransition.setToY(1.1D);
         scaleTransition.setNode(this);
 
 
