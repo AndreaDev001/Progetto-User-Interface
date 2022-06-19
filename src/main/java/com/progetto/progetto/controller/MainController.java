@@ -3,10 +3,10 @@ package com.progetto.progetto.controller;
 import com.progetto.progetto.model.enums.*;
 import com.progetto.progetto.model.handlers.CacheHandler;
 import com.progetto.progetto.model.handlers.FilmHandler;
-import com.progetto.progetto.model.handlers.listeners.IResearchListener;
 import com.progetto.progetto.model.handlers.ResearchHandler;
-import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
+import com.progetto.progetto.model.handlers.listeners.IResearchListener;
+import com.progetto.progetto.view.SceneHandler;
 import com.progetto.progetto.view.nodes.*;
 import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.BooleanProperty;
@@ -18,7 +18,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 import java.util.List;
 

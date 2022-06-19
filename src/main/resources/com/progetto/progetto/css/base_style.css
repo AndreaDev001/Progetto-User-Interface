@@ -6,7 +6,6 @@
     -fx-font-family: 'Roboto',Arial,sans-serif;
 }
 
-
 .radio-button:focused,
 .color-bar:focused,
 .card:focused,
@@ -20,12 +19,6 @@
   -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
 }
 
-.list-view
-{
-   -fx-font-size: 14px;
-   -fx-background-color: -thirty-color;
-   -fx-padding: 0px;
-}
 .list-cell
 {
    -fx-background-color: -thirty-color;
@@ -47,19 +40,6 @@
 {
    -fx-underline: true;
    -fx-font-weight: bold;
-}
-.list-view .scroll-bar:horizontal .increment-arrow,
-.list-view .scroll-bar:horizontal .decrement-arrow,
-.list-view .scroll-bar:horizontal .increment-button,
-.list-view .scroll-bar:horizontal .decrement-button {
-    -fx-padding:0;
-}
-.list-view .scroll-bar:horizontal {
-    -fx-scale-x: 0;
-}
-.list-view .scroll-bar:vertical
-{
-   -fx-scale-y: 0;
 }
 .progress-indicator
 {
@@ -88,11 +68,6 @@
 .toggle-button:focused
 {
    -fx-effect: dropShadow(gaussian,-text-color,17,0.0,0.0,0.0);
-}
-.toggle-button:selected
-{
-   -fx-background-color: -thirty-color;
-   -fx-border-color: -ten-color;
 }
 .ikonli-font-icon
 {
