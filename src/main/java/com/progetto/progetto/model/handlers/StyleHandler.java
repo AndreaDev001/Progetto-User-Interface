@@ -43,7 +43,7 @@ public class StyleHandler {
 
     /**
      * read the config file and update the scene along with it
-     * if the .film_app folder doesn't exist a new one will be created
+     * if the config folder doesn't exist a new one will be created
      * @param scene the scene to update
      */
     public void init(Scene scene)
@@ -109,7 +109,7 @@ public class StyleHandler {
     }
 
     /**
-     * the configuration will be saved inside the .film_app folder
+     * the configuration will be saved inside the configuration folder
      * @throws IOException if file cannot be written
      */
     public void saveConfigurationOnFile(Properties properties) throws IOException {

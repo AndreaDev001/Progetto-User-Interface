@@ -8,7 +8,7 @@ public class Options
 {
     public static final String APP_VERSION = "1.0.0";
     //the folder where everything persistent will be stored
-    public static final String APP_FOLDER_LOCATION = System.getProperty("user.home") + File.separator + ".film_app";
+    public static final String APP_FOLDER_LOCATION = System.getProperty("user.home") + File.separator + ".filmsharp";
     //the settings file
     public static final String CONFIG_NAME = "config.properties";
     //immutable list of supported languages
