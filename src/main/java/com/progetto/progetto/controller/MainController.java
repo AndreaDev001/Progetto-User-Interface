@@ -81,9 +81,9 @@ public class MainController implements IResearchListener
             second.setExpanded(false);
             handleError("connectionError.name","reloadButton.name",(event) -> {
                 ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,false,false);
-                FilmHandler.getInstance().updateLibrary();
                 SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
             });},success -> {;
+            //Se c'è stato un errore di connessione o l'utente ha appena effettuato il login, bisogna ricaricare la libreria
             if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable())
                 FilmHandler.getInstance().updateLibrary();
             this.handleLoading(false);
@@ -91,6 +91,7 @@ public class MainController implements IResearchListener
             second.setDisable(false);
             CacheHandler.getInstance().reset();
             ResearchHandler.getInstance().addListener(this,this.getClass().getSimpleName());
+            //Crea una lista contenente tutti i generi letti dalla API
             genreList = new GenreList(FilmHandler.getInstance().getGenres());
             for(CheckBox current : genreList.getCheckBoxes())
                 current.setOnAction((event) -> {
@@ -136,8 +137,10 @@ public class MainController implements IResearchListener
      */
     private void initHandlers()
     {
+        //Questi due pulsanti si occupano di caricare le pagine
         loadNextPageButton.setOnAction(event -> loadNext(true));
         loadPreviousPageButton.setOnAction(event -> loadNext(false));
+        //Questi due handler servono per assicurarsi che solo uno dei due dropdown sia visibile allo stesso tempo
         first.addEventHandler(KeyEvent.KEY_PRESSED,(event) -> {
             if(event.getCode().equals(KeyCode.ENTER) && !searchField.isFocused())
                 first.setExpanded(third.isFocused() || !first.isExpanded());
@@ -168,6 +171,7 @@ public class MainController implements IResearchListener
             this.searchField.setText(ResearchHandler.getInstance().getCurrentText());
         this.bottomHolder.setVisible(ResearchHandler.getInstance().getCurrentViewMode() != MovieViewMode.LIBRARY);
         currentSearch = new CurrentSearch();
+        //Impostato per assicurarsi che la currentSearch effettui sempre un wrap corretto del testo
         boxHolder.getChildren().add(currentSearch);
         boxHolder.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_PREF_SIZE);
         boxHolder.setMaxSize(Region.USE_COMPUTED_SIZE,Region.USE_PREF_SIZE);
@@ -175,6 +179,7 @@ public class MainController implements IResearchListener
         sortComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortType().ordinal());
         sortOrderComboBox.getSelectionModel().select(ResearchHandler.getInstance().getCurrentSortOrder().ordinal());
         EnumList<MovieListType> enumList = new EnumList<>(MovieListType.values());
+        //Crea una lista contenente i valori di MovieListType  e associa i relativi controlli
         for(int i = 0;i < enumList.getLabels().size();i++)
         {
             int finalI = i;
@@ -335,6 +340,7 @@ public class MainController implements IResearchListener
             if(genreList == null)
                 return;
             genreList.clearList();
+            //Il tiltedPane third non deve essere mai visibile quando si utilizza la libreria, in quanto contiene ricerche non supportate
             third.setVisible(false);
             //Se la libreria è vuota bisogna mostrare una pagina di errore al'utente
             if(FilmHandler.getInstance().getCurrentLoaded().isEmpty())
@@ -348,7 +354,7 @@ public class MainController implements IResearchListener
             ResearchHandler.getInstance().setCurrentListType(MovieListType.MOST_POPULAR);
         }
     }
-
+    //Reimposta la searchField,reimposta il prompt text
     private void resetSearchField()
     {
         this.searchField.clear();

@@ -38,7 +38,8 @@ public class FilmHandler
     private final MovieQueryService movieDbService = new MovieQueryService();
     private final MovieGenreService movieGenreService = new MovieGenreService();
     private final BooleanProperty libraryAvailable = new SimpleBooleanProperty(false);
-    private Map<String, ChangeListener<Boolean>> libraryListeners = new HashMap<>();
+    //Questa proprietà viene utilizzata per comprendere dall'esterno se la libreria è stata caricata completamente
+    private final Map<String, ChangeListener<Boolean>> libraryListeners = new HashMap<>();
 
     private FilmHandler()
     {
@@ -47,6 +48,7 @@ public class FilmHandler
     private void init()
     {
         String apiKey = "3837271101e801680438310f38a3feff";
+        //Quando l'utente effettua cambia il login, bisogna sempre ripristinare queste variabili
         Client.getInstance().isLogged().addListener((obs,oldValue,newValue) -> {
             currentLoaded.clear();
             movieElementId.clear();
@@ -96,7 +98,6 @@ public class FilmHandler
         movieGenreService.setOnSucceeded(success::accept);
         movieGenreService.restart();
     }
-
     /**
      * Ordina una lista di film, seguendo un ordine specificato
      * @param values La lista dei film da ordinare
@@ -231,7 +232,7 @@ public class FilmHandler
         movieDbService.setMovieId(filmID);
         movieDbService.restart();
     }
-
+    //Questo metodo legge i film dal database e li inserisce in currentLoaded utilizzando loadMovies
     public void updateLibrary()
     {
         libraryAvailable.set(false);
@@ -281,6 +282,12 @@ public class FilmHandler
         }
         libraryAvailable.set(true);
     }
+
+    /**
+     * Aggiunge un listener alla proprietà libraryAvailable, lo rimuove se già presente
+     * @param changeListener Il listener da gestire
+     * @param value Il nome della classe
+     */
     public void addLibraryListener(ChangeListener<Boolean> changeListener,String value)
     {
         if(libraryListeners.containsKey(value))
