@@ -114,7 +114,10 @@ public class FilmController
     {
         if(FilmHandler.getInstance().IsLibraryAvailable().get())
             addToLibrary.setDisable(false);
-        addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
+        if(FilmHandler.getInstance().IsLibraryAvailable().get())
+            addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
+        else
+            addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryLoading.name"));
         addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
         if(!addToLibrary.isDisable())
         {
@@ -162,7 +165,65 @@ public class FilmController
             JSONObject object = JSONUtil.toJSON(film);
             Client.getInstance().insert("films",object,success -> {
                 FilmHandler.getInstance().getCurrentLoaded().add(movie);
-                FilmHandler.getInstance().getMovieElementId().put(movie,success.result().getJSONObject("response").getString("element_id"));
+                FilmHandler.getInstance().getMovieElementId().put(movie,success.result().getJSONObject("response").getString(
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        "element_id"));
             },error ->
             {
                 LoggerHandler.error("Error library film {} couldn't be added to the library",error.fillInStackTrace(),film.title());
