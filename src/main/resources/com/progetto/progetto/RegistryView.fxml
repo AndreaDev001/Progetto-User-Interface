@@ -4,7 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="500.0" spacing="10.0" styleClass="background" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.RegisterController">
    <children>
@@ -30,10 +30,27 @@
                   <VBox alignment="TOP_CENTER" maxWidth="-Infinity" spacing="2.0">
 
                         <children>
-                           <CheckLabel fx:id="upperCaseTick" text="%upperCaseCheck.name" checked="false"/>
-                           <CheckLabel fx:id="lowerCaseTick" text="%lowerCaseCheck.name" checked="false"/>
-                           <CheckLabel fx:id="numberTick" text="%numberCheck.name" checked="false"/>
-                           <CheckLabel fx:id="lengthTick" text="%lengthCheck.name" checked="false"/>
+                           <CheckLabel fx:id="upperCaseTick" text="%upperCaseCheck.name" checked="false">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </CheckLabel>
+                           <CheckLabel fx:id="lowerCaseTick" text="%lowerCaseCheck.name" checked="false">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </CheckLabel>
+                           <CheckLabel fx:id="numberTick" text="%numberCheck.name" checked="false">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </CheckLabel>
+                           <CheckLabel fx:id="lengthTick" text="%lengthCheck.name" checked="false">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </CheckLabel>
+
                         </children>
 
                      <VBox.margin>
