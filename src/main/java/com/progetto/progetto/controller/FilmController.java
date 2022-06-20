@@ -114,9 +114,9 @@ public class FilmController
     {
         if(FilmHandler.getInstance().IsLibraryAvailable().get())
             addToLibrary.setDisable(false);
-        if(FilmHandler.getInstance().IsLibraryAvailable().get())
-            addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
-        else
+        if(!Client.getInstance().isLogged().get())
+            addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryError.name"));
+        if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable().get())
             addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryLoading.name"));
         addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
         if(!addToLibrary.isDisable())
