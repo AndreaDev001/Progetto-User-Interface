@@ -10,6 +10,7 @@ import com.progetto.progetto.view.SceneHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
@@ -22,27 +23,59 @@ public class MenuController
 
     @FXML
     private Button homeButton;
-
     @FXML
     private Button libraryButton;
-
     @FXML
     private Button settingsButton;
-
     @FXML
     private Button loginButton;
-
     @FXML
     private Button logoutButton;
+    @FXML
+    private ProgressIndicator progressIndicator;
 
     @FXML
     private void initialize()
     {
+        if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable())
+        {
+            progressIndicator.setVisible(true);
+            libraryButton.setDisable(true);
+        }
+        else if(Client.getInstance().isLogged().get())
+        {
+            progressIndicator.setVisible(false);
+            libraryButton.setDisable(false);
+        }
         this.loginButton.visibleProperty().bind(Client.getInstance().isLogged().not());
         this.logoutButton.visibleProperty().bind(Client.getInstance().isLogged());
-        this.libraryButton.disableProperty().bind(Client.getInstance().isLogged().not());
         this.loginButton.managedProperty().bind(Client.getInstance().isLogged().not());
         this.logoutButton.managedProperty().bind(Client.getInstance().isLogged());
+        progressIndicator.managedProperty().bind(progressIndicator.visibleProperty());
+        Client.getInstance().isLogged().addListener((obs,oldValue,newValue) -> {
+            if(!Client.getInstance().isLogged().get())
+            {
+                this.progressIndicator.setVisible(false);
+                this.libraryButton.setDisable(true);
+            }
+            else
+            {
+                this.progressIndicator.setVisible(true);
+                this.libraryButton.setDisable(true);
+            }
+        });
+        FilmHandler.getInstance().addLibraryListener((obs,oldValue,newValue) -> {
+            if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable())
+            {
+                this.progressIndicator.setVisible(true);
+                this.libraryButton.setDisable(true);
+            }
+            if(Client.getInstance().isLogged().get() && FilmHandler.getInstance().IsLibraryAvailable())
+            {
+                this.progressIndicator.setVisible(false);
+                this.libraryButton.setDisable(false);
+            }
+        },this.getClass().getSimpleName());
         SceneHandler.getInstance().currentPageProperty().addListener((observable, oldValue, newValue) -> {
             updateButtonSelection(homeButton, newValue, PageEnum.MAIN);
             updateButtonSelection(settingsButton, newValue, PageEnum.SETTINGS);
@@ -102,8 +135,6 @@ public class MenuController
     {
         try {
             Client.getInstance().logout();
-            FilmHandler.getInstance().getCurrentLoaded().clear();
-            FilmHandler.getInstance().getMovieElementId().clear();
             ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,true,false);
         } catch (IOException | ConnectionException e) {
             e.printStackTrace();

@@ -10,6 +10,10 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import info.movito.themoviedbapi.tools.MovieDbException;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -33,6 +37,8 @@ public class FilmHandler
     private final Map<MovieDb,String> movieElementId = new HashMap<>();
     private final MovieQueryService movieDbService = new MovieQueryService();
     private final MovieGenreService movieGenreService = new MovieGenreService();
+    private final BooleanProperty libraryAvailable = new SimpleBooleanProperty(false);
+    private Map<String, ChangeListener<Boolean>> libraryListeners = new HashMap<>();
 
     private FilmHandler()
     {
@@ -41,6 +47,11 @@ public class FilmHandler
     private void init()
     {
         String apiKey = "3837271101e801680438310f38a3feff";
+        Client.getInstance().isLogged().addListener((obs,oldValue,newValue) -> {
+            currentLoaded.clear();
+            movieElementId.clear();
+            libraryAvailable.set(false);
+        });
         try
         {
             tmdbApi = new TmdbApi(apiKey);
@@ -223,7 +234,7 @@ public class FilmHandler
 
     public void updateLibrary()
     {
-
+        libraryAvailable.set(false);
         if(Client.getInstance().isLogged().get())
         {
             Client.getInstance().get("films",success -> {
@@ -236,7 +247,6 @@ public class FilmHandler
             });
         }
     }
-
     /**
      * Aggiorna la libreria caricata attualmente usando una JSONArray
      * @param jsonArray JSONArray contenente i film
@@ -247,12 +257,37 @@ public class FilmHandler
         this.movieElementId.clear();
         for(int i = 0;i < jsonArray.length();i++)
         {
-            JSONObject current = jsonArray.getJSONObject(i);
-            int id = current.getInt("filmId");
-            MovieDb movieDb = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
-            movieElementId.put(movieDb,current.getString("element_id"));
-            currentLoaded.add(movieDb);
+            try
+            {
+                JSONObject current = jsonArray.getJSONObject(i);
+                int id = current.getInt("filmId");
+                MovieDb movieDb = movies.getMovie(id,StyleHandler.getInstance().getCurrentLanguage().toString(), TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.images);
+                if(movieDb == null)
+                {
+                    libraryAvailable.set(false);
+                    return;
+                }
+                if(this.currentLoaded.contains(movieDb))
+                    continue;
+                movieElementId.put(movieDb,current.getString("element_id"));
+                currentLoaded.add(movieDb);
+            }
+            catch (MovieDbException exception)
+            {
+                exception.printStackTrace();
+                libraryAvailable.set(false);
+                return;
+            }
         }
+        libraryAvailable.set(true);
+    }
+    public void addLibraryListener(ChangeListener<Boolean> changeListener,String value)
+    {
+        if(libraryListeners.containsKey(value))
+            libraryAvailable.removeListener(libraryListeners.get(value));
+        libraryListeners.remove(value);
+        this.libraryListeners.put(value,changeListener);
+        this.libraryAvailable.addListener(changeListener);
     }
     public final int getCurrentSelectedFilm() {return currentSelectedFilm;}
     public List<Genre> getValues(){
@@ -267,8 +302,10 @@ public class FilmHandler
     public void setGenres(List<Genre> genres){
         this.genres = genres;
     }
+
     public final Map<MovieDb,String> getMovieElementId() {return movieElementId;}
     public final List<MovieDb> getCurrentLoaded() {return currentLoaded;}
+    public final boolean IsLibraryAvailable() {return libraryAvailable.get();}
     public static FilmHandler getInstance() {return instance;}
 
     private class MovieQueryService extends Service<MovieDb>

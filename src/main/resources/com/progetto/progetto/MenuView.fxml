@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
 <BorderPane maxHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="201.0" prefWidth="208.0" style="-fx-border-width: 0px;" styleClass="background" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progetto.progetto.controller.MenuController">
    <top>
       <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" spacing="20.0" styleClass="foreground" BorderPane.alignment="CENTER">
@@ -17,10 +23,28 @@
                      <graphic>
                         <FontIcon iconLiteral="mdi2h-home" iconSize="25" />
                      </graphic></Button>
-                  <Button fx:id="libraryButton" mnemonicParsing="false" onAction="#onLibraryPressed" text="%library.name">
-                     <graphic>
-                        <FontIcon iconLiteral="mdi2l-library-shelves" iconSize="25" />
-                     </graphic></Button>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <StackPane>
+                           <children>
+                              <Button fx:id="libraryButton" disable="true" mnemonicParsing="false" onAction="#onLibraryPressed" text="%library.name" StackPane.alignment="CENTER">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2l-library-shelves" iconSize="25" />
+                                 </graphic>
+                              </Button>
+                              <ProgressIndicator fx:id="progressIndicator" visible="false">
+                                 <tooltip>
+                                    <Tooltip text="%libraryLoading.name">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </ProgressIndicator>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
                   <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#onSettingsPressed" text="%settings.name">
                      <graphic>
                         <FontIcon iconLiteral="mdi2t-tools" iconSize="25" />

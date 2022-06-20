@@ -9,6 +9,7 @@ import com.progetto.progetto.model.records.Film;
 import com.progetto.progetto.view.SceneHandler;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -66,6 +67,7 @@ public class FilmController
     @FXML
     private void initialize()
     {
+        FilmHandler.getInstance().addLibraryListener((obs,oldValue,newValue) -> Platform.runLater(this::initButton),this.getClass().getSimpleName());
         String pattern = "###,###.###";
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
         borderPane.setVisible(false);
@@ -84,26 +86,7 @@ public class FilmController
             borderPane.setVisible(true);
             filmProgress.setVisible(false);
             title = film.getTitle();
-            addToLibrary.disableProperty().bind(Client.getInstance().isLogged().not());
-            addToLibrary.setText(addToLibrary.isDisable() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
-            addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
-            if(!addToLibrary.isDisable())
-            {
-                List<MovieDb> movies = FilmHandler.getInstance().getCurrentLoaded();
-                boolean contains = movies.contains(film);
-                addToLibrary.setOnAction((event) ->
-                {
-                    if(movies.contains(film))
-                    {
-                        elementId = FilmHandler.getInstance().getMovieElementId().get(film);
-                        RemoveFilm();
-                    }
-                    else
-                        AddFilm();
-                    SceneHandler.getInstance().getFilmStage().close();
-                });
-                addToLibrary.setText(contains ? StyleHandler.getInstance().getLocalizedString("alreadyAdded.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
-            }
+            initButton();
             DecimalFormat decimalFormat = new DecimalFormat(pattern);
             String releaseDate = film.getReleaseDate() == null || film.getReleaseDate().isEmpty() || film.getStatus().equals("Planned") ? StyleHandler.getInstance().getLocalizedString("missingRelease.name") : film.getReleaseDate();
             String overview = film.getOverview().isEmpty() ? StyleHandler.getInstance().getLocalizedString("missingOverview.name") : film.getOverview();
@@ -123,10 +106,39 @@ public class FilmController
             filmRevenue.setText((revenue > 0 ? decimalFormat.format(revenue) : "-"));
             filmPopularity.setText(StyleHandler.getInstance().getLocalizedString("popularity.name") + ":" + " " + String.valueOf(popularity));
             filmRuntime.setText(StyleHandler.getInstance().getLocalizedString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
-            filmOriginalLanguage.setText(StyleHandler.getInstance().getLocalizedString("filmOriginalLanguage.name")  + ":" + " " + film.getOriginalLanguage());
+            filmOriginalLanguage.setText(film.getOriginalLanguage());
             createFlags(film);
         });
-
+    }
+    private void initButton()
+    {
+        if(!Client.getInstance().isLogged().get())
+        {
+            addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryError.name"));
+            return;
+        }
+        if(FilmHandler.getInstance().IsLibraryAvailable())
+            addToLibrary.setDisable(false);
+        if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable())
+            addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryLoading.name"));
+        addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
+        if(!addToLibrary.isDisable())
+        {
+            List<MovieDb> movies = FilmHandler.getInstance().getCurrentLoaded();
+            boolean contains = movies.contains(movie);
+            addToLibrary.setOnAction((event) ->
+            {
+                if(movies.contains(movie))
+                {
+                    elementId = FilmHandler.getInstance().getMovieElementId().get(movie);
+                    RemoveFilm();
+                }
+                else
+                    AddFilm();
+                SceneHandler.getInstance().getFilmStage().close();
+            });
+            addToLibrary.setText(contains ? StyleHandler.getInstance().getLocalizedString("alreadyAdded.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name"));
+        }
     }
     private void createFlags(MovieDb film)
     {
@@ -156,7 +168,65 @@ public class FilmController
             JSONObject object = JSONUtil.toJSON(film);
             Client.getInstance().insert("films",object,success -> {
                 FilmHandler.getInstance().getCurrentLoaded().add(movie);
-                FilmHandler.getInstance().getMovieElementId().put(movie,success.result().getJSONObject("response").getString("element_id"));
+                FilmHandler.getInstance().getMovieElementId().put(movie,success.result().getJSONObject("response").getString(
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        "element_id"));
             },error ->
             {
                 LoggerHandler.error("Error library film {} couldn't be added to the library",error.fillInStackTrace(),film.title());

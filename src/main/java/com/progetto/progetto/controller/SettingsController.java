@@ -1,9 +1,11 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.PageEnum;
 import com.progetto.progetto.model.enums.StyleMode;
+import com.progetto.progetto.model.handlers.FilmHandler;
 import com.progetto.progetto.model.handlers.LoggerHandler;
 import com.progetto.progetto.model.handlers.StyleHandler;
 import com.progetto.progetto.view.SceneHandler;
@@ -82,12 +84,12 @@ public class SettingsController {
 
         //colors
         this.colorPicker.hueProperty().addListener((observableValue, aBoolean, t1) -> saveConfigurationAndUpdate());
-
         //update language
         this.languageBox.valueProperty().addListener((observable, oldValue, newValue) ->
         {
             this.saveConfigurationAndUpdate();
             SceneHandler.getInstance().reloadApplication(PageEnum.SETTINGS);
+            FilmHandler.getInstance().updateLibrary();
         });
     }
 
