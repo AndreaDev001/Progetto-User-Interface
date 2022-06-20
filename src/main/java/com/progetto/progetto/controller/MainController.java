@@ -81,9 +81,10 @@ public class MainController implements IResearchListener
             second.setExpanded(false);
             handleError("connectionError.name","reloadButton.name",(event) -> {
                 ResearchHandler.getInstance().setCurrentViewMode(MovieViewMode.HOME,false,false,false);
+                FilmHandler.getInstance().updateLibrary();
                 SceneHandler.getInstance().reloadApplication(PageEnum.MAIN);
             });},success -> {;
-            if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable().get())
+            if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable())
                 FilmHandler.getInstance().updateLibrary();
             this.handleLoading(false);
             first.setDisable(false);
@@ -160,6 +161,7 @@ public class MainController implements IResearchListener
         //Inizializza i due dropdown
         initDropdown(MovieSortType.values(), sortComboBox);
         initDropdown(MovieSortOrder.values(), sortOrderComboBox);
+        third.setVisible(ResearchHandler.getInstance().getCurrentViewMode() == MovieViewMode.HOME);
         if (ResearchHandler.getInstance().getCurrentText().isEmpty())
             this.searchField.setPromptText(StyleHandler.getInstance().getLocalizedString("textPrompt.name"));
         else

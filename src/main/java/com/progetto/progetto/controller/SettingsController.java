@@ -1,5 +1,6 @@
 package com.progetto.progetto.controller;
 
+import com.progetto.progetto.client.Client;
 import com.progetto.progetto.model.Options;
 import com.progetto.progetto.model.enums.ErrorType;
 import com.progetto.progetto.model.enums.PageEnum;
@@ -83,7 +84,6 @@ public class SettingsController {
 
         //colors
         this.colorPicker.hueProperty().addListener((observableValue, aBoolean, t1) -> saveConfigurationAndUpdate());
-
         //update language
         this.languageBox.valueProperty().addListener((observable, oldValue, newValue) ->
         {

@@ -67,7 +67,7 @@ public class FilmController
     @FXML
     private void initialize()
     {
-        FilmHandler.getInstance().IsLibraryAvailable().addListener((obs,oldValue,newValue) -> Platform.runLater(this::initButton));
+        FilmHandler.getInstance().addLibraryListener((obs,oldValue,newValue) -> Platform.runLater(this::initButton),this.getClass().getSimpleName());
         String pattern = "###,###.###";
         id = FilmHandler.getInstance().getCurrentSelectedFilm();
         borderPane.setVisible(false);
@@ -106,17 +106,20 @@ public class FilmController
             filmRevenue.setText((revenue > 0 ? decimalFormat.format(revenue) : "-"));
             filmPopularity.setText(StyleHandler.getInstance().getLocalizedString("popularity.name") + ":" + " " + String.valueOf(popularity));
             filmRuntime.setText(StyleHandler.getInstance().getLocalizedString("filmRuntime.name") + ":" + " " + (runtime > 0 ? runtime + " " + "min" : "-"));
-            filmOriginalLanguage.setText(StyleHandler.getInstance().getLocalizedString("filmOriginalLanguage.name")  + ":" + " " + film.getOriginalLanguage());
+            filmOriginalLanguage.setText(film.getOriginalLanguage());
             createFlags(film);
         });
     }
     private void initButton()
     {
-        if(FilmHandler.getInstance().IsLibraryAvailable().get())
-            addToLibrary.setDisable(false);
         if(!Client.getInstance().isLogged().get())
+        {
             addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryError.name"));
-        if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable().get())
+            return;
+        }
+        if(FilmHandler.getInstance().IsLibraryAvailable())
+            addToLibrary.setDisable(false);
+        if(Client.getInstance().isLogged().get() && !FilmHandler.getInstance().IsLibraryAvailable())
             addToLibrary.setText(StyleHandler.getInstance().getLocalizedString("libraryLoading.name"));
         addToLibrary.disableProperty().addListener((observableValue, aBoolean, t1) -> addToLibrary.setText(observableValue.getValue().booleanValue() ? StyleHandler.getInstance().getLocalizedString("libraryError.name") : StyleHandler.getInstance().getLocalizedString("addToLibrary.name")));
         if(!addToLibrary.isDisable())
